@@ -1,0 +1,128 @@
+/* Champions TB design system — "championship stat-sheet".
+   Warm carbon ground, champion-gold accent, condensed athletic display type,
+   tabular numerals for stats, chamfered (not rounded) corners.
+   Conventions: docs/design-system.md */
+
+/* Latin subsets only — keeps the PWA precache small (covers é in Pokémon names). */
+@import '@fontsource/barlow/latin-400.css';
+@import '@fontsource/barlow/latin-500.css';
+@import '@fontsource/barlow/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-500.css';
+@import '@fontsource/barlow-condensed/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-700-italic.css';
+@import '@fontsource/barlow-condensed/latin-700.css';
+
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2')
+    format('woff2-variations');
+}
+
+@import 'tailwindcss';
+
+@theme {
+  /* Kill Tailwind's default palette so nothing "slate" sneaks back in. */
+  --color-*: initial;
+
+  /* Ink — warm carbon neutrals (brown-tinted, deliberately not blue) */
+  --color-ink-950: #0f0d0b;
+  --color-ink-900: #17140f;
+  --color-ink-850: #1d1a14;
+  --color-ink-800: #26221a;
+  --color-ink-700: #363021;
+  --color-ink-500: #6e6552;
+  --color-ink-400: #8d846f;
+  --color-ink-300: #b0a790;
+  --color-ink-200: #cfc7b2;
+  --color-ink-50: #f4f0e4;
+
+  /* Gold — champion accent */
+  --color-gold-300: #f2d27c;
+  --color-gold-400: #e7b84e;
+  --color-gold-500: #d49e2b;
+  --color-gold-600: #a87a1c;
+  --color-gold-950: #2a1f08;
+
+  /* Semantic */
+  --color-legal: #6fc27a;   /* legality ok */
+  --color-illegal: #e5484d; /* clause/reg violations */
+  --color-warn: #e8863c;    /* shaky / caution */
+  --color-info: #7aa7c7;    /* neutral info */
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Type */
+  --font-sans: 'Barlow', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  /* Sharp geometry — small radii only; chamfers are the signature */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+}
+
+/* Pokémon type colors — first-class tokens (SV-style palette).
+   `static` because they're consumed via inline style var() (TypeBadge),
+   which Tailwind's tree-shaking can't see. */
+@theme static {
+  --color-type-normal: #9099a1;
+  --color-type-fire: #ff9c54;
+  --color-type-water: #4d90d5;
+  --color-type-electric: #f3d23b;
+  --color-type-grass: #63bb5b;
+  --color-type-ice: #74cec0;
+  --color-type-fighting: #ce4069;
+  --color-type-poison: #ab6ac8;
+  --color-type-ground: #d97746;
+  --color-type-flying: #8fa8dd;
+  --color-type-psychic: #f97176;
+  --color-type-bug: #90c12c;
+  --color-type-rock: #c7b78b;
+  --color-type-ghost: #5269ac;
+  --color-type-dragon: #0a6dc4;
+  --color-type-dark: #5a5366;
+  --color-type-steel: #5a8ea1;
+  --color-type-fairy: #ec8fe6;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  @apply bg-ink-950 font-sans text-ink-50 antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+  background-image: radial-gradient(
+    ellipse 90% 45% at 50% 0%,
+    rgb(212 158 43 / 0.05),
+    transparent
+  );
+}
+
+::selection {
+  @apply bg-gold-500 text-ink-950;
+}
+
+@utility chamfer {
+  /* Signature cut corner (top-right), replaces rounded cards */
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+
+@utility chamfer-sm {
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+}
+
+@utility label-caps {
+  /* Section/eyebrow labels: condensed, spaced, uppercase */
+  @apply font-display text-[0.8rem] font-semibold uppercase tracking-[0.14em] text-ink-400;
+}
+
+@utility stat-num {
+  /* Every number that can change width uses tabular mono */
+  @apply font-mono text-[0.95em];
+  font-variant-numeric: tabular-nums;
+}

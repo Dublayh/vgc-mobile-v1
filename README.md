@@ -1,0 +1,103 @@
+# Champions Team Builder
+
+A free, installable PWA for building and analyzing teams for Pokémon Champions ranked
+(currently Reg M-B), with accurate damage calcs using the Champions Stat Point (SP) system.
+No backend, no runtime AI — everything runs client-side against static data bundles.
+
+Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline, milestones).
+
+## Status
+
+- ✅ **M1 — Engine core**: Champions stat formula, SP validation, `@smogon/calc` wrapper
+  (Approach A: raw-stat injection), speed tiers, SP optimizers, data pipeline.
+- ✅ **Design system**: "championship stat-sheet" — see `docs/design-system.md`; living
+  gallery behind the `UI` header toggle.
+- ✅ **M2 — Team builder MVP**: dex browser (search/type/mega filters, learnsets),
+  team CRUD in IndexedDB, SetEditor (forme toggle, alignment matrix, move/item pickers
+  with item-clause greying, 66-SP allocator with hold-to-repeat steppers + presets),
+  ambient legality (species/item clause, learnset, mega, SP), Showdown paste
+  import/export (EV↔SP translation), bundled offline sprites, hash deep links.
+- ✅ **M3 — Damage calc UI**: attacker/defender picked from saved team slots OR the
+  whole dex — dex picks auto-seed the mon's most common ladder set (spread, item,
+  ability, moves) and are fully editable in place (meta-spread chips, alignment,
+  SP allocator, item, ability; dex attackers can test any learnset move),
+  per-move damage rows (range, KO chance, best-move highlight), expandable detail
+  (rolls, SP-worded calc description, copy-to-clipboard), field conditions
+  (doubles/singles, weather, terrain, screens, Helping Hand, Friend Guard, crit),
+  boost stages + burn, swap button. Calc feature is code-split (lazy chunk).
+- ✅ **M4a — Meta intelligence (foundation)**: Smogon usage pipeline
+  (`npm run data:usage` — real Champions Reg M-B ladder stats, ~1.76M battles,
+  natively SP-scaled spreads), Meta tab with usage browser (moves/items/abilities/
+  spreads/teammates per mon), L50 speed-tier ladder (team vs meta common+max
+  speeds, Tailwind modes), threat audit (meta mon's most common set vs. every
+  team slot: damage both ways, speed order, safe/shaky/loses verdicts), and
+  one-tap "meta spreads" suggestions in the SetEditor.
+- ⏳ M4b — CounterFinder + Team Completer + AdviceExport · M5 — PWA polish ·
+  M6 — Reg M-C readiness
+
+Monthly data refresh (manual until CI exists): `npm run data:usage` (env
+`MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published).
+
+### Dev utilities
+
+- `node scripts/shoot.mjs <url> <out.png> [--full]` — screenshot the running dev app
+  via system Edge (playwright-core, no browser download). Page console errors are printed.
+- `node scripts/smoke-newteam.mjs <out.png>` — scripted UI smoke test: new team →
+  empty slot → pick species; exits non-zero on any page error.
+- `node scripts/smoke-calc.mjs <out.png>` — calc-tab smoke test: seeded team →
+  pick attacker/defender → damage rows + expanded description.
+- Append `?seed` to any dev URL to (re)create the demo team, then deep-link:
+  `/?seed#teams/demo-team` (team editor) · `/?seed#teams/demo-team/0` (set editor) ·
+  `#dex/garchomp` (dex detail).
+
+## Commands
+
+```bash
+npm run dev          # dev server
+npm test             # engine test suite (M1 acceptance gate)
+npm run build        # typecheck + production build (PWA)
+npm run data:all     # regenerate public/data/*.json from scripts/regulation-source/
+```
+
+## Architecture (implemented so far)
+
+```
+scripts/
+  regulation-source/m-b.ts   editable roster source (⚠ starter list — sync from
+                             Showdown's Champions format defs before real use)
+  build-regulation.ts        → public/data/regulations/m-b.json + meta.json
+  build-dex.ts               → public/data/dex.json (trimmed to reg roster)
+src/engine/
+  types.ts      ChampionsSet / SPSpread / Alignments (natures) / Regulation
+  stats.ts      Champions stat formula (level 50, IV 31, 1 SP = +1 final stat),
+                SP validation (pool 66, max 32/stat), EV↔SP interop
+  calc.ts       @smogon/calc wrapper — computes Champions stats and injects them
+                into Pokemon.rawStats/stats, bypassing the library's EV math
+  speed.ts      L50 speed tiers with Tailwind/Scarf/paralysis/stage modifiers
+  optimizer.ts  exact brute-force SP searches (survive X / reach speed / damage curve)
+src/app/        app shell, bottom tab nav (Teams · Calc · Dex · Meta)
+src/data/       static-data loading hooks (useMeta so far)
+src/storage/    Dexie (IndexedDB) schema for saved teams
+```
+
+## Key findings during M1
+
+- **`@pkmn/dex` already ships Champions data** — new megas like Staraptor-Mega
+  (Contrary), Raichu-Mega-X/Y and Sceptile-Mega resolve with correct stats and
+  abilities, so no custom data-override layer is needed for them.
+- **SP rounding order (plan §7.1) — still needs in-game verification.** The engine
+  defaults to `sp-after-alignment` ("1 SP = exactly +1 final stat", community
+  consensus). Every stat/calc/optimizer function accepts an `SPRoundingMode` so the
+  alternative (`sp-before-alignment`, EV-style) can be validated against in-game
+  screenshots / Game8 values and switched globally if consensus is wrong.
+
+## Open TODOs before M1 sign-off
+
+1. Replace the starter roster in `scripts/regulation-source/m-b.ts` with the real
+   Reg M-B list (208 species + ~76 megas) from Showdown's `config/formats.ts`.
+2. Verify the SP rounding mode against verified in-game stat screenshots.
+3. Add golden calcs cross-checked against the NCP VGC damage calculator.
+
+---
+
+*Fan project — not affiliated with Nintendo, The Pokémon Company, or Game Freak.*

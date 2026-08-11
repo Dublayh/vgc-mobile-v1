@@ -1,0 +1,553 @@
+{
+  "id": "m-b",
+  "label": "Regulation M-B",
+  "dateRange": [
+    "2026-06-17",
+    "2026-09-02"
+  ],
+  "allowedSpecies": [
+    "Venusaur",
+    "Charizard",
+    "Blastoise",
+    "Beedrill",
+    "Pidgeot",
+    "Arbok",
+    "Pikachu",
+    "Raichu",
+    "Raichu-Alola",
+    "Clefable",
+    "Ninetales",
+    "Ninetales-Alola",
+    "Vileplume",
+    "Arcanine",
+    "Arcanine-Hisui",
+    "Politoed",
+    "Alakazam",
+    "Machamp",
+    "Victreebel",
+    "Slowbro",
+    "Slowbro-Galar",
+    "Slowking",
+    "Slowking-Galar",
+    "Gengar",
+    "Steelix",
+    "Rhyperior",
+    "Kangaskhan",
+    "Starmie",
+    "Mr. Rime",
+    "Scizor",
+    "Kleavor",
+    "Pinsir",
+    "Tauros",
+    "Tauros-Paldea-Combat",
+    "Tauros-Paldea-Blaze",
+    "Tauros-Paldea-Aqua",
+    "Gyarados",
+    "Ditto",
+    "Vaporeon",
+    "Jolteon",
+    "Flareon",
+    "Espeon",
+    "Umbreon",
+    "Leafeon",
+    "Glaceon",
+    "Sylveon",
+    "Aerodactyl",
+    "Snorlax",
+    "Dragonite",
+    "Meganium",
+    "Typhlosion",
+    "Typhlosion-Hisui",
+    "Feraligatr",
+    "Ariados",
+    "Ampharos",
+    "Azumarill",
+    "Farigiraf",
+    "Forretress",
+    "Gliscor",
+    "Qwilfish",
+    "Overqwil",
+    "Heracross",
+    "Weavile",
+    "Sneasler",
+    "Mamoswine",
+    "Skarmory",
+    "Houndoom",
+    "Wyrdeer",
+    "Tyranitar",
+    "Sceptile",
+    "Blaziken",
+    "Swampert",
+    "Pelipper",
+    "Gardevoir",
+    "Gallade",
+    "Sableye",
+    "Mawile",
+    "Aggron",
+    "Medicham",
+    "Manectric",
+    "Roserade",
+    "Sharpedo",
+    "Camerupt",
+    "Torkoal",
+    "Altaria",
+    "Milotic",
+    "Castform",
+    "Banette",
+    "Chimecho",
+    "Absol",
+    "Glalie",
+    "Froslass",
+    "Metagross",
+    "Torterra",
+    "Infernape",
+    "Empoleon",
+    "Staraptor",
+    "Luxray",
+    "Rampardos",
+    "Bastiodon",
+    "Lopunny",
+    "Spiritomb",
+    "Garchomp",
+    "Lucario",
+    "Hippowdon",
+    "Toxicroak",
+    "Abomasnow",
+    "Rotom",
+    "Rotom-Heat",
+    "Rotom-Wash",
+    "Rotom-Frost",
+    "Rotom-Fan",
+    "Rotom-Mow",
+    "Serperior",
+    "Emboar",
+    "Samurott",
+    "Samurott-Hisui",
+    "Watchog",
+    "Liepard",
+    "Simisage",
+    "Simisear",
+    "Simipour",
+    "Musharna",
+    "Excadrill",
+    "Audino",
+    "Conkeldurr",
+    "Scolipede",
+    "Whimsicott",
+    "Basculegion",
+    "Basculegion-F",
+    "Krookodile",
+    "Scrafty",
+    "Cofagrigus",
+    "Runerigus",
+    "Garbodor",
+    "Zoroark",
+    "Zoroark-Hisui",
+    "Reuniclus",
+    "Vanilluxe",
+    "Emolga",
+    "Eelektross",
+    "Chandelure",
+    "Beartic",
+    "Stunfisk",
+    "Stunfisk-Galar",
+    "Golurk",
+    "Hydreigon",
+    "Volcarona",
+    "Chesnaught",
+    "Delphox",
+    "Greninja",
+    "Diggersby",
+    "Talonflame",
+    "Vivillon",
+    "Pyroar",
+    "Floette-Eternal",
+    "Florges",
+    "Pangoro",
+    "Furfrou",
+    "Meowstic",
+    "Meowstic-F",
+    "Aegislash",
+    "Aromatisse",
+    "Slurpuff",
+    "Malamar",
+    "Barbaracle",
+    "Dragalge",
+    "Clawitzer",
+    "Heliolisk",
+    "Tyrantrum",
+    "Aurorus",
+    "Hawlucha",
+    "Dedenne",
+    "Goodra",
+    "Goodra-Hisui",
+    "Klefki",
+    "Trevenant",
+    "Gourgeist",
+    "Gourgeist-Small",
+    "Gourgeist-Large",
+    "Gourgeist-Super",
+    "Avalugg",
+    "Avalugg-Hisui",
+    "Noivern",
+    "Decidueye",
+    "Decidueye-Hisui",
+    "Incineroar",
+    "Primarina",
+    "Toucannon",
+    "Crabominable",
+    "Lycanroc",
+    "Lycanroc-Midnight",
+    "Lycanroc-Dusk",
+    "Toxapex",
+    "Mudsdale",
+    "Araquanid",
+    "Salazzle",
+    "Tsareena",
+    "Oranguru",
+    "Passimian",
+    "Mimikyu",
+    "Drampa",
+    "Kommo-o",
+    "Corviknight",
+    "Flapple",
+    "Appletun",
+    "Sandaconda",
+    "Polteageist",
+    "Hatterene",
+    "Grimmsnarl",
+    "Alcremie",
+    "Falinks",
+    "Morpeko",
+    "Dragapult",
+    "Meowscarada",
+    "Skeledirge",
+    "Quaquaval",
+    "Houndstone",
+    "Espathra",
+    "Palafin",
+    "Scovillain",
+    "Bellibolt",
+    "Orthworm",
+    "Maushold",
+    "Garganacl",
+    "Glimmora",
+    "Gholdengo",
+    "Tinkaton",
+    "Armarouge",
+    "Ceruledge",
+    "Kingambit",
+    "Annihilape",
+    "Sinistcha",
+    "Archaludon",
+    "Hydrapple"
+  ],
+  "allowedMegas": [
+    "Venusaur",
+    "Charizard",
+    "Blastoise",
+    "Beedrill",
+    "Pidgeot",
+    "Raichu",
+    "Clefable",
+    "Alakazam",
+    "Victreebel",
+    "Slowbro",
+    "Gengar",
+    "Steelix",
+    "Kangaskhan",
+    "Starmie",
+    "Scizor",
+    "Pinsir",
+    "Gyarados",
+    "Aerodactyl",
+    "Dragonite",
+    "Meganium",
+    "Feraligatr",
+    "Ampharos",
+    "Heracross",
+    "Skarmory",
+    "Houndoom",
+    "Tyranitar",
+    "Sceptile",
+    "Blaziken",
+    "Swampert",
+    "Gardevoir",
+    "Gallade",
+    "Sableye",
+    "Mawile",
+    "Aggron",
+    "Medicham",
+    "Manectric",
+    "Sharpedo",
+    "Camerupt",
+    "Altaria",
+    "Banette",
+    "Chimecho",
+    "Absol",
+    "Glalie",
+    "Froslass",
+    "Metagross",
+    "Staraptor",
+    "Lopunny",
+    "Garchomp",
+    "Lucario",
+    "Abomasnow",
+    "Emboar",
+    "Excadrill",
+    "Audino",
+    "Scolipede",
+    "Scrafty",
+    "Eelektross",
+    "Chandelure",
+    "Golurk",
+    "Chesnaught",
+    "Delphox",
+    "Greninja",
+    "Pyroar",
+    "Floette-Eternal",
+    "Meowstic",
+    "Meowstic-F",
+    "Malamar",
+    "Barbaracle",
+    "Dragalge",
+    "Hawlucha",
+    "Crabominable",
+    "Drampa",
+    "Falinks",
+    "Scovillain",
+    "Glimmora"
+  ],
+  "megaFormes": {
+    "Venusaur": [
+      "Venusaur-Mega"
+    ],
+    "Charizard": [
+      "Charizard-Mega-X",
+      "Charizard-Mega-Y"
+    ],
+    "Blastoise": [
+      "Blastoise-Mega"
+    ],
+    "Beedrill": [
+      "Beedrill-Mega"
+    ],
+    "Pidgeot": [
+      "Pidgeot-Mega"
+    ],
+    "Raichu": [
+      "Raichu-Mega-X",
+      "Raichu-Mega-Y"
+    ],
+    "Clefable": [
+      "Clefable-Mega"
+    ],
+    "Alakazam": [
+      "Alakazam-Mega"
+    ],
+    "Victreebel": [
+      "Victreebel-Mega"
+    ],
+    "Slowbro": [
+      "Slowbro-Mega"
+    ],
+    "Gengar": [
+      "Gengar-Mega"
+    ],
+    "Steelix": [
+      "Steelix-Mega"
+    ],
+    "Kangaskhan": [
+      "Kangaskhan-Mega"
+    ],
+    "Starmie": [
+      "Starmie-Mega"
+    ],
+    "Scizor": [
+      "Scizor-Mega"
+    ],
+    "Pinsir": [
+      "Pinsir-Mega"
+    ],
+    "Gyarados": [
+      "Gyarados-Mega"
+    ],
+    "Aerodactyl": [
+      "Aerodactyl-Mega"
+    ],
+    "Dragonite": [
+      "Dragonite-Mega"
+    ],
+    "Meganium": [
+      "Meganium-Mega"
+    ],
+    "Feraligatr": [
+      "Feraligatr-Mega"
+    ],
+    "Ampharos": [
+      "Ampharos-Mega"
+    ],
+    "Heracross": [
+      "Heracross-Mega"
+    ],
+    "Skarmory": [
+      "Skarmory-Mega"
+    ],
+    "Houndoom": [
+      "Houndoom-Mega"
+    ],
+    "Tyranitar": [
+      "Tyranitar-Mega"
+    ],
+    "Sceptile": [
+      "Sceptile-Mega"
+    ],
+    "Blaziken": [
+      "Blaziken-Mega"
+    ],
+    "Swampert": [
+      "Swampert-Mega"
+    ],
+    "Gardevoir": [
+      "Gardevoir-Mega"
+    ],
+    "Gallade": [
+      "Gallade-Mega"
+    ],
+    "Sableye": [
+      "Sableye-Mega"
+    ],
+    "Mawile": [
+      "Mawile-Mega"
+    ],
+    "Aggron": [
+      "Aggron-Mega"
+    ],
+    "Medicham": [
+      "Medicham-Mega"
+    ],
+    "Manectric": [
+      "Manectric-Mega"
+    ],
+    "Sharpedo": [
+      "Sharpedo-Mega"
+    ],
+    "Camerupt": [
+      "Camerupt-Mega"
+    ],
+    "Altaria": [
+      "Altaria-Mega"
+    ],
+    "Banette": [
+      "Banette-Mega"
+    ],
+    "Chimecho": [
+      "Chimecho-Mega"
+    ],
+    "Absol": [
+      "Absol-Mega"
+    ],
+    "Glalie": [
+      "Glalie-Mega"
+    ],
+    "Froslass": [
+      "Froslass-Mega"
+    ],
+    "Metagross": [
+      "Metagross-Mega"
+    ],
+    "Staraptor": [
+      "Staraptor-Mega"
+    ],
+    "Lopunny": [
+      "Lopunny-Mega"
+    ],
+    "Garchomp": [
+      "Garchomp-Mega"
+    ],
+    "Lucario": [
+      "Lucario-Mega"
+    ],
+    "Abomasnow": [
+      "Abomasnow-Mega"
+    ],
+    "Emboar": [
+      "Emboar-Mega"
+    ],
+    "Excadrill": [
+      "Excadrill-Mega"
+    ],
+    "Audino": [
+      "Audino-Mega"
+    ],
+    "Scolipede": [
+      "Scolipede-Mega"
+    ],
+    "Scrafty": [
+      "Scrafty-Mega"
+    ],
+    "Eelektross": [
+      "Eelektross-Mega"
+    ],
+    "Chandelure": [
+      "Chandelure-Mega"
+    ],
+    "Golurk": [
+      "Golurk-Mega"
+    ],
+    "Chesnaught": [
+      "Chesnaught-Mega"
+    ],
+    "Delphox": [
+      "Delphox-Mega"
+    ],
+    "Greninja": [
+      "Greninja-Mega"
+    ],
+    "Pyroar": [
+      "Pyroar-Mega"
+    ],
+    "Floette-Eternal": [
+      "Floette-Mega"
+    ],
+    "Meowstic": [
+      "Meowstic-M-Mega"
+    ],
+    "Meowstic-F": [
+      "Meowstic-F-Mega"
+    ],
+    "Malamar": [
+      "Malamar-Mega"
+    ],
+    "Barbaracle": [
+      "Barbaracle-Mega"
+    ],
+    "Dragalge": [
+      "Dragalge-Mega"
+    ],
+    "Hawlucha": [
+      "Hawlucha-Mega"
+    ],
+    "Crabominable": [
+      "Crabominable-Mega"
+    ],
+    "Drampa": [
+      "Drampa-Mega"
+    ],
+    "Falinks": [
+      "Falinks-Mega"
+    ],
+    "Scovillain": [
+      "Scovillain-Mega"
+    ],
+    "Glimmora": [
+      "Glimmora-Mega"
+    ]
+  },
+  "bannedItems": [],
+  "clauses": [
+    "species",
+    "item"
+  ],
+  "generatedAt": "2026-08-10T20:18:48.215Z"
+}
