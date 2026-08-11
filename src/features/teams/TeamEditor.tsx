@@ -9,10 +9,12 @@ import { teamViolations } from '../../engine/legality';
 import type { Team } from '../../engine/types';
 import { putTeam, renameTeam } from '../../storage/teams';
 import { parsePaste, serializeTeam } from '../import-export/showdown';
+import { TeamCompleter } from './TeamCompleter';
 
 export function TeamEditor({ team, lookup }: { team: Team; lookup: DexLookup }) {
   const { openTeam, openSlot } = useUI();
   const [showImport, setShowImport] = useState(false);
+  const [showCompleter, setShowCompleter] = useState(false);
   const [pasteText, setPasteText] = useState('');
   const [exportNote, setExportNote] = useState('');
   const violations = teamViolations(team, lookup.legalityContext());
@@ -112,6 +114,16 @@ export function TeamEditor({ team, lookup }: { team: Team; lookup: DexLookup }) 
           );
         })}
       </div>
+
+      {team.sets.length > 0 && (
+        <Button
+          variant={showCompleter ? 'primary' : 'secondary'}
+          onClick={() => setShowCompleter((v) => !v)}
+        >
+          {showCompleter ? 'Hide suggestions' : `Complete team (${team.sets.length}/6)`}
+        </Button>
+      )}
+      {showCompleter && <TeamCompleter team={team} lookup={lookup} />}
 
       <div className="flex flex-wrap items-center gap-2">
         <Button onClick={() => setShowImport((v) => !v)}>Import</Button>

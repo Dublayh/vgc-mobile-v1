@@ -32,8 +32,16 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   speeds, Tailwind modes), threat audit (meta mon's most common set vs. every
   team slot: damage both ways, speed order, safe/shaky/loses verdicts), and
   one-tap "meta spreads" suggestions in the SetEditor.
-- ⏳ M4b — CounterFinder + Team Completer + AdviceExport · M5 — PWA polish ·
-  M6 — Reg M-C readiness
+- ✅ **M4b — Threat Advisor + Team Completer**: CounterFinder (top-80 meta sets
+  audited vs. any threat, ranked with evidence, one-tap "Verify in calc"
+  deep link), field-aware audits (Trick Room / My Tailwind / Their Tailwind
+  toggles auto-defaulted from the team's detected archetype — acting order,
+  verdicts and counter ranking all respect them), Team Completer in the TeamEditor (archetype detection, teammate
+  co-occurrence, coverage-gap patching, clause-friction flags, iterative
+  add-and-re-rank), 18×18 type chart in the engine, and "Ask Claude" AdviceExport
+  (clipboard prompts for threat matchups and team completion — never an API call).
+- ⏳ M5 — PWA polish (URL team sharing, optimizer panel, virtualized lists,
+  GitHub Actions data cron) · M6 — Reg M-C readiness
 
 Monthly data refresh (manual until CI exists): `npm run data:usage` (env
 `MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published).

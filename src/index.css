@@ -126,3 +126,49 @@ body {
   @apply font-mono text-[0.95em];
   font-variant-numeric: tabular-nums;
 }
+
+/* SP slider — square gold thumb on a hairline track; fill driven by --fill. */
+.sp-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y; /* vertical page scroll still works; horizontal drags the thumb */
+}
+.sp-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: linear-gradient(
+    to right,
+    var(--color-gold-500) var(--fill, 0%),
+    var(--color-ink-800) var(--fill, 0%)
+  );
+}
+.sp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gold-400);
+  border: 1px solid var(--color-gold-600);
+}
+.sp-slider::-moz-range-track {
+  height: 6px;
+  background: linear-gradient(
+    to right,
+    var(--color-gold-500) var(--fill, 0%),
+    var(--color-ink-800) var(--fill, 0%)
+  );
+}
+.sp-slider::-moz-range-thumb {
+  width: 14px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gold-400);
+  border: 1px solid var(--color-gold-600);
+}
+.sp-slider:focus-visible {
+  outline: 1px solid var(--color-gold-500);
+  outline-offset: 2px;
+}

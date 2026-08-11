@@ -5,6 +5,7 @@
  * can be reproduced in CalcView.
  */
 import { buildField, runCalc, toCalcPokemon } from './calc';
+import { effectiveSpeed } from './speed';
 import type { ChampionsSet } from './types';
 
 export interface BestMove {
@@ -12,14 +13,25 @@ export interface BestMove {
   maxPercent: number;
 }
 
+/** Field state that changes acting order (team archetypes live here). */
+export interface AuditContext {
+  gameType?: 'Doubles' | 'Singles';
+  trickRoom?: boolean;
+  myTailwind?: boolean;
+  theirTailwind?: boolean;
+}
+
 export interface MatchupAudit {
   /** threat's best damaging move vs. mine (null = no damaging move known) */
   incoming: BestMove | null;
   /** my best damaging move vs. the threat */
   outgoing: BestMove | null;
-  speed: 'faster' | 'slower' | 'tie'; // my set relative to the threat
-  mySpeed: number;
-  theirSpeed: number;
+  /** relative EFFECTIVE speed (tailwinds applied) */
+  speed: 'faster' | 'slower' | 'tie';
+  mySpeed: number; // effective
+  theirSpeed: number; // effective
+  /** whether my set acts first under the given field (TR inverts; ties = false) */
+  actsFirst: boolean;
   verdict: 'safe' | 'shaky' | 'loses';
 }
 
@@ -51,25 +63,28 @@ const hitsToKO = (best: BestMove | null): number =>
 export function auditMatchup(
   mine: ChampionsSet,
   threat: ChampionsSet,
-  gameType: 'Doubles' | 'Singles' = 'Doubles',
+  ctx: AuditContext = {},
 ): MatchupAudit {
+  const gameType = ctx.gameType ?? 'Doubles';
   const me = toCalcPokemon(mine, { formeName: mine.megaStone });
   const them = toCalcPokemon(threat, { formeName: threat.megaStone });
 
-  const mySpeed = me.rawStats.spe;
-  const theirSpeed = them.rawStats.spe;
+  const mySpeed = effectiveSpeed(me.rawStats.spe, { tailwind: ctx.myTailwind });
+  const theirSpeed = effectiveSpeed(them.rawStats.spe, { tailwind: ctx.theirTailwind });
   const speed = mySpeed > theirSpeed ? 'faster' : mySpeed < theirSpeed ? 'slower' : 'tie';
+
+  // Trick Room inverts acting order; speed ties are treated as acting second.
+  const actsFirst = ctx.trickRoom ? mySpeed < theirSpeed : mySpeed > theirSpeed;
 
   const incoming = bestMove(them, threat.moves, me, gameType);
   const outgoing = bestMove(me, mine.moves, them, gameType);
 
   const toKOMe = hitsToKO(incoming);
   const toKOThem = hitsToKO(outgoing);
-  const meFirst = speed === 'faster';
 
   // Turn simulation: acting first means I win ties in hits-to-KO.
   const win =
-    toKOThem !== Infinity && (meFirst ? toKOThem <= toKOMe : toKOThem < toKOMe);
+    toKOThem !== Infinity && (actsFirst ? toKOThem <= toKOMe : toKOThem < toKOMe);
 
   let verdict: MatchupAudit['verdict'];
   if (win) {
@@ -81,5 +96,5 @@ export function auditMatchup(
     verdict = 'loses';
   }
 
-  return { incoming, outgoing, speed, mySpeed, theirSpeed, verdict };
+  return { incoming, outgoing, speed, mySpeed, theirSpeed, actsFirst, verdict };
 }

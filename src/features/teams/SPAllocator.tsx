@@ -63,6 +63,12 @@ export function SPAllocator({
     onChange({ ...sp, [stat]: next });
   };
 
+  const slide = (stat: StatID, raw: number) => {
+    // Clamp to the per-stat cap AND what's left in the pool.
+    const next = Math.max(0, Math.min(raw, SP_STAT_MAX, sp[stat] + remaining));
+    if (next !== sp[stat]) onChange({ ...sp, [stat]: next });
+  };
+
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
@@ -92,6 +98,7 @@ export function SPAllocator({
             tint={a.plus === stat ? 'plus' : a.minus === stat ? 'minus' : undefined}
             canUp={sp[stat] < SP_STAT_MAX && remaining > 0}
             onBump={(d) => bump(stat, d)}
+            onSlide={(v) => slide(stat, v)}
           />
         ))}
       </div>
@@ -118,6 +125,7 @@ function StatRow({
   tint,
   canUp,
   onBump,
+  onSlide,
 }: {
   stat: StatID;
   sp: number;
@@ -125,6 +133,7 @@ function StatRow({
   tint?: 'plus' | 'minus';
   canUp: boolean;
   onBump: (delta: 1 | -1) => void;
+  onSlide: (value: number) => void;
 }) {
   const { start, stop } = useRepeat(onBump);
   const hold = (delta: 1 | -1) => ({
@@ -148,7 +157,7 @@ function StatRow({
       <button
         {...hold(-1)}
         disabled={sp === 0}
-        className="h-9 w-9 shrink-0 touch-none border border-ink-700 font-mono text-lg text-ink-300 select-none disabled:opacity-30"
+        className="h-9 w-8 shrink-0 touch-none border border-ink-700 font-mono text-lg text-ink-300 select-none disabled:opacity-30"
         aria-label={`Decrease ${stat}`}
       >
         −
@@ -159,14 +168,22 @@ function StatRow({
       <button
         {...hold(1)}
         disabled={!canUp}
-        className="h-9 w-9 shrink-0 touch-none border border-ink-700 font-mono text-lg text-ink-300 select-none disabled:opacity-30"
+        className="h-9 w-8 shrink-0 touch-none border border-ink-700 font-mono text-lg text-ink-300 select-none disabled:opacity-30"
         aria-label={`Increase ${stat}`}
       >
         +
       </button>
-      <div className="h-1.5 min-w-4 flex-1 bg-ink-800">
-        <div className="h-full bg-gold-500" style={{ width: `${(sp / SP_STAT_MAX) * 100}%` }} />
-      </div>
+      <input
+        type="range"
+        min={0}
+        max={SP_STAT_MAX}
+        step={1}
+        value={sp}
+        onChange={(e) => onSlide(e.target.valueAsNumber)}
+        aria-label={`${STAT_LABELS[stat]} SP`}
+        className="sp-slider min-w-8 flex-1"
+        style={{ '--fill': `${(sp / SP_STAT_MAX) * 100}%` } as React.CSSProperties}
+      />
       <span className="stat-num w-9 shrink-0 text-right text-sm">{final}</span>
     </div>
   );

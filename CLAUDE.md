@@ -46,6 +46,11 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
 - Tests: `npm test` (Vitest, node env). The golden calc suite in
   `src/engine/calc.test.ts` is the engine acceptance gate — extend it with any
   externally-verified calc values you obtain.
+- Type effectiveness: `src/engine/typechart.ts` (tested) — never hand-roll
+  matchups. Counter ranking: `src/engine/counters.ts`; coverage/completer
+  analysis: `src/features/analysis/` (pure + tested). AdviceExport
+  (`analysis/adviceExport.ts`) is the ONLY AI touchpoint — clipboard prompts,
+  never an API call (plan §5).
 - Usage stats: schema pinned in `src/data/usage.ts`; produced by
   `scripts/build-usage.ts` from Smogon chaos JSON (format
   `gen9championsvgc2026regmb-<rating>`; Champions spreads are natively
