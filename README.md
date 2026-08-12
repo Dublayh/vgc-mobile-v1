@@ -40,8 +40,18 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   co-occurrence, coverage-gap patching, clause-friction flags, iterative
   add-and-re-rank), 18×18 type chart in the engine, and "Ask Claude" AdviceExport
   (clipboard prompts for threat matchups and team completion — never an API call).
-- ⏳ M5 — PWA polish (URL team sharing, optimizer panel, virtualized lists,
-  GitHub Actions data cron) · M6 — Reg M-C readiness
+- ✅ **M5 — PWA polish**: URL team sharing (team → deflate → base64url fragment,
+  `#share/<blob>` preview + save flow, no server), Optimizer panel in Calc
+  ("min SP to survive their best move" / "min Spe SP to outspeed", exact search,
+  one-tap apply), install prompt, configurable base path, GitHub Actions
+  workflows (deploy on push + monthly Smogon data cron — activate by pushing
+  this repo to GitHub and enabling Pages).
+- ✅ **M6 — Regulation swap proven**: multi-regulation pipeline
+  (`CURRENT_REG=m-c npm run data:regulation && npm run data:dex` swaps the whole
+  app — header, dex roster, legality, meta degradation — with zero code changes;
+  fake M-C fixture in `scripts/regulation-source/m-c.ts`). When the real M-C
+  lands: replace that file's roster, run `npm run data:all` with CURRENT_REG=m-c,
+  and add usage once Smogon publishes the new ladder format.
 
 Monthly data refresh (manual until CI exists): `npm run data:usage` (env
 `MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published).
@@ -50,10 +60,11 @@ Monthly data refresh (manual until CI exists): `npm run data:usage` (env
 
 - `node scripts/shoot.mjs <url> <out.png> [--full]` — screenshot the running dev app
   via system Edge (playwright-core, no browser download). Page console errors are printed.
-- `node scripts/smoke-newteam.mjs <out.png>` — scripted UI smoke test: new team →
-  empty slot → pick species; exits non-zero on any page error.
-- `node scripts/smoke-calc.mjs <out.png>` — calc-tab smoke test: seeded team →
-  pick attacker/defender → damage rows + expanded description.
+- UI smoke tests (all exit non-zero on page errors; pass an `<out.png>` path):
+  `smoke-newteam.mjs` (team creation flow), `smoke-calc.mjs` (calc incl. dex
+  sourcing + scratch edits), `smoke-meta.mjs` (usage/speed/threats),
+  `smoke-advisor.mjs` (counters, deep link, completer loop),
+  `smoke-share.mjs` (share URL round trip).
 - Append `?seed` to any dev URL to (re)create the demo team, then deep-link:
   `/?seed#teams/demo-team` (team editor) · `/?seed#teams/demo-team/0` (set editor) ·
   `#dex/garchomp` (dex detail).

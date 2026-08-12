@@ -6,7 +6,11 @@
 import { Dex } from '@pkmn/dex';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { REGULATION_M_B } from './regulation-source/m-b';
+import {
+  DEFAULT_REGULATION,
+  REGULATIONS,
+  type RegulationSource,
+} from './regulation-source/index';
 
 const OUT_DIR = join(import.meta.dirname, '..', 'public', 'data');
 
@@ -19,7 +23,7 @@ function resolveMegaFormes(species: string): string[] {
   return formes;
 }
 
-function buildRegulation(reg: typeof REGULATION_M_B) {
+function buildRegulation(reg: RegulationSource) {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -64,25 +68,38 @@ function buildRegulation(reg: typeof REGULATION_M_B) {
   };
 }
 
-const reg = buildRegulation(REGULATION_M_B);
 mkdirSync(join(OUT_DIR, 'regulations'), { recursive: true });
-writeFileSync(
-  join(OUT_DIR, 'regulations', `${reg.id}.json`),
-  JSON.stringify(reg, null, 2),
-);
+
+const current = process.env.CURRENT_REG ?? DEFAULT_REGULATION;
+if (!REGULATIONS.some((r) => r.id === current)) {
+  console.error(
+    `✗ CURRENT_REG="${current}" has no source (known: ${REGULATIONS.map((r) => r.id).join(', ')})`,
+  );
+  process.exit(1);
+}
+
+for (const source of REGULATIONS) {
+  const reg = buildRegulation(source);
+  writeFileSync(
+    join(OUT_DIR, 'regulations', `${reg.id}.json`),
+    JSON.stringify(reg, null, 2),
+  );
+  console.log(
+    `✓ regulations/${reg.id}.json — ${reg.allowedSpecies.length} species, ` +
+      `${reg.allowedMegas.length} megas (${Object.keys(reg.megaFormes).length} resolved in dex data)` +
+      (reg.id === current ? '  ← current' : ''),
+  );
+}
+
 writeFileSync(
   join(OUT_DIR, 'meta.json'),
   JSON.stringify(
     {
-      currentRegulation: reg.id,
+      currentRegulation: current,
       dataVersion: 1,
       generatedAt: new Date().toISOString(),
     },
     null,
     2,
   ),
-);
-console.log(
-  `✓ regulations/${reg.id}.json — ${reg.allowedSpecies.length} species, ` +
-    `${reg.allowedMegas.length} megas (${Object.keys(reg.megaFormes).length} resolved in dex data)`,
 );

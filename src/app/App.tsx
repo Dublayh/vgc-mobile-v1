@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useDex } from '../data/useDex';
 import { DexBrowser } from '../features/dex/DexBrowser';
 import { TeamsScreen } from '../features/teams/TeamsScreen';
@@ -21,10 +21,24 @@ const TABS: { id: Tab; label: string; icon: IconName }[] = [
   { id: 'meta', label: 'Meta', icon: 'meta' },
 ];
 
+interface InstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+}
+
 export function App() {
   const { tab, setTab } = useUI();
   const [showGallery, setShowGallery] = useState(false);
+  const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
   const lookup = useDex();
+
+  useEffect(() => {
+    const onPrompt = (e: Event) => {
+      e.preventDefault();
+      setInstallEvent(e as InstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', onPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', onPrompt);
+  }, []);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -39,6 +53,17 @@ export function App() {
             </span>
           </h1>
           <div className="flex items-center gap-2.5">
+            {installEvent && (
+              <button
+                onClick={async () => {
+                  await installEvent.prompt();
+                  setInstallEvent(null);
+                }}
+                className="chamfer-sm bg-gold-500 px-2 py-0.5 font-display text-xs font-semibold tracking-[0.12em] uppercase text-ink-950"
+              >
+                Install
+              </button>
+            )}
             {lookup && (
               <span className="chamfer-sm border border-gold-600/50 bg-gold-950 px-2 py-0.5 font-display text-xs font-semibold tracking-[0.14em] uppercase text-gold-300">
                 {lookup.regulation.label.replace('Regulation', 'Reg')}

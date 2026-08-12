@@ -21,6 +21,7 @@ import { db } from '../../storage/db';
 import { SPAllocator } from '../teams/SPAllocator';
 import { usageMonToSet } from '../meta/threatSet';
 import { useCalc, type BoostState, type CalcSelection } from './calcStore';
+import { OptimizerPanel } from './OptimizerPanel';
 
 interface SlotOption {
   teamId: string;
@@ -131,7 +132,16 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
       <FieldControls />
 
       {calc.attacker && calc.defender && (
-        <Results attacker={calc.attacker} defender={calc.defender} lookup={lookup} />
+        <>
+          <Results attacker={calc.attacker} defender={calc.defender} lookup={lookup} />
+          <OptimizerPanel
+            attacker={calc.attacker}
+            defender={calc.defender}
+            lookup={lookup}
+            onUpdateAttacker={updateSet('attacker')}
+            onUpdateDefender={updateSet('defender')}
+          />
+        </>
       )}
     </div>
   );

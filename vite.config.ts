@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  // '/' for root domains (Cloudflare Pages, custom domain); set BASE_PATH=/repo-name/
+  // in CI for GitHub Pages project sites.
+  base: process.env.BASE_PATH || '/',
   plugins: [
     react(),
     tailwindcss(),

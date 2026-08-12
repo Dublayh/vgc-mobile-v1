@@ -1,13 +1,12 @@
 {
-  "id": "m-b",
-  "label": "Regulation M-B",
+  "id": "m-c",
+  "label": "Regulation M-C (TEST)",
   "dateRange": [
-    "2026-06-17",
-    "2026-09-02"
+    "2026-09-03",
+    "2026-12-01"
   ],
   "allowedSpecies": [
     "Venusaur",
-    "Charizard",
     "Blastoise",
     "Beedrill",
     "Pidgeot",
@@ -236,15 +235,12 @@
     "Tinkaton",
     "Armarouge",
     "Ceruledge",
-    "Kingambit",
-    "Annihilape",
     "Sinistcha",
     "Archaludon",
     "Hydrapple"
   ],
   "allowedMegas": [
     "Venusaur",
-    "Charizard",
     "Blastoise",
     "Beedrill",
     "Pidgeot",
@@ -321,10 +317,6 @@
   "megaFormes": {
     "Venusaur": [
       "Venusaur-Mega"
-    ],
-    "Charizard": [
-      "Charizard-Mega-X",
-      "Charizard-Mega-Y"
     ],
     "Blastoise": [
       "Blastoise-Mega"
@@ -549,5 +541,5 @@
     "species",
     "item"
   ],
-  "generatedAt": "2026-08-11T01:41:38.280Z"
+  "generatedAt": "2026-08-11T01:41:38.283Z"
 }

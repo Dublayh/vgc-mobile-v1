@@ -9,6 +9,7 @@ import { teamViolations } from '../../engine/legality';
 import type { Team } from '../../engine/types';
 import { putTeam, renameTeam } from '../../storage/teams';
 import { parsePaste, serializeTeam } from '../import-export/showdown';
+import { encodeTeamShare, shareUrl } from '../import-export/shareCodec';
 import { TeamCompleter } from './TeamCompleter';
 
 export function TeamEditor({ team, lookup }: { team: Team; lookup: DexLookup }) {
@@ -132,6 +133,23 @@ export function TeamEditor({ team, lookup }: { team: Team; lookup: DexLookup }) 
         </Button>
         <Button variant="ghost" onClick={() => doExport('evs')} disabled={team.sets.length === 0}>
           Export for calc sites
+        </Button>
+        <Button
+          variant="ghost"
+          disabled={team.sets.length === 0}
+          onClick={async () => {
+            const url = shareUrl(await encodeTeamShare(team));
+            try {
+              await navigator.clipboard.writeText(url);
+              setExportNote('Share link copied');
+            } catch {
+              setPasteText(url);
+              setShowImport(true);
+            }
+            setTimeout(() => setExportNote(''), 2500);
+          }}
+        >
+          Share link
         </Button>
         {exportNote && <span className="text-sm text-legal">{exportNote}</span>}
       </div>
