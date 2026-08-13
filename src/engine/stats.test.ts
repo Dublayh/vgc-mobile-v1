@@ -34,41 +34,44 @@ describe('Champions stat formula (level 50, IV 31)', () => {
     expect(computeStat(GARCHOMP.atk, 0, 'Serious', 'atk')).toBe(150);
   });
 
-  test('+alignment: Adamant Garchomp Atk 0 SP → 165, 32 SP → 197', () => {
+  test('+alignment: Adamant Garchomp Atk 0 SP → 165, 32 SP → 200 (Showdown parity)', () => {
+    // scripts.ts statModify: trunc((base + SP + 20) × 110/100)
     expect(computeStat(GARCHOMP.atk, 0, 'Adamant', 'atk')).toBe(165);
-    expect(computeStat(GARCHOMP.atk, 32, 'Adamant', 'atk')).toBe(197);
+    expect(computeStat(GARCHOMP.atk, 32, 'Adamant', 'atk')).toBe(200);
   });
 
   test('−alignment: Modest Garchomp Atk 0 SP → 135', () => {
     expect(computeStat(GARCHOMP.atk, 0, 'Modest', 'atk')).toBe(135);
   });
 
-  test('default mode: 1 SP = exactly +1 final stat for every alignment', () => {
+  test('default mode reproduces the champions-mod formula for every alignment/SP', () => {
+    // Reference: trunc((B + 20 + sp) × 110|90/100) — data/mods/champions/scripts.ts
+    const B = GARCHOMP.spe; // odd 2B+31 exercises the floor in baseTerm too
     for (const alignment of Object.keys(ALIGNMENTS) as AlignmentName[]) {
-      for (let sp = 0; sp < 32; sp++) {
-        const at = computeStat(GARCHOMP.spe, sp, alignment, 'spe');
-        const next = computeStat(GARCHOMP.spe, sp + 1, alignment, 'spe');
-        expect(next, `${alignment} spe ${sp}→${sp + 1}`).toBe(at + 1);
+      const a = ALIGNMENTS[alignment];
+      const mod = a.plus === 'spe' ? 110 : a.minus === 'spe' ? 90 : 100;
+      for (let sp = 0; sp <= 32; sp++) {
+        const expected = Math.trunc(((B + 20 + sp) * mod) / 100);
+        expect(computeStat(B, sp, alignment, 'spe'), `${alignment} ${sp}`).toBe(expected);
       }
     }
   });
 
-  test("fallback mode ('sp-before-alignment') differs — documents why mode matters", () => {
-    // Adamant, 32 SP: after-mode = floor(150·1.1)+32 = 197
-    //                 before-mode = floor((150+32)·1.1) = floor(200.2) = 200
-    expect(computeStat(GARCHOMP.atk, 32, 'Adamant', 'atk', 'sp-before-alignment')).toBe(200);
+  test("legacy mode ('sp-after-alignment') kept for in-game divergence, differs on +nature", () => {
+    // after-mode = floor(150·1.1)+32 = 197; Showdown/before-mode = 200
     expect(computeStat(GARCHOMP.atk, 32, 'Adamant', 'atk', 'sp-after-alignment')).toBe(197);
+    expect(computeStat(GARCHOMP.atk, 32, 'Adamant', 'atk', 'sp-before-alignment')).toBe(200);
   });
 
   test('computeStats produces the full table', () => {
     const stats = computeStats(GARCHOMP, { ...EMPTY_SP, hp: 4, atk: 32, spe: 30 }, 'Jolly');
     expect(stats).toEqual({
       hp: 187,  // 183 + 4
-      atk: 182, // 145 + 5 + 32
+      atk: 182, // 145 + 5 + 32 (neutral)
       def: 115, // floor(221/2)=110, +5
-      spa: 90,  // floor(191/2)=95, +5=100, Jolly −spa: floor(100·0.9)
+      spa: 90,  // floor(191/2)=95, +5=100, Jolly −spa: trunc(100·90/100)
       spd: 105, // floor(201/2)=100, +5
-      spe: 164, // floor(235/2)=117, +5=122, ×1.1→floor(134.2)=134, +30 SP
+      spe: 167, // 117+5+30=152, Jolly +spe: trunc(152·110/100)=167
     });
   });
 });

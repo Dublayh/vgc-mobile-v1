@@ -5,6 +5,7 @@ import { TypeBadge } from '../../app/ui/TypeBadge';
 import type { DexLookup } from '../../data/dex';
 import type { UsageLookup, UsageMon } from '../../data/usage';
 import { STAT_IDS, STAT_LABELS } from '../../engine/types';
+import { useJumpToCalc } from '../calc/jumpToCalc';
 
 const pct = (v: number, digits = 1) => `${(v * 100).toFixed(digits)}%`;
 
@@ -95,6 +96,7 @@ function MonUsageDetail({
   onJump: (m: UsageMon) => void;
 }) {
   const species = lookup.getSpecies(mon.name);
+  const jumpToCalc = useJumpToCalc(lookup);
 
   return (
     <div className="flex flex-col gap-3">
@@ -115,6 +117,9 @@ function MonUsageDetail({
             </span>
           </div>
         </div>
+        <button onClick={() => jumpToCalc(mon.name)} className="label-caps text-gold-400">
+          Calc vs ›
+        </button>
       </div>
 
       <RankedList

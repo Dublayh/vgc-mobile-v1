@@ -23,15 +23,20 @@ await page.getByText('Earthquake').first().click(); // expand detail
 await page.waitForTimeout(300);
 const hasDescription = await page.getByText(/vs\./).first().isVisible().catch(() => false);
 
+// Panels are located by their heading — loose text matching also hits the
+// Damage panel ("…vs this defender").
+const panelByHeading = (name) =>
+  page.locator('section').filter({ has: page.getByRole('heading', { name, exact: true }) });
+
 // Team pick must carry the SAVED spread (demo Garchomp = 66/66) and say so.
-const attackerPanel = page.locator('section', { hasText: 'Attacker' }).first();
+const attackerPanel = panelByHeading('Attacker');
 const savedSpreadShown =
   (await attackerPanel.getByText(/66\/66 SP/).count()) > 0 &&
   (await attackerPanel.getByText(/from Sand core/).count()) > 0;
 
 // Defender from the whole dex (not a saved team): switch source and search.
 // Kingambit is #1 in usage, so the pick must seed its real meta set (not 0 SP).
-const defenderPanel = page.locator('section', { hasText: 'Defender' }).last();
+const defenderPanel = panelByHeading('Defender');
 await defenderPanel.getByRole('button', { name: 'Change' }).click();
 await defenderPanel.getByRole('button', { name: 'Dex', exact: true }).click();
 await defenderPanel.getByPlaceholder('Search the whole dex…').fill('kingambit');

@@ -7,9 +7,12 @@ and milestones. `README.md` tracks current status and open TODOs.
 ## Non-negotiable domain rules (Champions ≠ mainline VGC)
 
 - No IVs (always 31), no levels (always 50), no Tera.
-- **SP system**: 66-point pool, max 32/stat, 1 SP = +1 final stat.
-  Default rounding mode is `sp-after-alignment` (SP added AFTER the ±10% multiplier) —
-  unverified in-game; every engine function takes an `SPRoundingMode` param so it can flip.
+- **SP system**: 66-point pool, max 32/stat. Formula VERIFIED against Showdown's
+  champions mod (data/mods/champions/scripts.ts statModify): HP = base+SP+75;
+  other = trunc((base+SP+20)·110|90/100) — SP added BEFORE the alignment
+  multiplier (`sp-before-alignment`, the default; "1 SP = +1" holds only on
+  neutral stats). Differentially tested: 0 mismatches over the full base×SP×nature
+  space. `sp-after-alignment` kept behind `SPRoundingMode` if in-game ever differs.
 - Alignments = natures (same ±10%, modeled as `AlignmentName` in `src/engine/types.ts`).
 - Mega Evolution is core; `@pkmn/dex` 0.10.x already contains Champions megas
   (Staraptor-Mega, Raichu-Mega-X/Y, Sceptile-Mega, ...) — verified, no override layer needed.

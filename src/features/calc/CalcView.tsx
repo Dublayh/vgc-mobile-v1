@@ -12,7 +12,6 @@ import { computeStats } from '../../engine/stats';
 import {
   type AlignmentName,
   type ChampionsSet,
-  EMPTY_SP,
   SP_POOL,
   STAT_IDS,
   type Team,
@@ -21,6 +20,7 @@ import { db } from '../../storage/db';
 import { SPAllocator } from '../teams/SPAllocator';
 import { usageMonToSet } from '../meta/threatSet';
 import { useCalc, type BoostState, type CalcSelection } from './calcStore';
+import { speciesToSet } from './jumpToCalc';
 import { OptimizerPanel } from './OptimizerPanel';
 
 interface SlotOption {
@@ -28,18 +28,6 @@ interface SlotOption {
   slot: number;
   team: Team;
   set: ChampionsSet;
-}
-
-/** Any dex species (or mega forme) as a neutral 0-SP set. */
-function speciesToSet(sp: DexSpecies): ChampionsSet {
-  return {
-    species: sp.baseSpecies ?? sp.name,
-    ...(sp.baseSpecies ? { megaStone: sp.name } : {}),
-    ability: sp.abilities[0] ?? '',
-    alignment: 'Serious',
-    sp: { ...EMPTY_SP },
-    moves: [],
-  };
 }
 
 export function CalcView({ lookup }: { lookup: DexLookup }) {
@@ -352,6 +340,10 @@ function SelectedSummary({
         {stats.spe} Spe
       </p>
 
+      {!selected.fromTeam && (
+        <SpreadChips speciesName={species.name} set={set} onUpdate={onUpdateSet} />
+      )}
+
       {editing && (
         <SetScratchEditor set={set} species={species} lookup={lookup} onUpdate={onUpdateSet} />
       )}
@@ -393,6 +385,48 @@ function SelectedSummary({
   );
 }
 
+/** One-tap switch between the mon's top ladder spreads (dex-sourced panels). */
+function SpreadChips({
+  speciesName,
+  set,
+  onUpdate,
+}: {
+  speciesName: string;
+  set: ChampionsSet;
+  onUpdate: (patch: Partial<ChampionsSet>) => void;
+}) {
+  const usage = useUsage();
+  const mon = usage?.get(speciesName) ?? usage?.get(set.species);
+  if (!mon || mon.spreads.length < 2) return null;
+
+  const isCurrent = (s: (typeof mon.spreads)[number]) =>
+    s.alignment === set.alignment && STAT_IDS.every((id) => s.sp[id] === set.sp[id]);
+
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {mon.spreads.slice(0, 5).map((s, i) => (
+        <button
+          key={i}
+          onClick={() => onUpdate({ alignment: s.alignment as AlignmentName, sp: { ...s.sp } })}
+          className={`chamfer-sm px-2 py-0.5 font-display text-[0.7rem] font-semibold tracking-[0.06em] uppercase ${
+            isCurrent(s)
+              ? 'bg-gold-500 text-ink-950'
+              : 'border border-ink-700 text-ink-400 hover:border-gold-600 hover:text-gold-300'
+          }`}
+        >
+          {s.alignment}{' '}
+          <span className="stat-num normal-case">
+            {STAT_IDS.filter((id) => s.sp[id] > 0)
+              .map((id) => s.sp[id])
+              .join('/')}
+          </span>{' '}
+          <span className="opacity-60">{(s.pct * 100).toFixed(0)}%</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /** Inline scratch editing of the working copy (never writes back to teams). */
 function SetScratchEditor({
   set,
@@ -415,7 +449,7 @@ function SetScratchEditor({
         <div>
           <p className="label-caps mb-1.5">Meta spreads</p>
           <div className="flex flex-wrap gap-1.5">
-            {mon.spreads.slice(0, 3).map((s, i) => (
+            {mon.spreads.slice(0, 5).map((s, i) => (
               <button
                 key={i}
                 onClick={() =>
@@ -639,7 +673,9 @@ function Results({
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [attacker.set.species, lookup]);
 
-  const rows = useMemo(() => {
+  const [showSweep, setShowSweep] = useState(false);
+
+  const combatants = useMemo(() => {
     const field = buildField({
       gameType: calc.gameType,
       weather: calc.weather,
@@ -661,7 +697,11 @@ function Results({
       formeName: defender.set.megaStone,
       boosts: calc.defenderBoosts,
     });
+    return { field, atk, def };
+  }, [attacker, defender, calc]);
 
+  const rows = useMemo(() => {
+    const { field, atk, def } = combatants;
     return moveNames.map((moveName) => {
       try {
         return {
@@ -673,7 +713,24 @@ function Results({
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attacker, defender, calc, moveNames.join('|')]);
+  }, [combatants, calc.isCrit, moveNames.join('|')]);
+
+  /** Whole-learnset sweep: the attacker's strongest options into THIS defender. */
+  const sweep = useMemo(() => {
+    if (!showSweep) return [];
+    const { field, atk, def } = combatants;
+    return learnsetOptions
+      .map((move) => {
+        try {
+          return { move, result: runCalc(atk, def, move.name, field, { isCrit: calc.isCrit }) };
+        } catch {
+          return null;
+        }
+      })
+      .filter((x): x is { move: DexMove; result: DamageResult } => !!x && x.result.maxPercent > 0)
+      .sort((a, b) => b.result.maxPercent - a.result.maxPercent)
+      .slice(0, 10);
+  }, [showSweep, combatants, learnsetOptions, calc.isCrit]);
 
   const best = rows.reduce(
     (acc, r, i) => (r.result && r.result.maxPercent > (rows[acc]?.result?.maxPercent ?? -1) ? i : acc),
@@ -764,6 +821,40 @@ function Results({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {learnsetOptions.length > 0 && (
+        <div className="mt-2 border-t border-ink-800 pt-2">
+          <button
+            onClick={() => setShowSweep((v) => !v)}
+            className={`label-caps ${showSweep ? 'text-gold-300' : 'text-gold-400'}`}
+          >
+            {showSweep ? '▾ Top learnset moves vs this defender' : '▸ Top learnset moves vs this defender'}
+          </button>
+          {showSweep && (
+            <ul className="mt-1.5 flex flex-col">
+              {sweep.map(({ move, result }) => (
+                <li key={move.id}>
+                  <button
+                    onClick={() => calc.patch({ customMove: move.name, expandedMove: null })}
+                    className="flex w-full items-center gap-2 border-b border-ink-800/40 py-1.5 text-left last:border-0 hover:bg-ink-850"
+                    title="Add to the rows above"
+                  >
+                    <TypeBadge type={move.type} size="sm" />
+                    <span className="flex-1 text-sm">{move.name}</span>
+                    <span className="stat-num text-sm text-ink-200">{result.percentRange}</span>
+                    <span className="label-caps shrink-0 text-xs">{shortKO(result.koChance)}</span>
+                  </button>
+                </li>
+              ))}
+              {sweep.length === 0 && (
+                <li className="py-1.5 text-xs text-ink-500">
+                  Nothing in the learnset damages this defender.
+                </li>
+              )}
+            </ul>
+          )}
         </div>
       )}
     </Panel>

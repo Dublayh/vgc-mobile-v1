@@ -14,6 +14,7 @@ import { db } from '../../storage/db';
 import { copyToClipboard, threatAdvicePrompt } from '../analysis/adviceExport';
 import { detectArchetypes } from '../analysis/completer';
 import { useCalc } from '../calc/calcStore';
+import { useJumpToCalc } from '../calc/jumpToCalc';
 import { usageMonToSet } from './threatSet';
 
 const VERDICT_STYLE: Record<MatchupAudit['verdict'], string> = {
@@ -28,6 +29,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
   const [teamId, setTeamId] = useState<string | null>(null);
   const [threatName, setThreatName] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const jumpToCalc = useJumpToCalc(lookup);
 
   const team = teams?.find((t) => t.id === teamId) ?? teams?.[0];
   const threat: UsageMon | undefined = threatName ? usage.get(threatName) : undefined;
@@ -143,9 +145,14 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
                 {threatSet?.moves.filter(Boolean).join(' / ')}
               </p>
             </div>
-            <button onClick={() => setThreatName(null)} className="label-caps text-gold-400">
-              Change
-            </button>
+            <div className="flex flex-col items-end gap-1">
+              <button onClick={() => setThreatName(null)} className="label-caps text-gold-400">
+                Change
+              </button>
+              <button onClick={() => jumpToCalc(threat.name)} className="label-caps text-gold-400">
+                Calc vs ›
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5">
@@ -346,6 +353,10 @@ function CounterFinder({
                     {(c.usage * 100).toFixed(1)}%
                   </span>
                 </div>
+                <p className="mt-0.5 text-[0.7rem] text-ink-500">
+                  {c.set.item ? `${c.set.item} · ` : ''}
+                  {c.set.alignment} · {c.set.moves.filter(Boolean).join(' / ')}
+                </p>
                 <p className="mt-0.5 text-ink-400">{c.evidence.join(' · ')}</p>
                 <button
                   onClick={() => openInCalc(c.set)}

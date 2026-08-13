@@ -6,6 +6,7 @@ import { POKEMON_TYPES, TypeBadge } from '../../app/ui/TypeBadge';
 import { StatBar } from '../../app/ui/StatBar';
 import type { DexLookup, DexSpecies } from '../../data/dex';
 import { STAT_IDS, STAT_LABELS } from '../../engine/types';
+import { useJumpToCalc } from '../calc/jumpToCalc';
 
 export function DexBrowser({ lookup }: { lookup: DexLookup }) {
   const { dexSpecies, openDexSpecies } = useUI();
@@ -123,6 +124,7 @@ function SpeciesDetail({
 }) {
   const [forme, setForme] = useState<DexSpecies>(species);
   const [moveQuery, setMoveQuery] = useState('');
+  const jumpToCalc = useJumpToCalc(lookup);
   const megas = lookup.megaFormesOf(species.name);
   const formes = [species, ...megas];
 
@@ -180,6 +182,12 @@ function SpeciesDetail({
                 </span>
               ))}
             </p>
+            <button
+              onClick={() => jumpToCalc(forme.name)}
+              className="label-caps mt-2 text-gold-400"
+            >
+              Calc against ›
+            </button>
           </div>
         </div>
         <div className="mt-4 flex flex-col gap-1.5">

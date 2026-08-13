@@ -37,8 +37,8 @@ describe('auditMatchup', () => {
       moves: ['Moonblast'],
     });
     const audit = auditMatchup(whimsi, GARCHOMP);
-    // Whimsicott base 116 Spe: floor(263/2)=131+5=136, ×1.1=149→149, +32 = 181
-    expect(audit.mySpeed).toBe(181);
+    // Whimsicott base 116 Spe: trunc((116+20+32)·110/100) = trunc(184.8) = 184
+    expect(audit.mySpeed).toBe(184);
     expect(audit.speed).toBe('faster');
     // Moonblast is 4× into Garchomp — Whimsicott should not "lose" this audit
     expect(audit.verdict).not.toBe('loses');

@@ -12,15 +12,20 @@ import {
 } from './types';
 
 /**
- * Rounding-order question (plan §7.1): community consensus is "1 SP = exactly +1
- * final stat", which means SP is added AFTER the alignment multiplier. That is the
- * default here. 'sp-before-alignment' treats SP like the EV term inside the classic
- * formula (SP added before the ×0.9/×1.1, then floored) so the two models can be
- * diffed against verified in-game values in the golden tests before M1 sign-off.
+ * Rounding-order question (plan §7.1) — RESOLVED against the authoritative
+ * implementation. Showdown's champions mod (data/mods/champions/scripts.ts,
+ * statModify, verified 2026-08-11) computes:
+ *   HP    = base + SP + 75
+ *   other = trunc((base + SP + 20) × 110|90 / 100)
+ * i.e. SP is added BEFORE the alignment multiplier ('sp-before-alignment').
+ * The ladder, its usage stats, and Showdown tooling all run this formula, so
+ * it is our default. ("1 SP = +1 final stat" holds only on neutral stats.)
+ * 'sp-after-alignment' is kept in case in-game evidence ever contradicts
+ * Showdown — flipping this constant re-bases the entire app.
  */
 export type SPRoundingMode = 'sp-after-alignment' | 'sp-before-alignment';
 
-export const DEFAULT_SP_MODE: SPRoundingMode = 'sp-after-alignment';
+export const DEFAULT_SP_MODE: SPRoundingMode = 'sp-before-alignment';
 
 const alignmentMod = (alignment: AlignmentName, stat: StatID): number => {
   const a = ALIGNMENTS[alignment];
@@ -49,10 +54,12 @@ export function computeStat(
   mode: SPRoundingMode = DEFAULT_SP_MODE,
 ): number {
   const mod = alignmentMod(alignment, stat);
-  if (mode === 'sp-after-alignment') {
-    return Math.floor((baseTerm(base) + 5) * mod) + sp;
-  }
-  return Math.floor((baseTerm(base) + 5 + sp) * mod);
+  const pre = baseTerm(base) + 5 + (mode === 'sp-before-alignment' ? sp : 0);
+  // Match Showdown's integer path exactly: trunc(stat × 110|90 / 100),
+  // not ×1.1/×0.9 (float representation can differ at the truncation edge).
+  const modified =
+    mod === 1.1 ? Math.floor((pre * 110) / 100) : mod === 0.9 ? Math.floor((pre * 90) / 100) : pre;
+  return mode === 'sp-after-alignment' ? modified + sp : modified;
 }
 
 /** All six final stats for a set. */

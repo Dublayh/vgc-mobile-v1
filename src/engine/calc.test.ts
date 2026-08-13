@@ -35,7 +35,7 @@ describe('stat injection (Approach A, clone-proof)', () => {
     expect(p.rawStats).toEqual(expected);
     expect(p.stats).toEqual(expected);
     expect(p.maxHP()).toBe(expected.hp); // 183
-    expect(p.rawStats.atk).toBe(197);    // floor(150·1.1) + 32
+    expect(p.rawStats.atk).toBe(200);    // trunc((130+20+32)·110/100) — Showdown parity
     expect(p.level).toBe(50);
     // Base stats are inverted so the library's own formula lands on our values.
     expect(p.species.baseStats.atk).toBe(expected.atk - 20);
@@ -79,8 +79,8 @@ describe('stat injection (Approach A, clone-proof)', () => {
   test('mega forme uses mega base stats with the same SP/alignment', () => {
     const base = toCalcPokemon(GARCHOMP);
     const mega = toCalcPokemon(GARCHOMP, { formeName: 'Garchomp-Mega' });
-    // Mega Garchomp: floor((340+31)/2)=185, +5=190, Adamant ×1.1=209, +32 SP
-    expect(mega.rawStats.atk).toBe(241);
+    // Mega Garchomp: trunc((170+20+32)·110/100) = trunc(244.2) = 244
+    expect(mega.rawStats.atk).toBe(244);
     expect(mega.rawStats.atk).toBeGreaterThan(base.rawStats.atk);
   });
 
@@ -106,11 +106,11 @@ describe('golden damage calcs', () => {
     expect(result.description).toContain('Garchomp');
   });
 
-  test('anchor: Adamant 32-SP Garchomp (197 Atk) Earthquake vs Dondozo', () => {
-    // base = floor(floor(22·100·197/135)/50)+2 = 66; rolls 85–100%: 56→84 … 66→99 (STAB)
+  test('anchor: Adamant 32-SP Garchomp (200 Atk, Showdown parity) EQ vs Dondozo', () => {
+    // base = floor(floor(22·100·200/135)/50)+2 = 67; rolls 85–100%: 56→84 … 67→100 (STAB)
     const result = calcSets(GARCHOMP, DONDOZO, 'Earthquake', { gameType: 'Singles' });
     expect(Math.min(...result.rolls)).toBe(84);
-    expect(Math.max(...result.rolls)).toBe(99);
+    expect(Math.max(...result.rolls)).toBe(100);
     // Description percentages must agree with rolls/maxHP (caught the clone bug).
     expect(result.description).toContain('37.3');
     expect(result.description).toContain('44');

@@ -33,10 +33,13 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   team slot: damage both ways, speed order, safe/shaky/loses verdicts), and
   one-tap "meta spreads" suggestions in the SetEditor.
 - ✅ **M4b — Threat Advisor + Team Completer**: CounterFinder (top-80 meta sets
-  audited vs. any threat, ranked with evidence, one-tap "Verify in calc"
-  deep link), field-aware audits (Trick Room / My Tailwind / Their Tailwind
-  toggles auto-defaulted from the team's detected archetype — acting order,
-  verdicts and counter ranking all respect them), Team Completer in the TeamEditor (archetype detection, teammate
+  audited vs. any threat, ranked with evidence + their full meta set shown,
+  one-tap "Verify in calc" deep link), field-aware audits (Trick Room /
+  My Tailwind / Their Tailwind toggles auto-defaulted from the team's detected
+  archetype — acting order, verdicts and counter ranking all respect them),
+  "Calc vs ›" jump buttons on every mon detail (dex, usage, threat header),
+  quick spread-switch chips (top 5 ladder spreads) on dex-sourced calc mons,
+  and a top-10 whole-learnset damage sweep in the Damage panel, Team Completer in the TeamEditor (archetype detection, teammate
   co-occurrence, coverage-gap patching, clause-friction flags, iterative
   add-and-re-rank), 18×18 type chart in the engine, and "Ask Claude" AdviceExport
   (clipboard prompts for threat matchups and team completion — never an API call).
@@ -114,7 +117,11 @@ src/storage/    Dexie (IndexedDB) schema for saved teams
 
 1. Replace the starter roster in `scripts/regulation-source/m-b.ts` with the real
    Reg M-B list (208 species + ~76 megas) from Showdown's `config/formats.ts`.
-2. Verify the SP rounding mode against verified in-game stat screenshots.
+2. ~~Verify the SP rounding mode~~ — RESOLVED: engine matches Showdown's champions
+   mod formula exactly (SP added before the alignment multiplier; differential
+   test = 0 mismatches). Note: "Export for calc sites" still loses 1 point on
+   32-SP stats (mainline EVs cap at 252 = +31) — inherent to EV interop, compare
+   against Champions-aware calcs for exact numbers.
 3. Add golden calcs cross-checked against the NCP VGC damage calculator.
 
 ---
