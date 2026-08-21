@@ -25,6 +25,8 @@ export interface DexMove {
   priority: number;
   target: string;
   shortDesc: string;
+  /** set for "could but wouldn't" moves: recharge / charge turn / self-KO / … */
+  drawback?: string;
 }
 
 export interface DexItem {

@@ -84,6 +84,15 @@ describe('stat injection (Approach A, clone-proof)', () => {
     expect(mega.rawStats.atk).toBeGreaterThan(base.rawStats.atk);
   });
 
+  test('mega forme swap corrects a stale base-forme ability', () => {
+    // Set carries Rough Skin (base Garchomp) — the mega runs Sand Force, and
+    // the damage math must use the forme's fixed ability, not the stale one.
+    const mega = toCalcPokemon(GARCHOMP, { formeName: 'Garchomp-Mega' });
+    expect(mega.ability).toBe('Sand Force');
+    // Non-mega keeps whatever the set says.
+    expect(toCalcPokemon(GARCHOMP).ability).toBe('Rough Skin');
+  });
+
   test('curHP percent option', () => {
     const p = toCalcPokemon(GARCHOMP, { curHPPercent: 50 });
     expect(p.curHP()).toBe(Math.floor(183 / 2));

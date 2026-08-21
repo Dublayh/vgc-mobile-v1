@@ -12,6 +12,12 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   (Approach A: raw-stat injection), speed tiers, SP optimizers, data pipeline.
 - ✅ **Design system**: "championship stat-sheet" — see `docs/design-system.md`; living
   gallery behind the `UI` header toggle.
+- ✅ **Roster intelligence**: advanced dex search (ability — mega-aware — plus
+  "learns ALL of these moves" and multi-type AND filters, freely combinable with
+  live match count) and the **OHKO sweep** on every dex/usage detail page: calc
+  the whole regulation (all formes at 32 SP +nature, best learnset move) against
+  one defender, grouped into OHKOs and 85–99% near-misses, each row deep-linking
+  into Calc (`src/features/analysis/ohkoSweep.ts`, tested).
 - ✅ **M2 — Team builder MVP**: dex browser (search/type/mega filters, learnsets),
   team CRUD in IndexedDB, SetEditor (forme toggle, alignment matrix, move/item pickers
   with item-clause greying, 66-SP allocator with hold-to-repeat steppers + presets),

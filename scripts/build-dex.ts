@@ -138,8 +138,20 @@ async function buildSpecies(name: string): Promise<DexSpecies> {
 
 const species = await Promise.all(speciesNames.map(buildSpecies));
 
+/** Practicality tag for moves you "could but wouldn't" click (OHKO sweep UX). */
+function moveDrawback(id: string): string | undefined {
+  const m = Dex.moves.get(id);
+  if (m.flags.recharge) return 'recharge';
+  if (m.flags.charge) return 'charge turn';
+  if (m.selfdestruct === 'always') return 'self-KO';
+  if (id === 'focuspunch' || id === 'shelltrap') return 'interruptible';
+  if (id === 'dreameater' || id === 'lastresort' || id === 'belch') return 'conditional';
+  return undefined;
+}
+
 const moves = [...usedMoves].sort().map((id) => {
   const m = Dex.moves.get(id);
+  const drawback = moveDrawback(id);
   return {
     id: m.id,
     name: m.name,
@@ -150,6 +162,7 @@ const moves = [...usedMoves].sort().map((id) => {
     priority: m.priority,
     target: m.target,
     shortDesc: m.shortDesc,
+    ...(drawback ? { drawback } : {}),
   };
 });
 

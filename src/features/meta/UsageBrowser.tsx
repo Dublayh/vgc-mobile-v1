@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Panel } from '../../app/ui/Panel';
 import { Sprite } from '../../app/ui/Sprite';
 import { TypeBadge } from '../../app/ui/TypeBadge';
@@ -6,6 +6,10 @@ import type { DexLookup } from '../../data/dex';
 import type { UsageLookup, UsageMon } from '../../data/usage';
 import { STAT_IDS, STAT_LABELS } from '../../engine/types';
 import { useJumpToCalc } from '../calc/jumpToCalc';
+
+const OhkoSweepPanel = lazy(() =>
+  import('../analysis/OhkoSweepPanel').then((m) => ({ default: m.OhkoSweepPanel })),
+);
 
 const pct = (v: number, digits = 1) => `${(v * 100).toFixed(digits)}%`;
 
@@ -157,6 +161,10 @@ function MonUsageDetail({
           </ul>
         </Panel>
       )}
+
+      <Suspense fallback={null}>
+        <OhkoSweepPanel defenderName={mon.name} lookup={lookup} />
+      </Suspense>
 
       {mon.teammates.length > 0 && (
         <Panel title="Teammates">

@@ -503,21 +503,29 @@ function SetScratchEditor({
 
       <div>
         <p className="label-caps mb-1.5">Ability</p>
-        <div className="flex flex-wrap gap-1.5">
-          {baseSpecies.abilities.map((ab) => (
-            <button
-              key={ab}
-              onClick={() => onUpdate({ ability: ab })}
-              className={`chamfer-sm px-2.5 py-1 font-display text-xs font-semibold tracking-[0.08em] uppercase ${
-                set.ability === ab
-                  ? 'bg-gold-500 text-ink-950'
-                  : 'border border-ink-700 text-ink-300'
-              }`}
-            >
-              {ab}
-            </button>
-          ))}
-        </div>
+        {set.megaStone ? (
+          // Mega formes have exactly one ability — offer it, never the base's.
+          <p className="px-0.5 text-sm text-ink-300">
+            {species.abilities[0]}
+            <span className="ml-2 text-xs text-ink-500">(fixed on mega)</span>
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-1.5">
+            {baseSpecies.abilities.map((ab) => (
+              <button
+                key={ab}
+                onClick={() => onUpdate({ ability: ab })}
+                className={`chamfer-sm px-2.5 py-1 font-display text-xs font-semibold tracking-[0.08em] uppercase ${
+                  set.ability === ab
+                    ? 'bg-gold-500 text-ink-950'
+                    : 'border border-ink-700 text-ink-300'
+                }`}
+              >
+                {ab}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

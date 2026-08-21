@@ -67,8 +67,17 @@ export interface CalcPokemonOptions {
  */
 export function toCalcPokemon(set: ChampionsSet, opts: CalcPokemonOptions = {}): Pokemon {
   const name = opts.formeName ?? set.species;
-  const realBase = new Pokemon(GEN, name).species.baseStats as StatsTable;
+  const probe = new Pokemon(GEN, name);
+  const realBase = probe.species.baseStats as StatsTable;
   const stats = computeStats(realBase, set.sp, set.alignment, opts.spMode ?? DEFAULT_SP_MODE);
+
+  // Forme swaps (megas) fix the ability: a stale base-forme ability on the set
+  // must never leak into the damage math.
+  const formeAbilities = Object.values(probe.species.abilities ?? {}) as string[];
+  const ability =
+    opts.formeName && formeAbilities.length && !formeAbilities.includes(set.ability)
+      ? formeAbilities[0]
+      : set.ability;
 
   const invertedBase: StatsTable = {
     hp: realBase.hp === 1 ? 1 : stats.hp - 75, // base HP 1 = Shedinja special case
@@ -81,7 +90,7 @@ export function toCalcPokemon(set: ChampionsSet, opts: CalcPokemonOptions = {}):
 
   const pokemon = new Pokemon(GEN, name, {
     level: CHAMPIONS_LEVEL,
-    ability: set.ability as Pokemon['ability'],
+    ability: ability as Pokemon['ability'],
     item: set.item as Pokemon['item'],
     nature: 'Serious' as NatureName, // alignment already applied in computeStats
     overrides: { baseStats: invertedBase },
