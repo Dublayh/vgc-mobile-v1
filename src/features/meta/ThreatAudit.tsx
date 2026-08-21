@@ -71,16 +71,10 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
 
   const ctx: AuditContext = { trickRoom, myTailwind, theirTailwind };
 
-  // Invalidate the worst-matchup ranking whenever the team or field changes.
-  const teamKey = useMemo(
-    () =>
-      team
-        ? team.sets
-            .map((s) => `${s.megaStone ?? s.species}:${s.alignment}:${JSON.stringify(s.sp)}`)
-            .join('|')
-        : '',
-    [team],
-  );
+  // Invalidate the worst-matchup ranking whenever ANYTHING audit-relevant on
+  // the team changes — species/forme, spread, alignment, item AND moves
+  // (items and movesets change damage, so a partial fingerprint goes stale).
+  const teamKey = useMemo(() => (team ? JSON.stringify(team.sets) : ''), [team]);
   // Compute "worst matchups": every top meta set audited vs. every team slot.
   // One effect, keyed on all inputs — a separate invalidate-effect deadlocks
   // when the archetype auto-defaults flip a field toggle right after mount.
@@ -90,7 +84,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
     setWorst(null);
     setWorstProgress(0);
     (async () => {
-      const threats = usage.top(50);
+      const threats = usage.top(100);
       const rows: WorstRow[] = [];
       const CHUNK = 5;
       for (let i = 0; i < threats.length; i += CHUNK) {
@@ -206,7 +200,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
               <ul className="chamfer border border-ink-800 bg-ink-900">
                 {worst
                   .filter((r) => r.loses + r.shaky > 0)
-                  .slice(0, 25)
+                  .slice(0, 40)
                   .map((r, i) => {
                     const sp = lookup.getSpecies(r.name);
                     return (
@@ -248,13 +242,14 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
                   })}
                 {worst.every((r) => r.loses + r.shaky === 0) && (
                   <li className="px-3 py-4 text-sm text-legal">
-                    Nothing in the top 50 wins a single audited matchup into this team.
+                    Nothing in the top 100 wins a single audited matchup into this team.
                   </li>
                 )}
               </ul>
               <p className="mt-1.5 text-xs text-ink-500">
-                Top 50 meta sets vs. every slot, ranked by losses (weighted by usage).
-                Tap a row for the full audit + counters.
+                Top 100 meta sets vs. every slot, ranked by losses (weighted by usage).
+                Recomputes when you edit the team or flip field toggles. Tap a row
+                for the full audit + counters.
               </p>
             </>
           )}
