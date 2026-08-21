@@ -49,6 +49,38 @@ async function loadModLearnsets(): Promise<Map<string, string[]>> {
 }
 
 const modLearnsets = await loadModLearnsets();
+
+/**
+ * Champions removes most mainline items (Choice Specs, Assault Vest, Covert
+ * Cloak, …) and re-enables mega stones. Showdown encodes this in
+ * data/mods/champions/items.ts as per-item isNonstandard diffs:
+ *   "Past" = not in Champions · null = re-enabled · absent = inherit gen 9.
+ */
+const MOD_ITEMS_URL =
+  'https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/mods/champions/items.ts';
+
+async function loadModItems(): Promise<Map<string, string | null>> {
+  const vendored = join(VENDOR_DIR, 'champions-items.ts');
+  if (process.env.REFRESH_MODS) {
+    const res = await fetch(MOD_ITEMS_URL);
+    if (!res.ok) {
+      console.error(`✗ failed to refresh champions items (${res.status})`);
+      process.exit(1);
+    }
+    writeFileSync(vendored, await res.text());
+    console.log('↻ refreshed vendor/champions-items.ts');
+  }
+  // The mod file contains TS casts in handlers — import it (tsx transpiles);
+  // dynamic specifier keeps it out of the tsc project (vendor/ is excluded).
+  const mod = (await import(new URL('./vendor/champions-items.ts', import.meta.url).href)) as {
+    Items: Record<string, { isNonstandard?: string | null }>;
+  };
+  return new Map(
+    Object.entries(mod.Items).map(([id, e]) => [id, e.isNonstandard ?? null]),
+  );
+}
+
+const modItems = await loadModItems();
 const meta = JSON.parse(readFileSync(join(DATA_DIR, 'meta.json'), 'utf8'));
 const reg = JSON.parse(
   readFileSync(join(DATA_DIR, 'regulations', `${meta.currentRegulation}.json`), 'utf8'),
@@ -171,16 +203,15 @@ const abilities = [...usedAbilities].sort().map((name) => {
   return { id: a.id, name: a.name, shortDesc: a.shortDesc };
 });
 
-// Battle-relevant held items legal in gen 9, minus regulation bans.
+// The Champions item pool: mod verdict first, gen-9 standard status otherwise.
 const items = Dex.items
   .all()
-  .filter(
-    (i) =>
-      !i.isNonstandard &&
-      !i.isPokeball &&
-      !reg.bannedItems.includes(i.name) &&
-      (i.fling || i.megaStone || i.onPlate || i.isBerry),
-  )
+  .filter((i) => {
+    if (i.isPokeball || reg.bannedItems.includes(i.name)) return false;
+    const verdict = modItems.get(i.id);
+    if (verdict !== undefined) return verdict !== 'Past';
+    return !i.isNonstandard;
+  })
   .map((i) => {
     // @pkmn/dex models mega stones as { [baseSpecies]: megaForme }.
     const megaEvolves = i.megaStone ? Object.keys(i.megaStone)[0] : undefined;
@@ -231,11 +262,23 @@ try {
       }
     }
   }
+  // Same guarantee for items: everything the ladder holds must be in our pool.
+  const itemNames = new Set<string>(items.map((i) => i.name));
+  const missingItems = new Set<string>();
+  for (const mon of usage.mons ?? []) {
+    for (const [item] of mon.items as [string, number][]) {
+      if (item !== 'Nothing' && !itemNames.has(item)) missingItems.add(item);
+    }
+  }
+  for (const item of missingItems) {
+    misses++;
+    console.error(`  ✗ ladder-observed item missing from pool: ${item}`);
+  }
   if (misses > 0) {
-    console.error(`✗ ${misses} ladder-observed moves missing — try REFRESH_MODS=1 npm run data:dex`);
+    console.error(`✗ ${misses} ladder-observed entries missing — try REFRESH_MODS=1 npm run data:dex`);
     process.exit(1);
   }
-  console.log('✓ all ladder-observed moves present in learnsets');
+  console.log('✓ all ladder-observed moves + items present');
 } catch {
   console.warn('  ⚠ no usage bundle — skipped learnset cross-check');
 }

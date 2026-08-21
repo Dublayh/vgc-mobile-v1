@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useUI } from '../../app/store';
 import { Button } from '../../app/ui/Button';
 import { Icon } from '../../app/ui/Icon';
@@ -24,11 +24,24 @@ const VERDICT_STYLE: Record<MatchupAudit['verdict'], string> = {
 };
 
 /** "How does my team handle X?" — X's most common set vs. every slot. */
+interface WorstRow {
+  name: string;
+  usage: number;
+  loses: number;
+  shaky: number;
+  safe: number;
+  score: number;
+}
+
 export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);
   const [teamId, setTeamId] = useState<string | null>(null);
   const [threatName, setThreatName] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [view, setView] = useState<'worst' | 'browse'>('worst');
+  const [worst, setWorst] = useState<WorstRow[] | null>(null);
+  const [worstProgress, setWorstProgress] = useState(0);
+  const worstToken = useRef(0);
   const jumpToCalc = useJumpToCalc(lookup);
 
   const team = teams?.find((t) => t.id === teamId) ?? teams?.[0];
@@ -57,6 +70,67 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
   }, [team?.id, archetypes]);
 
   const ctx: AuditContext = { trickRoom, myTailwind, theirTailwind };
+
+  // Invalidate the worst-matchup ranking whenever the team or field changes.
+  const teamKey = useMemo(
+    () =>
+      team
+        ? team.sets
+            .map((s) => `${s.megaStone ?? s.species}:${s.alignment}:${JSON.stringify(s.sp)}`)
+            .join('|')
+        : '',
+    [team],
+  );
+  // Compute "worst matchups": every top meta set audited vs. every team slot.
+  // One effect, keyed on all inputs — a separate invalidate-effect deadlocks
+  // when the archetype auto-defaults flip a field toggle right after mount.
+  useEffect(() => {
+    if (view !== 'worst' || !team || team.sets.length === 0) return;
+    const token = ++worstToken.current;
+    setWorst(null);
+    setWorstProgress(0);
+    (async () => {
+      const threats = usage.top(50);
+      const rows: WorstRow[] = [];
+      const CHUNK = 5;
+      for (let i = 0; i < threats.length; i += CHUNK) {
+        if (worstToken.current !== token) return;
+        for (const t of threats.slice(i, i + CHUNK)) {
+          const tSet = usageMonToSet(t, lookup);
+          if (!tSet) continue;
+          let loses = 0;
+          let shaky = 0;
+          let safe = 0;
+          for (const mine of team.sets) {
+            try {
+              const a = auditMatchup(mine, tSet, ctx);
+              if (a.verdict === 'loses') loses++;
+              else if (a.verdict === 'shaky') shaky++;
+              else safe++;
+            } catch {
+              /* skip uncalcable slots */
+            }
+          }
+          // Badness first, prevalence as a multiplier — a 2% mon that 4-0s you
+          // matters less than Kingambit doing it.
+          rows.push({
+            name: t.name,
+            usage: t.usage,
+            loses,
+            shaky,
+            safe,
+            score: (loses * 3 + shaky) * (0.3 + t.usage),
+          });
+        }
+        setWorstProgress(Math.min(100, Math.round(((i + CHUNK) / threats.length) * 100)));
+        await new Promise((r) => setTimeout(r, 0));
+      }
+      if (worstToken.current !== token) return;
+      rows.sort((a, b) => b.score - a.score);
+      setWorst(rows);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, teamKey, trickRoom, myTailwind, theirTailwind, usage, lookup]);
 
   const audits = useMemo(() => {
     if (!threatSet || !team) return [];
@@ -94,7 +168,100 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
         </select>
       )}
 
-      {!threat ? (
+      {!threat && (
+        <>
+          <div className="flex gap-1.5">
+            <FieldToggle
+              label="Worst matchups"
+              value={view === 'worst'}
+              onChange={() => setView('worst')}
+            />
+            <FieldToggle
+              label="Browse by usage"
+              value={view === 'browse'}
+              onChange={() => setView('browse')}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="label-caps">Field:</span>
+            <FieldToggle label="Trick Room" value={trickRoom} onChange={setTrickRoom} />
+            <FieldToggle label="My Tailwind" value={myTailwind} onChange={setMyTailwind} />
+            <FieldToggle label="Their Tailwind" value={theirTailwind} onChange={setTheirTailwind} />
+            {autoNote && <span className="text-xs text-ink-500">auto from team plan</span>}
+          </div>
+        </>
+      )}
+
+      {!threat && view === 'worst' && (
+        <div>
+          {worst === null ? (
+            <div className="flex items-center gap-3 py-2">
+              <span className="label-caps">Auditing meta vs. {team.name}…</span>
+              <div className="h-1.5 flex-1 bg-ink-800">
+                <div className="h-full bg-gold-500" style={{ width: `${worstProgress}%` }} />
+              </div>
+            </div>
+          ) : (
+            <>
+              <ul className="chamfer border border-ink-800 bg-ink-900">
+                {worst
+                  .filter((r) => r.loses + r.shaky > 0)
+                  .slice(0, 25)
+                  .map((r, i) => {
+                    const sp = lookup.getSpecies(r.name);
+                    return (
+                      <li key={r.name}>
+                        <button
+                          onClick={() => setThreatName(r.name)}
+                          className="flex w-full items-center gap-2.5 border-b border-ink-800/60 px-3 py-1.5 text-left hover:bg-ink-850"
+                        >
+                          <span className="stat-num w-5 text-right text-xs text-ink-500">
+                            {i + 1}
+                          </span>
+                          {sp && <Sprite spriteId={sp.spriteId} size={32} />}
+                          <span className="flex-1">
+                            <span className="font-display text-sm font-semibold tracking-wide uppercase">
+                              {r.name}
+                            </span>
+                            <span className="stat-num ml-2 text-xs text-ink-500">
+                              {(r.usage * 100).toFixed(1)}%
+                            </span>
+                          </span>
+                          {r.loses > 0 && (
+                            <span className="chamfer-sm bg-illegal/15 px-1.5 py-0.5 font-display text-xs font-semibold text-illegal">
+                              {r.loses} lose
+                            </span>
+                          )}
+                          {r.shaky > 0 && (
+                            <span className="chamfer-sm bg-warn/15 px-1.5 py-0.5 font-display text-xs font-semibold text-warn">
+                              {r.shaky} shaky
+                            </span>
+                          )}
+                          {r.safe > 0 && (
+                            <span className="chamfer-sm bg-legal/15 px-1.5 py-0.5 font-display text-xs font-semibold text-legal">
+                              {r.safe} safe
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+                {worst.every((r) => r.loses + r.shaky === 0) && (
+                  <li className="px-3 py-4 text-sm text-legal">
+                    Nothing in the top 50 wins a single audited matchup into this team.
+                  </li>
+                )}
+              </ul>
+              <p className="mt-1.5 text-xs text-ink-500">
+                Top 50 meta sets vs. every slot, ranked by losses (weighted by usage).
+                Tap a row for the full audit + counters.
+              </p>
+            </>
+          )}
+        </div>
+      )}
+
+      {!threat && view === 'browse' && (
         <div>
           <input
             value={query}
@@ -130,7 +297,9 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
               })}
           </ul>
         </div>
-      ) : (
+      )}
+
+      {threat && (
         <>
           <div className="flex items-center gap-3">
             {lookup.getSpecies(threat.name) && (

@@ -15,6 +15,7 @@ const pct = (v: number, digits = 1) => `${(v * 100).toFixed(digits)}%`;
 
 export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const [selected, setSelected] = useState<UsageMon | null>(null);
+  const [query, setQuery] = useState('');
 
   if (selected) {
     return (
@@ -29,10 +30,20 @@ export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: De
   }
 
   const maxUsage = usage.mons[0]?.usage ?? 1;
+  const shown = usage.mons.filter(
+    (m) => !query || m.name.toLowerCase().includes(query.toLowerCase()),
+  );
 
   return (
+    <div className="flex flex-col gap-2">
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={`Search ${usage.mons.length} ranked mons…`}
+        className="min-h-11 border border-ink-700 bg-ink-850 px-3 text-sm outline-none placeholder:text-ink-500 focus:border-gold-600"
+      />
     <ul className="chamfer border border-ink-800 bg-ink-900">
-      {usage.mons.map((m) => {
+      {shown.map((m) => {
         const sp = lookup.getSpecies(m.name);
         return (
           <li key={m.name}>
@@ -58,7 +69,9 @@ export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: De
           </li>
         );
       })}
+      {shown.length === 0 && <li className="px-3 py-4 text-sm text-ink-500">No matches</li>}
     </ul>
+    </div>
   );
 }
 

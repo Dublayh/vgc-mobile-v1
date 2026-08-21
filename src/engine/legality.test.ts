@@ -65,6 +65,15 @@ describe('setViolations', () => {
     const v = setViolations(chomp({ sp: { ...EMPTY_SP, hp: 32, atk: 32, def: 32 } }), ctx);
     expect(v.some((x) => x.code === 'sp-invalid')).toBe(true);
   });
+
+  test('items outside the Champions pool are flagged (imported pastes)', () => {
+    const withPool = { ...ctx, legalItems: new Set(['Life Orb', 'Lum Berry']) };
+    const v = setViolations(chomp({ item: 'Choice Specs' }), withPool);
+    expect(v.some((x) => x.code === 'item-illegal')).toBe(true);
+    expect(setViolations(chomp({ item: 'Life Orb' }), withPool)).toEqual([]);
+    // No pool provided (null/absent) → existence check is skipped.
+    expect(setViolations(chomp({ item: 'Choice Specs' }), ctx)).toEqual([]);
+  });
 });
 
 describe('teamViolations', () => {

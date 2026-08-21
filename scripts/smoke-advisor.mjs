@@ -13,6 +13,7 @@ page.on('console', (m) => {
 // --- CounterFinder + deep link ---
 await page.goto('http://localhost:5173/?seed#meta', { waitUntil: 'networkidle' });
 await page.getByRole('button', { name: 'Threats', exact: true }).click();
+await page.getByRole('button', { name: 'Browse by usage' }).click();
 await page.getByPlaceholder(/pick a threat/i).fill('garchomp');
 await page.getByRole('button', { name: /garchomp/i }).first().click();
 await page.waitForSelector('text=Best answers to', { timeout: 20000 });

@@ -44,6 +44,9 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   My Tailwind / Their Tailwind toggles auto-defaulted from the team's detected
   archetype — acting order, verdicts and counter ranking all respect them),
   "Calc vs ›" jump buttons on every mon detail (dex, usage, threat header),
+  Threats tab defaults to a "Worst matchups" ranking (top-50 meta sets audited
+  vs. every team slot, loses/shaky/safe pills weighted by usage, tap → full
+  audit) with "Browse by usage" as the secondary view; usage browser has search,
   quick spread-switch chips (top 5 ladder spreads) on dex-sourced calc mons,
   and a top-10 whole-learnset damage sweep in the Damage panel, Team Completer in the TeamEditor (archetype detection, teammate
   co-occurrence, coverage-gap patching, clause-friction flags, iterative

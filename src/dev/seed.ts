@@ -12,11 +12,13 @@ export async function seedDemoTeam(): Promise<void> {
     regulation: 'm-b',
     format: 'doubles',
     sets: [
+      // Items must exist in Champions (mainline staples like Clear Amulet,
+      // Assault Vest and Covert Cloak don't — see vendor/champions-items.ts).
       {
         species: 'Garchomp',
         megaStone: 'Garchomp-Mega',
         ability: 'Rough Skin',
-        item: 'Clear Amulet',
+        item: 'Lum Berry',
         alignment: 'Jolly',
         sp: { ...EMPTY_SP, hp: 2, atk: 32, spe: 32 },
         moves: ['Earthquake', 'Dragon Claw', 'Swords Dance', 'Protect'],
@@ -24,7 +26,7 @@ export async function seedDemoTeam(): Promise<void> {
       {
         species: 'Tyranitar',
         ability: 'Sand Stream',
-        item: 'Assault Vest',
+        item: 'Leftovers',
         alignment: 'Adamant',
         sp: { ...EMPTY_SP, hp: 32, atk: 32, spd: 2 },
         moves: ['Rock Slide', 'Knock Off', 'Low Kick', 'Ice Punch'],
@@ -40,7 +42,7 @@ export async function seedDemoTeam(): Promise<void> {
       {
         species: 'Whimsicott',
         ability: 'Prankster',
-        item: 'Covert Cloak',
+        item: 'Focus Sash',
         alignment: 'Timid',
         sp: { ...EMPTY_SP, hp: 32, spe: 32, def: 2 },
         moves: ['Tailwind', 'Encore', 'Moonblast', 'Helping Hand'],

@@ -39,7 +39,11 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   `scripts/regulation-source/*.ts`, then `npm run data:all` → `public/data/*.json`.
 - Learnsets = mainline gen-9 learnsets ∪ Champions-specific TM/tutor additions
   from Showdown's champions mod, vendored at `scripts/vendor/champions-learnsets.ts`
-  (refresh: `REFRESH_MODS=1 npm run data:dex`). build-dex cross-checks every
+  (refresh: `REFRESH_MODS=1 npm run data:dex`). Items likewise: the Champions
+  pool is `champions-items.ts` verdicts over gen-9 ("Past" = not in game — most
+  mainline staples like Choice Specs/Band, Assault Vest, Covert Cloak, Clear
+  Amulet, Safety Goggles, Eviolite are NOT in Champions; Scarf/Life Orb are).
+  Never assume a mainline item exists here. build-dex cross-checks every
   ladder-observed usage move against the learnsets and fails if any is missing —
   that failure means the vendored file is stale or a forme's learnset source is
   wrong (megas resolve to base species; Floette-Mega → Floette-Eternal).

@@ -11,6 +11,7 @@ export interface Violation {
     | 'mega-not-allowed'
     | 'ability-mismatch'
     | 'item-banned'
+    | 'item-illegal'
     | 'move-illegal'
     | 'move-duplicate'
     | 'sp-invalid'
@@ -27,6 +28,8 @@ export interface LegalityContext {
   /** species name → allowed mega forme names */
   megaFormes: Map<string, string[]>;
   bannedItems: Set<string>;
+  /** the full Champions item pool; null = unknown (skip existence check) */
+  legalItems?: Set<string> | null;
   clauses: string[];
   /** species name → learnset move ids; absent species = unknown (skip move check) */
   learnsets: Map<string, Set<string>>;
@@ -66,6 +69,13 @@ export function setViolations(set: ChampionsSet, ctx: LegalityContext): Violatio
 
   if (set.item && ctx.bannedItems.has(set.item)) {
     v.push({ code: 'item-banned', message: `${set.item} is banned` });
+  }
+
+  if (set.item && ctx.legalItems && !ctx.legalItems.has(set.item)) {
+    v.push({
+      code: 'item-illegal',
+      message: `${set.item} does not exist in Champions`,
+    });
   }
 
   const learnset = ctx.learnsets.get(set.species);

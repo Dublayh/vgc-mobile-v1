@@ -25,8 +25,12 @@ await page.waitForTimeout(400);
 const speedRows = await page.getByText(/max speed/).count();
 await page.screenshot({ path: (process.argv[2] ?? 'meta') + '-speed.png', fullPage: true });
 
-// Threat audit
+// Threat audit — default view is "Worst matchups": wait for the audit ranking.
 await page.getByRole('button', { name: 'Threats', exact: true }).click();
+await page.waitForSelector('text=/lose|shaky|safe/', { timeout: 60000 });
+const worstRows = await page.getByText(/\d+ (lose|shaky)/).count();
+// Then the browse view still works as before.
+await page.getByRole('button', { name: 'Browse by usage' }).click();
 await page.getByPlaceholder(/pick a threat/i).fill('gholdengo');
 await page.getByRole('button', { name: /gholdengo/i }).first().click();
 await page.waitForTimeout(600);
@@ -36,6 +40,7 @@ await page.screenshot({ path: (process.argv[2] ?? 'meta') + '-threats.png', full
 console.log(
   'detail spreads visible:', spreadsVisible,
   '| speed rows:', speedRows,
+  '| worst-matchup rows:', worstRows,
   '| verdict chips:', verdicts,
 );
 console.log(errors.length ? `ERRORS:\n${errors.join('\n')}` : 'no page errors');

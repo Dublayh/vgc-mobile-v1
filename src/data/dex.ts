@@ -109,6 +109,7 @@ export class DexLookup {
       allowedSpecies: new Set(this.regulation.allowedSpecies),
       megaFormes: new Map(Object.entries(this.regulation.megaFormes)),
       bannedItems: new Set(this.regulation.bannedItems),
+      legalItems: new Set(this.items.map((i) => i.name)),
       clauses: this.regulation.clauses,
       learnsets: new Map(this.species.map((s) => [s.name, new Set(s.learnset)])),
       abilities: new Map(this.species.map((s) => [s.name, s.abilities])),
