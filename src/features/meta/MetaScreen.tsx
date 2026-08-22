@@ -5,9 +5,10 @@ import type { DexLookup } from '../../data/dex';
 import { useUsage } from '../../data/useUsage';
 import { SpeedTiers } from './SpeedTiers';
 import { ThreatAudit } from './ThreatAudit';
+import { TournamentTeams } from './TournamentTeams';
 import { UsageBrowser } from './UsageBrowser';
 
-type Segment = 'usage' | 'speed' | 'threats';
+type Segment = 'usage' | 'speed' | 'threats' | 'tourney';
 
 export function MetaScreen({ lookup }: { lookup: DexLookup }) {
   const usage = useUsage();
@@ -42,6 +43,7 @@ export function MetaScreen({ lookup }: { lookup: DexLookup }) {
             ['usage', 'Usage'],
             ['speed', 'Speed'],
             ['threats', 'Threats'],
+            ['tourney', 'Tourney'],
           ] as [Segment, string][]
         ).map(([id, label]) => (
           <button
@@ -63,6 +65,7 @@ export function MetaScreen({ lookup }: { lookup: DexLookup }) {
       {segment === 'usage' && <UsageBrowser usage={usage} lookup={lookup} />}
       {segment === 'speed' && <SpeedTiers usage={usage} lookup={lookup} />}
       {segment === 'threats' && <ThreatAudit usage={usage} lookup={lookup} />}
+      {segment === 'tourney' && <TournamentTeams lookup={lookup} />}
     </div>
   );
 }

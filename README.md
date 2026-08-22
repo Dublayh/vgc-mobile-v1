@@ -65,8 +65,16 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   lands: replace that file's roster, run `npm run data:all` with CURRENT_REG=m-c,
   and add usage once Smogon publishes the new ladder format.
 
+- ✅ **Tournament teams (ProvenTeams)**: Meta → Tourney lists recent high-placing
+  Champions tournament teams from the Limitless public API (documented, keyless —
+  `npm run data:tournaments` refreshes; 8 events × top 8 with full sets). Every
+  placement expands to its full teamlist and imports one-tap into your teams
+  (megas inferred from held stones; SP spreads aren't published, so fill those
+  in the editor).
+
 Monthly data refresh (manual until CI exists): `npm run data:usage` (env
-`MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published).
+`MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published) and
+`npm run data:tournaments` for fresh tournament results.
 
 ### Dev utilities
 
@@ -76,7 +84,8 @@ Monthly data refresh (manual until CI exists): `npm run data:usage` (env
   `smoke-newteam.mjs` (team creation flow), `smoke-calc.mjs` (calc incl. dex
   sourcing + scratch edits), `smoke-meta.mjs` (usage/speed/threats),
   `smoke-advisor.mjs` (counters, deep link, completer loop),
-  `smoke-share.mjs` (share URL round trip).
+  `smoke-share.mjs` (share URL round trip), `smoke-tourney.mjs` (tournament
+  list → import → editor, mega-from-stone inference).
 - Append `?seed` to any dev URL to (re)create the demo team, then deep-link:
   `/?seed#teams/demo-team` (team editor) · `/?seed#teams/demo-team/0` (set editor) ·
   `#dex/garchomp` (dex detail).

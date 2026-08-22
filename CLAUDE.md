@@ -60,6 +60,11 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   analysis: `src/features/analysis/` (pure + tested). AdviceExport
   (`analysis/adviceExport.ts`) is the ONLY AI touchpoint — clipboard prompts,
   never an API call (plan §5).
+- Tournament teams: schema in `src/data/tournaments.ts`; produced by
+  `scripts/build-tournaments.ts` from the Limitless public API (documented,
+  keyless — never scrape HTML sources; a name-alias map at the top of the
+  script handles Limitless↔dex naming quirks). Megas arrive as base species +
+  stone item; the importer infers the forme from the stone.
 - Usage stats: schema pinned in `src/data/usage.ts`; produced by
   `scripts/build-usage.ts` from Smogon chaos JSON (format
   `gen9championsvgc2026regmb-<rating>`; Champions spreads are natively

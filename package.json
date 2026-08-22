@@ -14,7 +14,8 @@
     "data:regulation": "tsx scripts/build-regulation.ts",
     "data:all": "npm run data:regulation && npm run data:dex && npm run data:sprites",
     "data:sprites": "tsx scripts/fetch-sprites.ts",
-    "data:usage": "tsx scripts/build-usage.ts"
+    "data:usage": "tsx scripts/build-usage.ts",
+    "data:tournaments": "tsx scripts/build-tournaments.ts"
   },
   "license": "MIT",
   "dependencies": {

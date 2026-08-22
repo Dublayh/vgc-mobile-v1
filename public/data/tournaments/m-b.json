@@ -1,0 +1,4695 @@
+{
+  "generatedAt": "2026-08-22T02:24:31.985Z",
+  "source": "play.limitlesstcg.com",
+  "sourceUrl": "https://play.limitlesstcg.com/tournaments/completed?game=VGC&format=M-B",
+  "events": [
+    {
+      "id": "6a6d77542b308b6067b461ac",
+      "name": "CHAMPIONS REG. M-B |👑CROWN FIGHT Bo3 TOUR #82👑",
+      "date": "2026-08-21T16:25:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 118,
+      "url": "https://play.limitlesstcg.com/tournament/6a6d77542b308b6067b461ac",
+      "placements": [
+        {
+          "place": 1,
+          "player": "Leon000",
+          "mons": [
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Dazzling Gleam",
+                "Light of Ruin",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Encore",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Life Orb",
+              "ability": "Rough Skin",
+              "moves": [
+                "Dragon Claw",
+                "Earthquake",
+                "Protect",
+                "Rock Slide"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Mystic Water",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Sucker Punch",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "LenVGC",
+          "mons": [
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Flare Blitz",
+                "Helping Hand",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Samurott-Hisui",
+              "item": "Choice Scarf",
+              "ability": "Sharpness",
+              "moves": [
+                "Razor Shell",
+                "Night Slash",
+                "Sacred Sword",
+                "Flip Turn"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Occa Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Life Dew",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Poison Jab",
+                "Rock Slide"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Dazzling Gleam",
+                "Calm Mind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Blaze",
+              "moves": [
+                "Psychic",
+                "Heat Wave",
+                "Nasty Plot",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "Sela133VII",
+          "mons": [
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Aerodactyl",
+              "item": "Aerodactylite",
+              "ability": "Unnerve",
+              "moves": [
+                "Rock Slide",
+                "Dual Wingbeat",
+                "Ice Fang",
+                "Tailwind"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Soft Sand",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Stomping Tantrum",
+                "Dragon Claw",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Thunderbolt",
+                "Roar",
+                "Trick Room"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Focus Sash",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Iron Head",
+                "Low Kick"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "Davide Giomi",
+          "mons": [
+            {
+              "species": "Venusaur",
+              "item": "Venusaurite",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Giga Drain",
+                "Sludge Bomb",
+                "Earth Power",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Hurricane",
+                "Tailwind",
+                "Weather Ball",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Gardevoir",
+              "item": "Gardevoirite",
+              "ability": "Trace",
+              "moves": [
+                "Psyshock",
+                "Vacuum Wave",
+                "Hyper Voice",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Foul Play",
+                "Parting Shot",
+                "Light Screen",
+                "Reflect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Flip Turn",
+                "Aqua Jet",
+                "Last Respects"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Flash Cannon",
+                "Dragon Pulse",
+                "Electro Shot",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "dartsvgc",
+          "mons": [
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Last Respects",
+                "Wave Crash",
+                "Aqua Jet",
+                "Flip Turn"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Close Combat",
+                "Poison Jab",
+                "Fake Out",
+                "Coaching"
+              ]
+            },
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Dragon Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Scovillain",
+              "item": "Scovillainite",
+              "ability": "Moody",
+              "moves": [
+                "Overheat",
+                "Giga Drain",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Corviknight",
+              "item": "Occa Berry",
+              "ability": "Mirror Armor",
+              "moves": [
+                "Brave Bird",
+                "Iron Head",
+                "Tailwind",
+                "Roost"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "Raichu123",
+          "mons": [
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Weather Ball",
+                "Hurricane",
+                "Tailwind",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Venusaur",
+              "item": "Venusaurite",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Giga Drain",
+                "Earth Power",
+                "Sludge Bomb",
+                "Sleep Powder"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Parting Shot",
+                "Reflect",
+                "Light Screen"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Flip Turn",
+                "Aqua Jet"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Ancient Power",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "Alejandro Fernández Cañete",
+          "mons": [
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Swords Dance",
+                "Protect",
+                "Sucker Punch",
+                "Kowtow Cleave"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Life Orb",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Protect",
+                "Close Combat",
+                "Dire Claw"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Focus Sash",
+              "ability": "Adaptability",
+              "moves": [
+                "Protect",
+                "Last Respects",
+                "Aqua Jet",
+                "Liquidation"
+              ]
+            },
+            {
+              "species": "Tsareena",
+              "item": "Wide Lens",
+              "ability": "Queenly Majesty",
+              "moves": [
+                "Power Whip",
+                "Low Kick",
+                "Triple Axel",
+                "Helping Hand"
+              ]
+            },
+            {
+              "species": "Froslass",
+              "item": "Froslassite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Protect",
+                "Blizzard",
+                "Shadow Ball",
+                "Destiny Bond"
+              ]
+            },
+            {
+              "species": "Aerodactyl",
+              "item": "Aerodactylite",
+              "ability": "Unnerve",
+              "moves": [
+                "Protect",
+                "Rock Slide",
+                "Dual Wingbeat",
+                "Tailwind"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "TheChoiceoffreedom",
+          "mons": [
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Weather Ball",
+                "Hurricane",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Close Combat",
+                "Dire Claw",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Flash Cannon",
+                "Dragon Pulse",
+                "Electro Shot",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Torrent",
+              "moves": [
+                "Wave Crash",
+                "Earthquake",
+                "Ice Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Coba Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Shadow Ball",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Foul Play",
+                "Reflect",
+                "Light Screen",
+                "Parting Shot"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a83b91278baaa6d1c222ab3",
+      "name": "𝗡𝗲𝗺𝗲 𝗪𝗲𝗲𝗸𝗹𝘆 𝗠-𝗕 𝗧𝗼𝘂𝗿 🏆 #𝟕𝟎",
+      "date": "2026-08-21T00:15:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 20,
+      "url": "https://play.limitlesstcg.com/tournament/6a83b91278baaa6d1c222ab3",
+      "placements": [
+        {
+          "place": 1,
+          "player": "SeroSmurf",
+          "mons": [
+            {
+              "species": "Garchomp",
+              "item": "Garchompite",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Protect",
+                "Rock Slide",
+                "Stomping Tantrum"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Sucker Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Unburden",
+              "moves": [
+                "Dire Claw",
+                "Fake Out",
+                "Coaching",
+                "Close Combat"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Sitrus Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Leftovers",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Fake Out",
+                "Parting Shot",
+                "Helping Hand"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Dazzling Gleam",
+                "Draining Kiss",
+                "Protect",
+                "Calm Mind"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "DisPlotfr",
+          "mons": [
+            {
+              "species": "Froslass",
+              "item": "Froslassite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Blizzard",
+                "Shadow Ball",
+                "Weather Ball",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Low Kick",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Excadrill",
+              "item": "Focus Sash",
+              "ability": "Sand Rush",
+              "moves": [
+                "High Horsepower",
+                "Iron Head",
+                "Earthquake",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Corviknight",
+              "item": "Occa Berry",
+              "ability": "Mirror Armor",
+              "moves": [
+                "Tailwind",
+                "Brave Bird",
+                "Iron Head",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Fake Out",
+                "Dire Claw",
+                "Close Combat",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Leftovers",
+              "ability": "Competitive",
+              "moves": [
+                "Scald",
+                "Icy Wind",
+                "Haze",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "IRNemesis",
+          "mons": [
+            {
+              "species": "Gengar",
+              "item": "Gengarite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Protect",
+                "Shadow Ball",
+                "Disable",
+                "Perish Song"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Chople Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Protect",
+                "Fake Out",
+                "Throat Chop",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Vivillon",
+              "item": "Focus Sash",
+              "ability": "Compound Eyes",
+              "moves": [
+                "Protect",
+                "Hurricane",
+                "Rage Powder",
+                "Sleep Powder"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Damp",
+              "moves": [
+                "Protect",
+                "Knock Off",
+                "Earthquake",
+                "Wave Crash"
+              ]
+            },
+            {
+              "species": "Politoed",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Protect",
+                "Encore",
+                "Perish Song",
+                "Weather Ball"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Protect",
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "benjaisdead",
+          "mons": [
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Kasib Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Life Dew",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Ceruledge",
+              "item": "Colbur Berry",
+              "ability": "Flash Fire",
+              "moves": [
+                "Bitter Blade",
+                "Shadow Sneak",
+                "Bulk Up",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Leftovers",
+              "ability": "Competitive",
+              "moves": [
+                "Muddy Water",
+                "Coil",
+                "Hypnosis",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Throat Chop",
+                "Fake Out",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Dire Claw",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "Giozztan",
+          "mons": [
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Protect",
+                "Kowtow Cleave",
+                "Swords Dance",
+                "Sucker Punch"
+              ]
+            },
+            {
+              "species": "Primarina",
+              "item": "Life Orb",
+              "ability": "Liquid Voice",
+              "moves": [
+                "Dazzling Gleam",
+                "Hyper Voice",
+                "Moonblast",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Hyper Voice",
+                "Twin Beam",
+                "Helping Hand",
+                "Trick Room"
+              ]
+            },
+            {
+              "species": "Chandelure",
+              "item": "Chandelurite",
+              "ability": "Flash Fire",
+              "moves": [
+                "Heat Wave",
+                "Calm Mind",
+                "Shadow Ball",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kangaskhan",
+              "item": "Kangaskhanite",
+              "ability": "Scrappy",
+              "moves": [
+                "Fake Out",
+                "Drain Punch",
+                "Ice Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Trick Room",
+                "Protect",
+                "Rage Powder"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "JuliiiHD",
+          "mons": [
+            {
+              "species": "Scovillain",
+              "item": "Scovillainite",
+              "ability": "Moody",
+              "moves": [
+                "Protect",
+                "Flamethrower",
+                "Giga Drain",
+                "Rage Powder"
+              ]
+            },
+            {
+              "species": "Aerodactyl",
+              "item": "Aerodactylite",
+              "ability": "Unnerve",
+              "moves": [
+                "Rock Slide",
+                "Dual Wingbeat",
+                "Tailwind",
+                "Ice Fang"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Sitrus Berry",
+              "ability": "Rough Skin",
+              "moves": [
+                "Protect",
+                "Dragon Claw",
+                "Earthquake",
+                "Stomping Tantrum"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Focus Sash",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Low Kick",
+                "Sucker Punch"
+              ]
+            },
+            {
+              "species": "Mimikyu",
+              "item": "Life Orb",
+              "ability": "Disguise",
+              "moves": [
+                "Protect",
+                "Shadow Claw",
+                "Play Rough",
+                "Shadow Sneak"
+              ]
+            },
+            {
+              "species": "Hydreigon",
+              "item": "Choice Scarf",
+              "ability": "Levitate",
+              "moves": [
+                "Dark Pulse",
+                "Draco Meteor",
+                "Earth Power",
+                "Snarl"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "Monofinal",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Brave Bird",
+                "Close Combat",
+                "Protect",
+                "Roost"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Wacan Berry",
+              "ability": "Competitive",
+              "moves": [
+                "Muddy Water",
+                "Hypnosis",
+                "Recover",
+                "Coil"
+              ]
+            },
+            {
+              "species": "Hatterene",
+              "item": "Mental Herb",
+              "ability": "Healer",
+              "moves": [
+                "Heal Pulse",
+                "Life Dew",
+                "Trick Room",
+                "Dazzling Gleam"
+              ]
+            },
+            {
+              "species": "Annihilape",
+              "item": "Sitrus Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Rage Fist",
+                "Drain Punch",
+                "Protect",
+                "Bulk Up"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sableye",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Knock Off",
+                "Reflect",
+                "Light Screen",
+                "Rain Dance"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "otroMati",
+          "mons": [
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Kasib Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Life Dew",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Ceruledge",
+              "item": "Colbur Berry",
+              "ability": "Flash Fire",
+              "moves": [
+                "Bitter Blade",
+                "Shadow Sneak",
+                "Bulk Up",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Leftovers",
+              "ability": "Competitive",
+              "moves": [
+                "Muddy Water",
+                "Coil",
+                "Hypnosis",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Throat Chop",
+                "Fake Out",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Dire Claw",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a83017178baaa6d1c222170",
+      "name": "Intimidators Champions Challenge #37 REG M-B",
+      "date": "2026-08-20T23:05:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 29,
+      "url": "https://play.limitlesstcg.com/tournament/6a83017178baaa6d1c222170",
+      "placements": [
+        {
+          "place": 1,
+          "player": "NMR | Correiazinho",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Close Combat",
+                "Brave Bird",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Arcanine-Hisui",
+              "item": "Focus Sash",
+              "ability": "Rock Head",
+              "moves": [
+                "Head Smash",
+                "Flare Blitz",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Iron Head",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Helping Hand",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "lucardrgs",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Close Combat",
+                "Dual Wingbeat",
+                "Roost",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Thunderbolt",
+                "Helping Hand",
+                "Trick Room"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Mystic Water",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Beam",
+                "Hyper Voice",
+                "Baby-Doll Eyes",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Reflect",
+                "Light Screen",
+                "Parting Shot",
+                "Scary Face"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "T-FG | Savio",
+          "mons": [
+            {
+              "species": "Garchomp",
+              "item": "Garchompite",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Protect",
+                "Rock Slide",
+                "Stomping Tantrum"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Sucker Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Unburden",
+              "moves": [
+                "Dire Claw",
+                "Fake Out",
+                "Coaching",
+                "Close Combat"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Sitrus Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Leftovers",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Fake Out",
+                "Parting Shot",
+                "Helping Hand"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Dazzling Gleam",
+                "Draining Kiss",
+                "Protect",
+                "Calm Mind"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "JogadorZero",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Brave Bird",
+                "Close Combat",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Dragon Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Excadrill",
+              "item": "Focus Sash",
+              "ability": "Sand Rush",
+              "moves": [
+                "Iron Head",
+                "Earthquake",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Leftovers",
+              "ability": "Competitive",
+              "moves": [
+                "Scald",
+                "Protect",
+                "Ice Beam",
+                "Icy Wind"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Passho Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Flare Blitz",
+                "Parting Shot",
+                "Throat Chop"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "Lamen ",
+          "mons": [
+            {
+              "species": "Pelipper",
+              "item": "Focus Sash",
+              "ability": "Drizzle",
+              "moves": [
+                "Hurricane",
+                "Weather Ball",
+                "Protect",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Dire Claw",
+                "Close Combat",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Dragon Pulse",
+                "Flash Cannon",
+                "Electro Shot",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Talonflame",
+              "item": "Sharp Beak",
+              "ability": "Gale Wings",
+              "moves": [
+                "Tailwind",
+                "Rain Dance",
+                "Protect",
+                "Dual Wingbeat"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Dazzling Gleam",
+                "Light of Ruin",
+                "Psychic",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Damp",
+              "moves": [
+                "Earthquake",
+                "Knock Off",
+                "Protect",
+                "Wave Crash"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "kenzinn",
+          "mons": [
+            {
+              "species": "Malamar",
+              "item": "Malamarite",
+              "ability": "Contrary",
+              "moves": [
+                "Superpower",
+                "Knock Off",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Maushold",
+              "item": "Wide Lens",
+              "ability": "Technician",
+              "moves": [
+                "Population Bomb",
+                "Follow Me",
+                "Feint",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Mawile",
+              "item": "Mawilite",
+              "ability": "Hyper Cutter",
+              "moves": [
+                "Play Rough",
+                "Rock Slide",
+                "Sucker Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Life Dew",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Charm",
+                "Fake Tears"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Life Orb",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Darkest Lariat",
+                "Parting Shot",
+                "Fake Out"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "GuiCateb",
+          "mons": [
+            {
+              "species": "Scovillain",
+              "item": "Scovillainite",
+              "ability": "Moody",
+              "moves": [
+                "Giga Drain",
+                "Overheat",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Froslass",
+              "item": "Froslassite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Blizzard",
+                "Shadow Ball",
+                "Aurora Veil",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Life Orb",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Lycanroc-Dusk",
+              "item": "Focus Sash",
+              "ability": "Tough Claws",
+              "moves": [
+                "Rock Slide",
+                "Accelerock",
+                "Close Combat",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Close Combat",
+                "Dire Claw",
+                "Protect",
+                "Fake Out"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "Kauuh",
+          "mons": [
+            {
+              "species": "Froslass",
+              "item": "Froslassite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Blizzard",
+                "Shadow Ball",
+                "Taunt",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Scovillain",
+              "item": "Scovillainite",
+              "ability": "Moody",
+              "moves": [
+                "Overheat",
+                "Giga Drain",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Sitrus Berry",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Close Combat",
+                "Gunk Shot",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Lycanroc-Dusk",
+              "item": "Focus Sash",
+              "ability": "Tough Claws",
+              "moves": [
+                "Rock Slide",
+                "Close Combat",
+                "Accelerock",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a6a30f1937230b102d48520",
+      "name": "Talon's FIGHT CLUB #98 POKEMON CHAMPIONS",
+      "date": "2026-08-20T23:00:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 59,
+      "url": "https://play.limitlesstcg.com/tournament/6a6a30f1937230b102d48520",
+      "placements": [
+        {
+          "place": 1,
+          "player": "Unskilled99",
+          "mons": [
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Life Orb",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Stomping Tantrum",
+                "Dragon Claw",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Yawn",
+                "Quick Attack",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Trick Room",
+                "Psyshock",
+                "Helping Hand",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Expert Belt",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Parting Shot",
+                "Flare Blitz",
+                "Darkest Lariat"
+              ]
+            },
+            {
+              "species": "Aerodactyl",
+              "item": "Aerodactylite",
+              "ability": "Unnerve",
+              "moves": [
+                "Rock Slide",
+                "Tailwind",
+                "Wide Guard",
+                "Dual Wingbeat"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "QueerCrocodile",
+          "mons": [
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Fake Out",
+                "Zap Cannon",
+                "Focus Blast",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Tailwind",
+                "Moonblast",
+                "Encore",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Life Orb",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Ancient Power",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "SableyeVGC",
+          "mons": [
+            {
+              "species": "Ninetales-Alola",
+              "item": "Choice Scarf",
+              "ability": "Snow Warning",
+              "moves": [
+                "Blizzard",
+                "Freeze-Dry",
+                "Icy Wind",
+                "Encore"
+              ]
+            },
+            {
+              "species": "Gengar",
+              "item": "Gengarite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Sludge Bomb",
+                "Shadow Ball",
+                "Substitute",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Throat Chop",
+                "Parting Shot",
+                "Fake Out"
+              ]
+            },
+            {
+              "species": "Dragonite",
+              "item": "Life Orb",
+              "ability": "Inner Focus",
+              "moves": [
+                "Dragon Claw",
+                "Superpower",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Unburden",
+              "moves": [
+                "Dire Claw",
+                "Close Combat",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Low Kick",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "Gmaddox",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Protect",
+                "Roost",
+                "Close Combat",
+                "Brave Bird"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Life Orb",
+              "ability": "Rough Skin",
+              "moves": [
+                "Protect",
+                "Rock Slide",
+                "Earthquake",
+                "Dragon Claw"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Occa Berry",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Charm",
+                "Light Screen"
+              ]
+            },
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Magician",
+              "moves": [
+                "Protect",
+                "Psychic",
+                "Heat Wave",
+                "Substitute"
+              ]
+            },
+            {
+              "species": "Glimmora",
+              "item": "Focus Sash",
+              "ability": "Toxic Debris",
+              "moves": [
+                "Spiky Shield",
+                "Sludge Bomb",
+                "Earth Power",
+                "Power Gem"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Sucker Punch",
+                "Low Kick",
+                "Iron Head",
+                "Kowtow Cleave"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "gaergaeaf",
+          "mons": [
+            {
+              "species": "Pelipper",
+              "item": "Life Orb",
+              "ability": "Drizzle",
+              "moves": [
+                "Muddy Water",
+                "Hurricane",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Flash Cannon",
+                "Dragon Pulse",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Alcremie",
+              "item": "Light Clay",
+              "ability": "Aroma Veil",
+              "moves": [
+                "Dazzling Gleam",
+                "Light Screen",
+                "Decorate",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Damp",
+              "moves": [
+                "Wave Crash",
+                "Ice Punch",
+                "Earthquake",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Solar Beam",
+                "Weather Ball",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Venusaur",
+              "item": "Focus Sash",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Sleep Powder",
+                "Sludge Bomb",
+                "Earth Power",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "GodXany",
+          "mons": [
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Low Kick",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Excadrill",
+              "item": "Focus Sash",
+              "ability": "Sand Rush",
+              "moves": [
+                "Iron Head",
+                "High Horsepower",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Gholdengo",
+              "item": "Life Orb",
+              "ability": "Good as Gold",
+              "moves": [
+                "Shadow Ball",
+                "Make It Rain",
+                "Nasty Plot",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Sitrus Berry",
+              "ability": "Competitive",
+              "moves": [
+                "Scald",
+                "Ice Beam",
+                "Icy Wind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Brave Bird",
+                "Close Combat",
+                "Tailwind",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "renjamino",
+          "mons": [
+            {
+              "species": "Scizor",
+              "item": "Scizorite",
+              "ability": "Technician",
+              "moves": [
+                "Bullet Punch",
+                "Protect",
+                "Bug Bite",
+                "Swords Dance"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Poison Jab",
+                "Close Combat",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Altaria",
+              "item": "Altarianite",
+              "ability": "Cloud Nine",
+              "moves": [
+                "Protect",
+                "Tailwind",
+                "Draco Meteor",
+                "Hyper Voice"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Light Screen",
+                "Reflect",
+                "Scary Face"
+              ]
+            },
+            {
+              "species": "Volcarona",
+              "item": "Leftovers",
+              "ability": "Flame Body",
+              "moves": [
+                "Giga Drain",
+                "Protect",
+                "Heat Wave",
+                "Quiver Dance"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "Zach K",
+          "mons": [
+            {
+              "species": "Froslass",
+              "item": "Froslassite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Blizzard",
+                "Shadow Ball",
+                "Aurora Veil",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Scovillain",
+              "item": "Scovillainite",
+              "ability": "Moody",
+              "moves": [
+                "Overheat",
+                "Giga Drain",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Lycanroc-Dusk",
+              "item": "Focus Sash",
+              "ability": "Tough Claws",
+              "moves": [
+                "Rock Slide",
+                "Close Combat",
+                "Accelerock",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Dire Claw",
+                "Close Combat",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Sitrus Berry",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a7e7ff22b308b6067b53747",
+      "name": "Weekly Qualifier for RookideeVGC Grand Tourney",
+      "date": "2026-08-20T21:00:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 32,
+      "url": "https://play.limitlesstcg.com/tournament/6a7e7ff22b308b6067b53747",
+      "placements": [
+        {
+          "place": 1,
+          "player": "RyukeiVGC",
+          "mons": [
+            {
+              "species": "Venusaur",
+              "item": "Focus Sash",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Protect",
+                "Sleep Powder",
+                "Sludge Bomb",
+                "Leaf Storm"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Torrent",
+              "moves": [
+                "Wave Crash",
+                "High Horsepower",
+                "Ice Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Weather Ball",
+                "Hurricane",
+                "Tailwind",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Reflect",
+                "Light Screen",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Protect",
+                "Ancient Power"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "Pro4tomico",
+          "mons": [
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Protect",
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Reflect",
+                "Light Screen",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Hurricane",
+                "Weather Ball",
+                "Tailwind",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Protect",
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon"
+              ]
+            },
+            {
+              "species": "Venusaur",
+              "item": "Focus Sash",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Protect",
+                "Sleep Powder",
+                "Sludge Bomb",
+                "Earth Power"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Torrent",
+              "moves": [
+                "Wave Crash",
+                "Ice Punch",
+                "High Horsepower",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "Soraxjm",
+          "mons": [
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Protect",
+                "Zap Cannon",
+                "Fake Out",
+                "Focus Blast"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Tailwind",
+                "Protect",
+                "Close Combat",
+                "Dual Wingbeat"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Protect",
+                "Psychic",
+                "Trick Room",
+                "Helping Hand"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Protect",
+                "Kowtow Cleave",
+                "Swords Dance",
+                "Sucker Punch"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Detect",
+                "Hyper Beam",
+                "Hyper Voice",
+                "Quick Attack"
+              ]
+            },
+            {
+              "species": "Arcanine-Hisui",
+              "item": "Focus Sash",
+              "ability": "Rock Head",
+              "moves": [
+                "Protect",
+                "Extreme Speed",
+                "Head Smash",
+                "Flare Blitz"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "HarodTheOne",
+          "mons": [
+            {
+              "species": "Garchomp",
+              "item": "Garchompite",
+              "ability": "Rough Skin",
+              "moves": [
+                "Protect",
+                "Stomping Tantrum",
+                "Rock Slide",
+                "Poison Jab"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Leftovers",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Flare Blitz",
+                "Parting Shot",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Protect",
+                "Kowtow Cleave",
+                "Iron Head",
+                "Sucker Punch"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Unburden",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Dire Claw",
+                "Coaching"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Protect",
+                "Dazzling Gleam",
+                "Draining Kiss",
+                "Calm Mind"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Sitrus Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Protect",
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "dartsvgc",
+          "mons": [
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Last Respects",
+                "Wave Crash",
+                "Aqua Jet",
+                "Flip Turn"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "White Herb",
+              "ability": "Unburden",
+              "moves": [
+                "Close Combat",
+                "Poison Jab",
+                "Fake Out",
+                "Coaching"
+              ]
+            },
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Dragon Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Scovillain",
+              "item": "Scovillainite",
+              "ability": "Moody",
+              "moves": [
+                "Overheat",
+                "Giga Drain",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Corviknight",
+              "item": "Occa Berry",
+              "ability": "Mirror Armor",
+              "moves": [
+                "Brave Bird",
+                "Iron Head",
+                "Tailwind",
+                "Roost"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "Zero_D_Tempest",
+          "mons": [
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Blaze",
+              "moves": [
+                "Psychic",
+                "Substitute",
+                "Heat Wave",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Life Orb",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Dragon Claw",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Close Combat",
+                "Brave Bird",
+                "Roost",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Occa Berry",
+              "ability": "Prankster",
+              "moves": [
+                "Tailwind",
+                "Charm",
+                "Light Screen",
+                "Moonblast"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Sucker Punch",
+                "Iron Head",
+                "Low Kick",
+                "Kowtow Cleave"
+              ]
+            },
+            {
+              "species": "Glimmora",
+              "item": "Focus Sash",
+              "ability": "Toxic Debris",
+              "moves": [
+                "Sludge Bomb",
+                "Power Gem",
+                "Earth Power",
+                "Spiky Shield"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "Taengerine",
+          "mons": [
+            {
+              "species": "Mawile",
+              "item": "Mawilite",
+              "ability": "Hyper Cutter",
+              "moves": [
+                "Play Rough",
+                "Swords Dance",
+                "Sucker Punch",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Poison Jab",
+                "Quick Guard"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Hydreigon",
+              "item": "Life Orb",
+              "ability": "Levitate",
+              "moves": [
+                "Protect",
+                "Draco Meteor",
+                "Dark Pulse",
+                "Earth Power"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Throat Chop",
+                "Fake Out",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Psychic",
+                "Nasty Plot",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "kunzitoo",
+          "mons": [
+            {
+              "species": "Excadrill",
+              "item": "Focus Sash",
+              "ability": "Sand Rush",
+              "moves": [
+                "High Horsepower",
+                "Iron Head",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Protect",
+                "Knock Off",
+                "Rock Slide",
+                "Superpower"
+              ]
+            },
+            {
+              "species": "Gyarados",
+              "item": "Expert Belt",
+              "ability": "Intimidate",
+              "moves": [
+                "Protect",
+                "Stone Edge",
+                "Ice Fang",
+                "Power Whip"
+              ]
+            },
+            {
+              "species": "Froslass",
+              "item": "Froslassite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Blizzard",
+                "Shadow Ball",
+                "Aurora Veil",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Gholdengo",
+              "item": "Life Orb",
+              "ability": "Good as Gold",
+              "moves": [
+                "Shadow Ball",
+                "Make It Rain",
+                "Power Gem",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Sitrus Berry",
+              "ability": "Competitive",
+              "moves": [
+                "Scald",
+                "Ice Beam",
+                "Icy Wind",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a7082542b308b6067b4884b",
+      "name": "London Corviknights VGC Weekly Tour 10!",
+      "date": "2026-08-20T17:30:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 47,
+      "url": "https://play.limitlesstcg.com/tournament/6a7082542b308b6067b4884b",
+      "placements": [
+        {
+          "place": 1,
+          "player": "Raichu123",
+          "mons": [
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Weather Ball",
+                "Hurricane",
+                "Tailwind",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Venusaur",
+              "item": "Venusaurite",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Giga Drain",
+                "Earth Power",
+                "Sludge Bomb",
+                "Sleep Powder"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Parting Shot",
+                "Reflect",
+                "Light Screen"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Flip Turn",
+                "Aqua Jet"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Ancient Power",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "Managayo_Akkolon",
+          "mons": [
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Encore",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Dazzling Gleam",
+                "Light of Ruin",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Weather Ball",
+                "Heat Wave",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Life Orb",
+              "ability": "Rough Skin",
+              "moves": [
+                "Dragon Claw",
+                "Rock Slide",
+                "Earthquake",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Mystic Water",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Iron Head",
+                "Low Kick"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "Forblaze",
+          "mons": [
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Parting Shot",
+                "Fake Out",
+                "Throat Chop"
+              ]
+            },
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Blaze",
+              "moves": [
+                "Protect",
+                "Nasty Plot",
+                "Heat Wave",
+                "Psyshock"
+              ]
+            },
+            {
+              "species": "Maushold",
+              "item": "Chople Berry",
+              "ability": "Friend Guard",
+              "moves": [
+                "Taunt",
+                "Encore",
+                "Protect",
+                "Follow Me"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Protect",
+                "Life Dew"
+              ]
+            },
+            {
+              "species": "Blastoise",
+              "item": "Blastoisinite",
+              "ability": "Rain Dish",
+              "moves": [
+                "Protect",
+                "Water Spout",
+                "Shell Smash",
+                "Dark Pulse"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Dire Claw",
+                "Quick Guard"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "Amethyst_sys",
+          "mons": [
+            {
+              "species": "Camerupt",
+              "item": "Cameruptite",
+              "ability": "Solid Rock",
+              "moves": [
+                "Eruption",
+                "Heat Wave",
+                "Earth Power",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Drampa",
+              "item": "Drampanite",
+              "ability": "Cloud Nine",
+              "moves": [
+                "Energy Ball",
+                "Earth Power",
+                "Thunderbolt",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Life Orb",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Darkest Lariat",
+                "Close Combat",
+                "Fake Out"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Thunderbolt",
+                "Helping Hand",
+                "Trick Room"
+              ]
+            },
+            {
+              "species": "Torkoal",
+              "item": "Charcoal",
+              "ability": "Drought",
+              "moves": [
+                "Eruption",
+                "Weather Ball",
+                "Sunny Day",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Tinkaton",
+              "item": "Iron Ball",
+              "ability": "Mold Breaker",
+              "moves": [
+                "Gigaton Hammer",
+                "Brick Break",
+                "Feint",
+                "Fake Out"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "CptAuroOG",
+          "mons": [
+            {
+              "species": "Excadrill",
+              "item": "Focus Sash",
+              "ability": "Sand Rush",
+              "moves": [
+                "Earthquake",
+                "Iron Head",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Low Kick",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Sitrus Berry",
+              "ability": "Competitive",
+              "moves": [
+                "Scald",
+                "Icy Wind",
+                "Haze",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Dual Wingbeat",
+                "Close Combat",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Gholdengo",
+              "item": "Life Orb",
+              "ability": "Good as Gold",
+              "moves": [
+                "Make It Rain",
+                "Shadow Ball",
+                "Nasty Plot",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "Kakudon",
+          "mons": [
+            {
+              "species": "Kingambit",
+              "item": "Focus Sash",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Sucker Punch",
+                "Low Kick"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Solar Beam",
+                "Weather Ball",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Aerodactyl",
+              "item": "Aerodactylite",
+              "ability": "Unnerve",
+              "moves": [
+                "Rock Slide",
+                "Dual Wingbeat",
+                "Ice Fang",
+                "Tailwind"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Thunderbolt",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Life Orb",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Dragon Claw",
+                "Stomping Tantrum",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "Kylos4",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Dual Wingbeat",
+                "Close Combat",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Arcanine-Hisui",
+              "item": "Focus Sash",
+              "ability": "Rock Head",
+              "moves": [
+                "Flare Blitz",
+                "Head Smash",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Helping Hand",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Detect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "Tachyon112358",
+          "mons": [
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Flare Blitz",
+                "Darkest Lariat",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Samurott-Hisui",
+              "item": "Choice Scarf",
+              "ability": "Sharpness",
+              "moves": [
+                "Razor Shell",
+                "Night Slash",
+                "Sacred Sword",
+                "Flip Turn"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Occa Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Life Dew",
+                "Rage Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Close Combat",
+                "Poison Jab",
+                "Rock Slide"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Dazzling Gleam",
+                "Calm Mind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Blaze",
+              "moves": [
+                "Psychic",
+                "Heat Wave",
+                "Nasty Plot",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a81e0c178baaa6d1c221625",
+      "name": "Tenki's Cart Weekly #114 - Reg MB",
+      "date": "2026-08-20T15:00:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 65,
+      "url": "https://play.limitlesstcg.com/tournament/6a81e0c178baaa6d1c221625",
+      "placements": [
+        {
+          "place": 1,
+          "player": "EnricoVgc",
+          "mons": [
+            {
+              "species": "Glalie",
+              "item": "Glalitite",
+              "ability": "Inner Focus",
+              "moves": [
+                "Explosion",
+                "Icicle Crash",
+                "Ice Shard",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Fairy Feather",
+              "ability": "Prankster",
+              "moves": [
+                "Helping Hand",
+                "Tailwind",
+                "Protect",
+                "Moonblast"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Focus Sash",
+              "ability": "Adaptability",
+              "moves": [
+                "Last Respects",
+                "Wave Crash",
+                "Flip Turn",
+                "Aqua Jet"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Parting Shot",
+                "Flare Blitz",
+                "Helping Hand"
+              ]
+            },
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "B3rtani",
+          "mons": [
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Hurricane",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Reflect",
+                "Light Screen",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Weather Ball",
+                "Hurricane",
+                "Tailwind",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Flash Cannon",
+                "Dragon Pulse",
+                "Electro Shot",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Torrent",
+              "moves": [
+                "Wave Crash",
+                "High Horsepower",
+                "Flip Turn",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Venusaur",
+              "item": "Focus Sash",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Sludge Bomb",
+                "Earth Power",
+                "Sleep Powder",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "FinnzVGC",
+          "mons": [
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Delphox",
+              "item": "Delphoxite",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Nasty Plot",
+                "Psychic",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Occa Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Poison Jab",
+                "Close Combat",
+                "Fake Out",
+                "Quick Guard"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Throat Chop",
+                "Parting Shot",
+                "Fake Out"
+              ]
+            },
+            {
+              "species": "Blastoise",
+              "item": "Blastoisinite",
+              "ability": "Rain Dish",
+              "moves": [
+                "Dark Pulse",
+                "Water Spout",
+                "Shell Smash",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "Nerdvillage",
+          "mons": [
+            {
+              "species": "Tyranitar",
+              "item": "Tyranitarite",
+              "ability": "Sand Stream",
+              "moves": [
+                "Rock Slide",
+                "Knock Off",
+                "Low Kick",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Excadrill",
+              "item": "Focus Sash",
+              "ability": "Sand Rush",
+              "moves": [
+                "Iron Head",
+                "High Horsepower",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Gholdengo",
+              "item": "Life Orb",
+              "ability": "Good as Gold",
+              "moves": [
+                "Make It Rain",
+                "Shadow Ball",
+                "Nasty Plot",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Colbur Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Milotic",
+              "item": "Sitrus Berry",
+              "ability": "Competitive",
+              "moves": [
+                "Scald",
+                "Icy Wind",
+                "Ice Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Brave Bird",
+                "Close Combat",
+                "Tailwind",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "Mattpode3",
+          "mons": [
+            {
+              "species": "Garchomp",
+              "item": "Sitrus Berry",
+              "ability": "Rough Skin",
+              "moves": [
+                "Dragon Claw",
+                "Stomping Tantrum",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Encore",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Light of Ruin",
+                "Dazzling Gleam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Low Kick",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Life Orb",
+              "ability": "Adaptability",
+              "moves": [
+                "Liquidation",
+                "Aqua Jet",
+                "Last Respects",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "Jhinting",
+          "mons": [
+            {
+              "species": "Gengar",
+              "item": "Gengarite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Shadow Ball",
+                "Sludge Bomb",
+                "Substitute",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Flare Blitz",
+                "Throat Chop",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Ninetales-Alola",
+              "item": "Choice Scarf",
+              "ability": "Snow Warning",
+              "moves": [
+                "Blizzard",
+                "Freeze-Dry",
+                "Encore",
+                "Icy Wind"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Unburden",
+              "moves": [
+                "Dire Claw",
+                "Protect",
+                "Close Combat",
+                "Rock Slide"
+              ]
+            },
+            {
+              "species": "Dragonite",
+              "item": "Life Orb",
+              "ability": "Inner Focus",
+              "moves": [
+                "Dragon Claw",
+                "Extreme Speed",
+                "Superpower",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Black Glasses",
+              "ability": "Defiant",
+              "moves": [
+                "Low Kick",
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "DaniVGC03",
+          "mons": [
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Aqua Jet",
+                "Last Respects",
+                "Flip Turn"
+              ]
+            },
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Weather Ball",
+                "Hurricane",
+                "Wide Guard",
+                "Tailwind"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Flash Cannon",
+                "Dragon Pulse",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Solar Beam",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Venusaur",
+              "item": "Venusaurite",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Giga Drain",
+                "Sludge Bomb",
+                "Earth Power",
+                "Sleep Powder"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Reflect",
+                "Light Screen",
+                "Spirit Break",
+                "Parting Shot"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "hellraiser",
+          "mons": [
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Dual Wingbeat",
+                "Close Combat",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Arcanine-Hisui",
+              "item": "Focus Sash",
+              "ability": "Rock Head",
+              "moves": [
+                "Flare Blitz",
+                "Head Smash",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Hyper Beam",
+                "Quick Attack",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Helping Hand",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6a8563e178baaa6d1c223693",
+      "name": "PokéFolk Champions Battle Night #4",
+      "date": "2026-08-20T08:30:00.000Z",
+      "format": "Reg M-B",
+      "playerCount": 39,
+      "url": "https://play.limitlesstcg.com/tournament/6a8563e178baaa6d1c223693",
+      "placements": [
+        {
+          "place": 1,
+          "player": "B2K",
+          "mons": [
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Poison Touch",
+              "moves": [
+                "Fake Out",
+                "Dire Claw",
+                "Close Combat",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Draining Kiss",
+                "Dazzling Gleam",
+                "Calm Mind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Choice Scarf",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Flip Turn"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Fake Out",
+                "Flare Blitz",
+                "Helping Hand",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Sinistcha",
+              "item": "Occa Berry",
+              "ability": "Hospitality",
+              "moves": [
+                "Matcha Gotcha",
+                "Rage Powder",
+                "Trick Room",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 2,
+          "player": "OriioN",
+          "mons": [
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Weather Ball",
+                "Ancient Power",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Encore",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Occa Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Sucker Punch",
+                "Low Kick"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Life Orb",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Sitrus Berry",
+              "ability": "Rough Skin",
+              "moves": [
+                "Earthquake",
+                "Dragon Claw",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Dazzling Gleam",
+                "Light of Ruin",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 3,
+          "player": "Qu1ck",
+          "mons": [
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Focus Blast",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Close Combat",
+                "Dual Wingbeat",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Arcanine-Hisui",
+              "item": "Focus Sash",
+              "ability": "Rock Head",
+              "moves": [
+                "Flare Blitz",
+                "Head Smash",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Helping Hand",
+                "Trick Room",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Quick Attack",
+                "Hyper Beam",
+                "Detect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Swords Dance",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 4,
+          "player": "JuanPabla",
+          "mons": [
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Encore",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Garchomp",
+              "item": "Sitrus Berry",
+              "ability": "Rough Skin",
+              "moves": [
+                "Dragon Claw",
+                "Earthquake",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Life Orb",
+              "ability": "Adaptability",
+              "moves": [
+                "Wave Crash",
+                "Last Respects",
+                "Aqua Jet",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Chople Berry",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Iron Head",
+                "Low Kick",
+                "Sucker Punch"
+              ]
+            },
+            {
+              "species": "Floette-Eternal",
+              "item": "Floettite",
+              "ability": "Flower Veil",
+              "moves": [
+                "Moonblast",
+                "Dazzling Gleam",
+                "Light of Ruin",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Heat Wave",
+                "Solar Beam",
+                "Weather Ball",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 5,
+          "player": "Jhinting",
+          "mons": [
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Zap Cannon",
+                "Encore",
+                "Fake Out",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Kingambit",
+              "item": "Life Orb",
+              "ability": "Defiant",
+              "moves": [
+                "Kowtow Cleave",
+                "Sucker Punch",
+                "Iron Head",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Arcanine-Hisui",
+              "item": "Focus Sash",
+              "ability": "Rock Head",
+              "moves": [
+                "Flare Blitz",
+                "Head Smash",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Staraptor",
+              "item": "Staraptite",
+              "ability": "Intimidate",
+              "moves": [
+                "Close Combat",
+                "Brave Bird",
+                "Tailwind",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Farigiraf",
+              "item": "Sitrus Berry",
+              "ability": "Armor Tail",
+              "moves": [
+                "Psychic",
+                "Thunderbolt",
+                "Trick Room",
+                "Helping Hand"
+              ]
+            },
+            {
+              "species": "Sylveon",
+              "item": "Fairy Feather",
+              "ability": "Pixilate",
+              "moves": [
+                "Hyper Voice",
+                "Quick Attack",
+                "Hyper Beam",
+                "Detect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 6,
+          "player": "KingOfYee",
+          "mons": [
+            {
+              "species": "Ninetales-Alola",
+              "item": "Choice Scarf",
+              "ability": "Snow Warning",
+              "moves": [
+                "Blizzard",
+                "Freeze-Dry",
+                "Icy Wind",
+                "Encore"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Sitrus Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Throat Chop",
+                "Fake Out",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Dragonite",
+              "item": "Life Orb",
+              "ability": "Inner Focus",
+              "moves": [
+                "Dragon Claw",
+                "Superpower",
+                "Extreme Speed",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Sneasler",
+              "item": "Focus Sash",
+              "ability": "Unburden",
+              "moves": [
+                "Close Combat",
+                "Dire Claw",
+                "Rock Slide",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Gengar",
+              "item": "Gengarite",
+              "ability": "Cursed Body",
+              "moves": [
+                "Sludge Bomb",
+                "Shadow Ball",
+                "Substitute",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Leftovers",
+              "ability": "Torrent",
+              "moves": [
+                "High Horsepower",
+                "Flip Turn",
+                "Yawn",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 7,
+          "player": "YomDilliDong",
+          "mons": [
+            {
+              "species": "Volcarona",
+              "item": "Leftovers",
+              "ability": "Flame Body",
+              "moves": [
+                "Quiver Dance",
+                "Giga Drain",
+                "Heat Wave",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Raichu",
+              "item": "Raichunite Y",
+              "ability": "Lightning Rod",
+              "moves": [
+                "Fake Out",
+                "Focus Blast",
+                "Zap Cannon",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Incineroar",
+              "item": "Chople Berry",
+              "ability": "Intimidate",
+              "moves": [
+                "Flare Blitz",
+                "Parting Shot",
+                "Darkest Lariat",
+                "Fake Out"
+              ]
+            },
+            {
+              "species": "Whimsicott",
+              "item": "Focus Sash",
+              "ability": "Prankster",
+              "moves": [
+                "Moonblast",
+                "Tailwind",
+                "Encore",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Toxapex",
+              "item": "Sitrus Berry",
+              "ability": "Regenerator",
+              "moves": [
+                "Baneful Bunker",
+                "Toxic",
+                "Infestation",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Basculegion",
+              "item": "Life Orb",
+              "ability": "Adaptability",
+              "moves": [
+                "Last Respects",
+                "Aqua Jet",
+                "Wave Crash",
+                "Protect"
+              ]
+            }
+          ]
+        },
+        {
+          "place": 8,
+          "player": "mudkipper",
+          "mons": [
+            {
+              "species": "Venusaur",
+              "item": "Focus Sash",
+              "ability": "Chlorophyll",
+              "moves": [
+                "Sludge Bomb",
+                "Leaf Storm",
+                "Sleep Powder",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Charizard",
+              "item": "Charizardite Y",
+              "ability": "Blaze",
+              "moves": [
+                "Protect",
+                "Heat Wave",
+                "Hurricane",
+                "Weather Ball"
+              ]
+            },
+            {
+              "species": "Grimmsnarl",
+              "item": "Light Clay",
+              "ability": "Prankster",
+              "moves": [
+                "Spirit Break",
+                "Light Screen",
+                "Reflect",
+                "Parting Shot"
+              ]
+            },
+            {
+              "species": "Archaludon",
+              "item": "Leftovers",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Dragon Pulse",
+                "Flash Cannon",
+                "Protect"
+              ]
+            },
+            {
+              "species": "Pelipper",
+              "item": "Sitrus Berry",
+              "ability": "Drizzle",
+              "moves": [
+                "Hurricane",
+                "Weather Ball",
+                "Tailwind",
+                "Wide Guard"
+              ]
+            },
+            {
+              "species": "Swampert",
+              "item": "Swampertite",
+              "ability": "Torrent",
+              "moves": [
+                "Earthquake",
+                "Wave Crash",
+                "Ice Punch",
+                "Protect"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
