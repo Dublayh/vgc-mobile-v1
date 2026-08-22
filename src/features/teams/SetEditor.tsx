@@ -34,15 +34,32 @@ export function SetEditor({
 
   // All hooks must run on every render path (empty slot vs. filled slot).
   const species = set ? lookup.getSpecies(set.species) : undefined;
+  const usage = useUsage();
+  // Megas are tracked separately on the ladder — prefer the forme's entry.
+  const usageMon = set
+    ? (usage?.get(set.megaStone ?? set.species) ?? usage?.get(set.species))
+    : undefined;
+  const moveUsage = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const [name, share] of usageMon?.moves ?? []) {
+      const m = lookup.getMove(name);
+      if (m) map.set(m.id, share);
+    }
+    return map;
+  }, [usageMon, lookup]);
   const moveOptions = useMemo(
     () =>
       species
         ? species.learnset
             .map((id) => lookup.getMove(id))
             .filter((m): m is DexMove => !!m)
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort(
+              (a, b) =>
+                (moveUsage.get(b.id) ?? -1) - (moveUsage.get(a.id) ?? -1) ||
+                a.name.localeCompare(b.name),
+            )
         : [],
-    [species, lookup],
+    [species, lookup, moveUsage],
   );
 
   const back = (
@@ -196,8 +213,8 @@ export function SetEditor({
               options={moveOptions}
               keyOf={(m) => m.id}
               filter={(m, q) => m.name.toLowerCase().includes(q)}
-              renderValue={(m) => <MoveRow move={m} />}
-              renderOption={(m) => <MoveRow move={m} />}
+              renderValue={(m) => <MoveRow move={m} pct={moveUsage.get(m.id)} />}
+              renderOption={(m) => <MoveRow move={m} pct={moveUsage.get(m.id)} />}
               onSelect={(m) => {
                 const moves = [...set.moves] as ChampionsSet['moves'];
                 moves[i] = m.name;
@@ -299,18 +316,23 @@ function FormeButton({
   );
 }
 
-function MoveRow({ move }: { move: DexMove }) {
+function MoveRow({ move, pct }: { move: DexMove; pct?: number }) {
   return (
     <span className="flex items-center gap-2">
       <TypeBadge type={move.type} size="sm" />
       <span className="flex-1">{move.name}</span>
+      {pct !== undefined && (
+        <span className="stat-num text-[0.7rem] text-gold-400">
+          {(pct * 100).toFixed(0)}%
+        </span>
+      )}
       <span className="label-caps">{move.category.slice(0, 4)}</span>
       <span className="stat-num w-7 text-right text-xs text-ink-300">{move.basePower || '—'}</span>
     </span>
   );
 }
 
-/** Roster search for an empty slot. */
+/** Roster search for an empty slot, usage-ranked (plan §4 SpeciesPicker). */
 export function SpeciesPicker({
   lookup,
   onPick,
@@ -319,12 +341,34 @@ export function SpeciesPicker({
   onPick: (s: DexSpecies) => void;
 }) {
   const [query, setQuery] = useState('');
+  const usage = useUsage();
+
+  // A base species inherits its best usage entry (its own or any mega forme's).
+  const usageOf = useMemo(() => {
+    const map = new Map<string, { rank: number; pct: number }>();
+    if (!usage) return map;
+    for (const s of lookup.roster) {
+      const entries = [s.name, ...lookup.megaFormesOf(s.name).map((m) => m.name)]
+        .map((n) => usage.get(n))
+        .filter((m): m is NonNullable<typeof m> => !!m);
+      if (entries.length) {
+        const best = entries.reduce((a, b) => (a.rank < b.rank ? a : b));
+        map.set(s.name, { rank: best.rank, pct: best.usage });
+      }
+    }
+    return map;
+  }, [usage, lookup]);
+
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
     return lookup.roster
       .filter((s) => !q || s.name.toLowerCase().includes(q))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [lookup, query]);
+      .sort(
+        (a, b) =>
+          (usageOf.get(a.name)?.rank ?? Infinity) - (usageOf.get(b.name)?.rank ?? Infinity) ||
+          a.name.localeCompare(b.name),
+      );
+  }, [lookup, query, usageOf]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -347,6 +391,11 @@ export function SpeciesPicker({
               <span className="flex-1 font-display text-base font-semibold tracking-wide uppercase">
                 {s.name}
               </span>
+              {usageOf.has(s.name) && (
+                <span className="stat-num text-xs text-gold-400">
+                  {(usageOf.get(s.name)!.pct * 100).toFixed(1)}%
+                </span>
+              )}
               <span className="flex gap-1">
                 {s.types.map((t) => (
                   <TypeBadge key={t} type={t} size="sm" />
