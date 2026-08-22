@@ -443,6 +443,24 @@ function SetScratchEditor({
   const mon = usage?.get(species.name) ?? usage?.get(set.species);
   const baseSpecies = lookup.getSpecies(set.species) ?? species;
 
+  const itemUsage = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const [name, share] of mon?.items ?? []) {
+      const i = lookup.getItem(name);
+      if (i) map.set(i.id, share);
+    }
+    return map;
+  }, [mon, lookup]);
+  const itemOptions = useMemo(
+    () =>
+      [...lookup.items].sort(
+        (a, b) =>
+          (itemUsage.get(b.id) ?? -1) - (itemUsage.get(a.id) ?? -1) ||
+          a.name.localeCompare(b.name),
+      ),
+    [lookup, itemUsage],
+  );
+
   return (
     <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
       {mon && mon.spreads.length > 0 && (
@@ -488,17 +506,24 @@ function SetScratchEditor({
 
       <div>
         <p className="label-caps mb-1.5">Item</p>
-        <SearchSelect<DexItem>
-          value={set.item ? lookup.getItem(set.item) : undefined}
-          placeholder="No item"
-          options={lookup.items}
-          keyOf={(i) => i.id}
-          filter={(i, q) => i.name.toLowerCase().includes(q)}
-          renderValue={(i) => <span>{i.name}</span>}
-          renderOption={(i) => <span>{i.name}</span>}
-          onSelect={(i) => onUpdate({ item: i.name })}
-          onClear={() => onUpdate({ item: undefined })}
-        />
+        {set.megaStone ? (
+          <p className="px-0.5 text-sm text-ink-300">
+            {lookup.stoneFor(set.megaStone)?.name ?? set.item ?? '—'}
+            <span className="ml-2 text-xs text-ink-500">(required to mega evolve)</span>
+          </p>
+        ) : (
+          <SearchSelect<DexItem>
+            value={set.item ? lookup.getItem(set.item) : undefined}
+            placeholder="No item"
+            options={itemOptions}
+            keyOf={(i) => i.id}
+            filter={(i, q) => i.name.toLowerCase().includes(q)}
+            renderValue={(i) => <ItemRow item={i} pct={itemUsage.get(i.id)} />}
+            renderOption={(i) => <ItemRow item={i} pct={itemUsage.get(i.id)} />}
+            onSelect={(i) => onUpdate({ item: i.name })}
+            onClear={() => onUpdate({ item: undefined })}
+          />
+        )}
       </div>
 
       <div>
@@ -866,6 +891,19 @@ function Results({
         </div>
       )}
     </Panel>
+  );
+}
+
+function ItemRow({ item, pct }: { item: DexItem; pct?: number }) {
+  return (
+    <span className="flex items-baseline gap-2">
+      <span className="flex-1">{item.name}</span>
+      {pct !== undefined && (
+        <span className="stat-num shrink-0 text-[0.7rem] text-gold-400">
+          {(pct * 100).toFixed(0)}%
+        </span>
+      )}
+    </span>
   );
 }
 

@@ -46,6 +46,26 @@ describe('setViolations', () => {
     expect(setViolations(chomp({ megaStone: 'Garchomp-Mega' }), ctx)).toEqual([]);
   });
 
+  test('megas must hold their stone when the context knows stones', () => {
+    const withStones = {
+      ...ctx,
+      stoneOf: new Map([['Garchomp-Mega', 'Garchompite']]),
+      legalItems: new Set(['Garchompite', 'Life Orb']),
+    };
+    const wrong = setViolations(
+      chomp({ megaStone: 'Garchomp-Mega', item: 'Life Orb' }),
+      withStones,
+    );
+    expect(wrong.some((x) => x.code === 'mega-item')).toBe(true);
+    expect(
+      setViolations(chomp({ megaStone: 'Garchomp-Mega', item: 'Garchompite' }), withStones),
+    ).toEqual([]);
+    // No stone map → check skipped (back-compat).
+    expect(
+      setViolations(chomp({ megaStone: 'Garchomp-Mega', item: 'Life Orb' }), ctx),
+    ).toEqual([]);
+  });
+
   test("mega sets accept the MEGA forme's ability (completer stores usage abilities)", () => {
     // Suggested megas carry their fixed mega ability — legal on a mega set...
     expect(

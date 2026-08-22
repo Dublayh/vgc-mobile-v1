@@ -18,7 +18,8 @@ export async function seedDemoTeam(): Promise<void> {
         species: 'Garchomp',
         megaStone: 'Garchomp-Mega',
         ability: 'Rough Skin',
-        item: 'Lum Berry',
+        item: 'Garchompite', // megas must hold their stone
+
         alignment: 'Jolly',
         sp: { ...EMPTY_SP, hp: 2, atk: 32, spe: 32 },
         moves: ['Earthquake', 'Dragon Claw', 'Swords Dance', 'Protect'],

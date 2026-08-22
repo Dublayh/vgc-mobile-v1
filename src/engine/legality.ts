@@ -9,6 +9,7 @@ export interface Violation {
   code:
     | 'species-not-allowed'
     | 'mega-not-allowed'
+    | 'mega-item'
     | 'ability-mismatch'
     | 'item-banned'
     | 'item-illegal'
@@ -30,6 +31,8 @@ export interface LegalityContext {
   bannedItems: Set<string>;
   /** the full Champions item pool; null = unknown (skip existence check) */
   legalItems?: Set<string> | null;
+  /** mega forme name → the stone it must hold; absent = skip the check */
+  stoneOf?: Map<string, string>;
   clauses: string[];
   /** species name → learnset move ids; absent species = unknown (skip move check) */
   learnsets: Map<string, Set<string>>;
@@ -55,6 +58,14 @@ export function setViolations(set: ChampionsSet, ctx: LegalityContext): Violatio
       v.push({
         code: 'mega-not-allowed',
         message: `${set.species} cannot mega evolve into ${set.megaStone} in this regulation`,
+      });
+    }
+    // Ladder-verified: mega evolution requires holding the matching stone.
+    const stone = ctx.stoneOf?.get(set.megaStone);
+    if (stone && set.item !== stone) {
+      v.push({
+        code: 'mega-item',
+        message: `${set.megaStone} must hold ${stone} to mega evolve`,
       });
     }
   }

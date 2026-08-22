@@ -47,6 +47,23 @@ export function SetEditor({
     }
     return map;
   }, [usageMon, lookup]);
+  const itemUsage = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const [name, share] of usageMon?.items ?? []) {
+      const i = lookup.getItem(name);
+      if (i) map.set(i.id, share);
+    }
+    return map;
+  }, [usageMon, lookup]);
+  const itemOptions = useMemo(
+    () =>
+      [...lookup.items].sort(
+        (a, b) =>
+          (itemUsage.get(b.id) ?? -1) - (itemUsage.get(a.id) ?? -1) ||
+          a.name.localeCompare(b.name),
+      ),
+    [lookup, itemUsage],
+  );
   const moveOptions = useMemo(
     () =>
       species
@@ -140,7 +157,10 @@ export function SetEditor({
               <FormeButton
                 key={m.id}
                 active={set.megaStone === m.name}
-                onClick={() => patch({ megaStone: m.name })}
+                // Megas must hold their stone (ladder-verified) — set it too.
+                onClick={() =>
+                  patch({ megaStone: m.name, item: lookup.stoneFor(m.name)?.name ?? set.item })
+                }
               >
                 {m.name.replace(`${species.name}-`, '')}
               </FormeButton>
@@ -167,26 +187,42 @@ export function SetEditor({
         )}
       </Labeled>
 
-      {/* Item */}
+      {/* Item — a mega's slot is its stone, not a choice */}
       <Labeled label="Item">
+        {set.megaStone ? (
+          <p className="px-0.5 text-sm text-ink-300">
+            {lookup.stoneFor(set.megaStone)?.name ?? set.item ?? '—'}
+            <span className="ml-2 text-xs text-ink-500">(required to mega evolve)</span>
+          </p>
+        ) : (
         <SearchSelect<DexItem>
           value={set.item ? lookup.getItem(set.item) : undefined}
           placeholder="No item"
-          options={lookup.items}
+          options={itemOptions}
           keyOf={(i) => i.id}
           filter={(i, q) => i.name.toLowerCase().includes(q)}
           disabledKeys={new Set(lookup.items.filter((i) => usedItems.has(i.name)).map((i) => i.id))}
           renderValue={(i) => (
             <span>
               {i.name}
+              {itemUsage.has(i.id) && (
+                <span className="stat-num ml-2 text-[0.7rem] text-gold-400">
+                  {(itemUsage.get(i.id)! * 100).toFixed(0)}%
+                </span>
+              )}
               {usedItems.has(i.name) && (
                 <span className="ml-2 text-xs text-illegal">item clause</span>
               )}
             </span>
           )}
           renderOption={(i) => (
-            <span className="flex items-baseline justify-between gap-2">
-              <span>{i.name}</span>
+            <span className="flex items-baseline gap-2">
+              <span className="flex-1">{i.name}</span>
+              {itemUsage.has(i.id) && (
+                <span className="stat-num shrink-0 text-[0.7rem] text-gold-400">
+                  {(itemUsage.get(i.id)! * 100).toFixed(0)}%
+                </span>
+              )}
               {usedItems.has(i.name) && (
                 <span className="shrink-0 text-xs text-illegal">on team</span>
               )}
@@ -195,6 +231,7 @@ export function SetEditor({
           onSelect={(i) => patch({ item: i.name })}
           onClear={() => patch({ item: undefined })}
         />
+        )}
       </Labeled>
 
       {/* Alignment */}

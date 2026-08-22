@@ -43,7 +43,9 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   pool is `champions-items.ts` verdicts over gen-9 ("Past" = not in game — most
   mainline staples like Choice Specs/Band, Assault Vest, Covert Cloak, Clear
   Amulet, Safety Goggles, Eviolite are NOT in Champions; Scarf/Life Orb are).
-  Never assume a mainline item exists here. build-dex cross-checks every
+  Never assume a mainline item exists here. Megas MUST hold their stone
+  (ladder-verified: mega formes show 100% stone usage) — the builder locks the
+  item slot for mega sets and legality enforces it (`mega-item`). build-dex cross-checks every
   ladder-observed usage move against the learnsets and fails if any is missing —
   that failure means the vendored file is stale or a forme's learnset source is
   wrong (megas resolve to base species; Floette-Mega → Floette-Eternal).

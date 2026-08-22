@@ -93,6 +93,12 @@ export class DexLookup {
     return this.megaBase.get(toId(formeNameOrId));
   }
 
+  /** The stone a mega forme must hold (ladder-verified: megas hold their stone). */
+  stoneFor(formeNameOrId: string): DexItem | undefined {
+    const id = toId(formeNameOrId);
+    return this.items.find((i) => i.megaForme && toId(i.megaForme) === id);
+  }
+
   getSpecies(nameOrId: string): DexSpecies | undefined {
     return this.bySpecies.get(toId(nameOrId));
   }
@@ -120,6 +126,11 @@ export class DexLookup {
       megaFormes: new Map(Object.entries(this.regulation.megaFormes)),
       bannedItems: new Set(this.regulation.bannedItems),
       legalItems: new Set(this.items.map((i) => i.name)),
+      stoneOf: new Map(
+        this.items
+          .filter((i): i is DexItem & { megaForme: string } => !!i.megaForme)
+          .map((i) => [i.megaForme, i.name]),
+      ),
       clauses: this.regulation.clauses,
       learnsets: new Map(this.species.map((s) => [s.name, new Set(s.learnset)])),
       abilities: new Map(this.species.map((s) => [s.name, s.abilities])),
