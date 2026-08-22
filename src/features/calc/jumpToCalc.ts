@@ -11,9 +11,13 @@ import { usageMonToSet } from '../meta/threatSet';
 import { useCalc, type CalcSelection } from './calcStore';
 
 /** Any dex species (or mega forme) as a neutral 0-SP set. */
-export function speciesToSet(sp: DexSpecies): ChampionsSet {
+export function speciesToSet(sp: DexSpecies, lookup?: DexLookup): ChampionsSet {
+  // Roster-legal base for megas (Floette-Mega → Floette-Eternal).
+  const base = sp.baseSpecies
+    ? (lookup?.megaBaseOf(sp.name) ?? sp.baseSpecies)
+    : sp.name;
   return {
-    species: sp.baseSpecies ?? sp.name,
+    species: base,
     ...(sp.baseSpecies ? { megaStone: sp.name } : {}),
     ability: sp.abilities[0] ?? '',
     alignment: 'Serious',
@@ -31,7 +35,7 @@ export function useJumpToCalc(lookup: DexLookup) {
     const sp = lookup.getSpecies(speciesName);
     if (!sp) return;
     const mon = usage?.get(sp.name);
-    const set = (mon && usageMonToSet(mon, lookup)) || speciesToSet(sp);
+    const set = (mon && usageMonToSet(mon, lookup)) || speciesToSet(sp, lookup);
     const selection: CalcSelection = {
       set,
       sourceLabel: mon ? 'meta set' : 'no usage data',

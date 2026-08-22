@@ -58,7 +58,7 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
 
   const pickSpecies = (sp: DexSpecies): CalcSelection => {
     const mon = usage?.get(sp.name);
-    const set = (mon && usageMonToSet(mon, lookup)) || speciesToSet(sp);
+    const set = (mon && usageMonToSet(mon, lookup)) || speciesToSet(sp, lookup);
     return { set, sourceLabel: mon ? 'meta set' : 'no usage data', fromTeam: false };
   };
 

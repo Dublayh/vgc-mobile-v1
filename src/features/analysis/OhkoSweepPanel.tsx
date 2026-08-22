@@ -70,7 +70,7 @@ export function OhkoSweepPanel({
   const spread = spreadOptions[Math.min(spreadIdx, spreadOptions.length - 1)];
 
   const defenderSet: ChampionsSet = {
-    ...speciesToSet(species),
+    ...speciesToSet(species, lookup),
     alignment: spread.alignment,
     sp: { ...spread.sp },
   };

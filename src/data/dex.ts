@@ -60,6 +60,8 @@ export class DexLookup {
   private bySpecies = new Map<string, DexSpecies>();
   private byMove = new Map<string, DexMove>();
   private byItem = new Map<string, DexItem>();
+  /** mega forme name → the ROSTER-LEGAL base (Floette-Mega → Floette-Eternal) */
+  private megaBase = new Map<string, string>();
 
   constructor(
     dex: {
@@ -81,6 +83,14 @@ export class DexLookup {
     }
     for (const m of dex.moves) this.byMove.set(m.id, m);
     for (const i of dex.items) this.byItem.set(toId(i.name), i);
+    for (const [base, formes] of Object.entries(regulation.megaFormes)) {
+      for (const f of formes) this.megaBase.set(toId(f), base);
+    }
+  }
+
+  /** The roster-legal base species for a mega forme (regulation-authoritative). */
+  megaBaseOf(formeNameOrId: string): string | undefined {
+    return this.megaBase.get(toId(formeNameOrId));
   }
 
   getSpecies(nameOrId: string): DexSpecies | undefined {

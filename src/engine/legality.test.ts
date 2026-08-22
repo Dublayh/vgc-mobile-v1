@@ -15,6 +15,7 @@ const ctx: LegalityContext = {
   ]),
   abilities: new Map([
     ['Garchomp', ['Sand Veil', 'Rough Skin']],
+    ['Garchomp-Mega', ['Sand Force']],
     ['Incineroar', ['Blaze', 'Intimidate']],
   ]),
   moveId: toId,
@@ -43,6 +44,24 @@ describe('setViolations', () => {
     const v = setViolations(chomp({ megaStone: 'Garchomp-Mega-Y' }), ctx);
     expect(v.some((x) => x.code === 'mega-not-allowed')).toBe(true);
     expect(setViolations(chomp({ megaStone: 'Garchomp-Mega' }), ctx)).toEqual([]);
+  });
+
+  test("mega sets accept the MEGA forme's ability (completer stores usage abilities)", () => {
+    // Suggested megas carry their fixed mega ability — legal on a mega set...
+    expect(
+      setViolations(chomp({ megaStone: 'Garchomp-Mega', ability: 'Sand Force' }), ctx),
+    ).toEqual([]);
+    // ...but not on the base set, and unknown abilities still flag on megas.
+    expect(
+      setViolations(chomp({ ability: 'Sand Force' }), ctx).some(
+        (x) => x.code === 'ability-mismatch',
+      ),
+    ).toBe(true);
+    expect(
+      setViolations(chomp({ megaStone: 'Garchomp-Mega', ability: 'Levitate' }), ctx).some(
+        (x) => x.code === 'ability-mismatch',
+      ),
+    ).toBe(true);
   });
 
   test('wrong ability, banned item, unlearnable + duplicate moves', () => {

@@ -59,11 +59,16 @@ export function setViolations(set: ChampionsSet, ctx: LegalityContext): Violatio
     }
   }
 
-  const abilities = ctx.abilities.get(set.species);
-  if (set.ability && abilities && !abilities.includes(set.ability)) {
+  // A mega set's ability may be stored as either the base forme's or the mega
+  // forme's (usage stats track megas by their fixed ability) — both are legal.
+  const abilityPool = [
+    ...(ctx.abilities.get(set.species) ?? []),
+    ...(set.megaStone ? (ctx.abilities.get(set.megaStone) ?? []) : []),
+  ];
+  if (set.ability && abilityPool.length && !abilityPool.includes(set.ability)) {
     v.push({
       code: 'ability-mismatch',
-      message: `${set.species} cannot have ${set.ability}`,
+      message: `${set.megaStone ?? set.species} cannot have ${set.ability}`,
     });
   }
 
