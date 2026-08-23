@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useDex } from '../data/useDex';
+import { useCalc } from '../features/calc/calcStore';
+import { useSettings } from './settings';
 import { DexBrowser } from '../features/dex/DexBrowser';
 import { TeamsScreen } from '../features/teams/TeamsScreen';
 
@@ -30,6 +32,12 @@ export function App() {
   const [showGallery, setShowGallery] = useState(false);
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
   const lookup = useDex();
+  const { gameMode, setGameMode } = useSettings();
+
+  // The app-wide mode is the calc's default field mode (still overridable there).
+  useEffect(() => {
+    useCalc.getState().patch({ gameType: gameMode });
+  }, [gameMode]);
 
   useEffect(() => {
     const onPrompt = (e: Event) => {
@@ -53,6 +61,13 @@ export function App() {
             </span>
           </h1>
           <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setGameMode(gameMode === 'Doubles' ? 'Singles' : 'Doubles')}
+              title="Game mode — drives all damage calcs (usage data stays doubles-ladder)"
+              className="chamfer-sm border border-ink-700 px-2 py-0.5 font-display text-xs font-semibold tracking-[0.14em] uppercase text-ink-300 hover:border-gold-600"
+            >
+              {gameMode === 'Doubles' ? '2v2' : '1v1'}
+            </button>
             {installEvent && (
               <button
                 onClick={async () => {

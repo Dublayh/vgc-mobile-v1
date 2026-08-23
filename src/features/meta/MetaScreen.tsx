@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useSettings } from '../../app/settings';
 import { EmptyState } from '../../app/ui/EmptyState';
 import { Icon } from '../../app/ui/Icon';
 import type { DexLookup } from '../../data/dex';
-import { useUsage } from '../../data/useUsage';
+import { isSinglesData, useUsage } from '../../data/useUsage';
 import { SpeedTiers } from './SpeedTiers';
 import { ThreatAudit } from './ThreatAudit';
 import { TournamentTeams } from './TournamentTeams';
@@ -13,6 +14,7 @@ type Segment = 'usage' | 'speed' | 'threats' | 'tourney';
 export function MetaScreen({ lookup }: { lookup: DexLookup }) {
   const usage = useUsage();
   const [segment, setSegment] = useState<Segment>('usage');
+  const { gameMode } = useSettings();
 
   if (usage === undefined) {
     return <p className="mt-16 text-center text-sm text-ink-500">Loading usage data…</p>;
@@ -29,6 +31,14 @@ export function MetaScreen({ lookup }: { lookup: DexLookup }) {
 
   return (
     <div className="flex flex-col gap-3">
+      {gameMode === 'Singles' && (
+        <p className="flex items-center gap-2 border border-info/40 bg-info/10 px-2.5 py-1.5 text-xs text-info">
+          <Icon name="alert" size={14} className="shrink-0" />
+          {isSinglesData(usage)
+            ? 'Singles mode: usage below is the SINGLES ranked ladder. Tournament teams remain doubles events.'
+            : 'Singles mode: no singles ladder bundle for this regulation — showing doubles usage.'}
+        </p>
+      )}
       {usage.data.synthetic && (
         <p className="flex items-center gap-2 border border-warn/40 bg-warn/10 px-2.5 py-1.5 text-xs text-warn">
           <Icon name="alert" size={14} className="shrink-0" />

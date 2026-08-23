@@ -49,6 +49,8 @@ interface UsageData {
   synthetic?: boolean; // never set here — only the checked-in sample uses it
   generatedAt: string;
   mons: UsageMon[];
+  /** slim snapshot of the prior month for trends: [name, usage, rank] */
+  previous?: { month: string; mons: [string, number, number][] };
 }
 
 interface ChaosMon {
@@ -228,11 +230,7 @@ function transformMon(speciesName: string, mon: ChaosMon, rank: number): UsageMo
   };
 }
 
-async function main(): Promise<void> {
-  const meta = JSON.parse(readFileSync(join(DATA_DIR, 'meta.json'), 'utf8'));
-  const regulation: string = meta.currentRegulation; // e.g. "m-b"
-  const formatBase = `gen9championsvgc2026reg${regulation.replace(/-/g, '')}`;
-
+async function buildTarget(formatBase: string, outFile: string): Promise<void> {
   const { month, rating, chaos } = await findChaosFile(formatBase);
   console.log(
     `Format ${chaos.info.metagame}, month ${month}, rating cutoff ${rating}, ` +
@@ -251,20 +249,59 @@ async function main(): Promise<void> {
     if (mons.length === 150) break;
   }
 
+  const outDir = join(DATA_DIR, 'usage');
+  mkdirSync(outDir, { recursive: true });
+  const outPath = join(outDir, outFile);
+
+  // Trend capture: keep a slim snapshot of the month we're replacing.
+  // Re-running the same month preserves the existing snapshot instead.
+  let previous: UsageData['previous'];
+  try {
+    const existing = JSON.parse(readFileSync(outPath, 'utf8')) as UsageData;
+    if (!existing.synthetic) {
+      if (existing.month !== month) {
+        previous = {
+          month: existing.month,
+          mons: existing.mons.map((m) => [m.name, m.usage, m.rank]),
+        };
+      } else {
+        previous = existing.previous;
+      }
+    }
+  } catch {
+    /* no prior file — no trend yet */
+  }
+
   const out: UsageData = {
     format: `${formatBase}-${rating}`,
     month,
     totalBattles: chaos.info['number of battles'],
     generatedAt: new Date().toISOString(),
     mons,
+    ...(previous ? { previous } : {}),
   };
-
-  const outDir = join(DATA_DIR, 'usage');
-  mkdirSync(outDir, { recursive: true });
-  const outPath = join(outDir, `${regulation}.json`);
   const json = JSON.stringify(out);
   writeFileSync(outPath, json);
   console.log(`Wrote ${outPath} (${mons.length} mons, ${(json.length / 1024).toFixed(1)} KB)`);
+}
+
+async function main(): Promise<void> {
+  const meta = JSON.parse(readFileSync(join(DATA_DIR, 'meta.json'), 'utf8'));
+  const regulation: string = meta.currentRegulation; // e.g. "m-b"
+  const regId = regulation.replace(/-/g, '');
+
+  // Doubles (the primary VGC ladder) — REQUIRED, failure kills the run.
+  await buildTarget(`gen9championsvgc2026reg${regId}`, `${regulation}.json`);
+
+  // Singles ranked ladder (BSS-style, regulation-suffixed) — best-effort:
+  // its absence must not block the doubles refresh.
+  try {
+    await buildTarget(`gen9championsbssreg${regId}`, `${regulation}-singles.json`);
+  } catch (err) {
+    console.warn(
+      `Singles ladder stats unavailable — doubles bundle written, singles skipped.\n  ${(err as Error).message.split('\n')[0]}`,
+    );
+  }
 }
 
 main().catch((err) => {

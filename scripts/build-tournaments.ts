@@ -59,7 +59,14 @@ interface TournamentTeam {
   place: number;
   player: string;
   paste?: string;
-  mons: { species: string; item?: string; ability?: string; moves?: string[] }[];
+  mons: {
+    species: string;
+    item?: string;
+    ability?: string;
+    moves?: string[];
+    /** Champions alignment (the API's "nature") when published */
+    alignment?: string;
+  }[];
 }
 
 interface ApiTournament {
@@ -144,6 +151,11 @@ function toTeam(row: ApiStanding, eventName: string): TournamentTeam | null {
     const mon: TournamentTeam['mons'][number] = { species: species.name };
     if (raw.item) mon.item = normItem(raw.item);
     if (raw.ability) mon.ability = normAbility(raw.ability);
+    if (raw.nature) {
+      const nature = Dex.natures.get(raw.nature);
+      if (nature.exists) mon.alignment = nature.name;
+      else warnOnce(`Unknown nature "${raw.nature}" — dropping`);
+    }
     if (Array.isArray(raw.attacks) && raw.attacks.length > 0) {
       mon.moves = raw.attacks.map(normMove);
     }

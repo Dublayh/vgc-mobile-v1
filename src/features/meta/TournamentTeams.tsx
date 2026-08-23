@@ -12,7 +12,13 @@ import { Sprite } from '../../app/ui/Sprite';
 import type { DexLookup } from '../../data/dex';
 import type { TournamentEvent, TournamentTeam } from '../../data/tournaments';
 import { useTournaments } from '../../data/useTournaments';
-import { EMPTY_SP, type ChampionsSet, type Team } from '../../engine/types';
+import {
+  ALIGNMENTS,
+  type AlignmentName,
+  EMPTY_SP,
+  type ChampionsSet,
+  type Team,
+} from '../../engine/types';
 import { db } from '../../storage/db';
 import { parsePaste } from '../import-export/showdown';
 
@@ -48,7 +54,10 @@ function placementToSets(t: TournamentTeam, lookup: DexLookup): ChampionsSet[] {
         ...(megaForme ? { megaStone: megaForme } : {}),
         ability: m.ability ?? sp.abilities[0] ?? '',
         item: megaForme ? (lookup.stoneFor(megaForme)?.name ?? m.item) : m.item,
-        alignment: 'Serious',
+        alignment:
+          m.alignment && m.alignment in ALIGNMENTS
+            ? (m.alignment as AlignmentName)
+            : 'Serious',
         sp: { ...EMPTY_SP },
         moves: (m.moves ?? []).slice(0, 4) as ChampionsSet['moves'],
       },
@@ -145,6 +154,9 @@ export function TournamentTeams({ lookup }: { lookup: DexLookup }) {
                               {m.species}
                             </span>
                             {m.item && <span className="text-ink-400"> @ {m.item}</span>}
+                            {m.alignment && (
+                              <span className="text-gold-400/80"> · {m.alignment}</span>
+                            )}
                             {m.moves && m.moves.length > 0 && (
                               <span className="block text-ink-500">{m.moves.join(' / ')}</span>
                             )}

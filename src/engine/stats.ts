@@ -20,6 +20,8 @@ import {
  * i.e. SP is added BEFORE the alignment multiplier ('sp-before-alignment').
  * The ladder, its usage stats, and Showdown tooling all run this formula, so
  * it is our default. ("1 SP = +1 final stat" holds only on neutral stats.)
+ * CONFIRMED IN-GAME (owner, 2026-08-23): Adamant 32-SP Garchomp reads 200 Atk
+ * on the summary screen — matching this formula, not the legacy mode's 197.
  * 'sp-after-alignment' is kept in case in-game evidence ever contradicts
  * Showdown — flipping this constant re-bases the entire app.
  */

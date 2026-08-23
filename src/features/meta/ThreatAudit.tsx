@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSettings } from '../../app/settings';
 import { useUI } from '../../app/store';
 import { Button } from '../../app/ui/Button';
 import { Icon } from '../../app/ui/Icon';
@@ -69,7 +70,8 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
     setAutoNote(tr || tw);
   }, [team?.id, archetypes]);
 
-  const ctx: AuditContext = { trickRoom, myTailwind, theirTailwind };
+  const { gameMode } = useSettings();
+  const ctx: AuditContext = { gameType: gameMode, trickRoom, myTailwind, theirTailwind };
 
   // Invalidate the worst-matchup ranking whenever ANYTHING audit-relevant on
   // the team changes — species/forme, spread, alignment, item AND moves
@@ -124,7 +126,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
       setWorst(rows);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, teamKey, trickRoom, myTailwind, theirTailwind, usage, lookup]);
+  }, [view, teamKey, trickRoom, myTailwind, theirTailwind, gameMode, usage, lookup]);
 
   const audits = useMemo(() => {
     if (!threatSet || !team) return [];
@@ -136,7 +138,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threatSet, team, trickRoom, myTailwind, theirTailwind]);
+  }, [threatSet, team, trickRoom, myTailwind, theirTailwind, gameMode]);
 
   if (!team || team.sets.length === 0) {
     return (
@@ -382,7 +384,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
               {(threat.spreads[0]?.pct ?? 0) * 100 > 0
                 ? `${((threat.spreads[0]?.pct ?? 0) * 100).toFixed(0)}% spread`
                 : 'top spread'}
-              , doubles). Reproduce any line in Calc.
+              , {gameMode.toLowerCase()}). Reproduce any line in Calc.
             </p>
           )}
 
@@ -480,7 +482,7 @@ function CounterFinder({
       .filter((c): c is CounterCandidate => !!c);
     return findCounters(threatSet, candidates, { ...ctx, limit: 10 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threatSet, usage, lookup, ctx.trickRoom, ctx.myTailwind, ctx.theirTailwind]);
+  }, [threatSet, usage, lookup, ctx.gameType, ctx.trickRoom, ctx.myTailwind, ctx.theirTailwind]);
 
   const openInCalc = (counterSet: ChampionsSet) => {
     calc.patch({

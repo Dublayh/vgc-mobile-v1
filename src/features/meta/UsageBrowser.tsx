@@ -54,8 +54,11 @@ export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: De
               <span className="stat-num w-6 text-right text-xs text-ink-500">{m.rank}</span>
               {sp && <Sprite spriteId={sp.spriteId} size={36} />}
               <span className="flex-1">
-                <span className="font-display text-sm font-semibold tracking-wide uppercase">
-                  {m.name}
+                <span className="flex items-center gap-1.5">
+                  <span className="font-display text-sm font-semibold tracking-wide uppercase">
+                    {m.name}
+                  </span>
+                  <TrendChip mon={m} usage={usage} />
                 </span>
                 <span className="mt-0.5 block h-1 max-w-40 bg-ink-800">
                   <span
@@ -72,6 +75,29 @@ export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: De
       {shown.length === 0 && <li className="px-3 py-4 text-sm text-ink-500">No matches</li>}
     </ul>
     </div>
+  );
+}
+
+/** Rank movement vs. last month: ▲ climbed, ▼ fell, "new" entrant. */
+function TrendChip({ mon, usage }: { mon: UsageMon; usage: UsageLookup }) {
+  if (!usage.prevMonth) return null;
+  const prev = usage.prevOf(mon.name);
+  if (!prev) {
+    return (
+      <span className="chamfer-sm bg-gold-950 px-1 font-display text-[0.65rem] font-semibold uppercase text-gold-400">
+        new
+      </span>
+    );
+  }
+  const delta = prev.rank - mon.rank; // positive = climbed
+  if (delta === 0) return null;
+  return (
+    <span
+      className={`stat-num text-[0.7rem] ${delta > 0 ? 'text-legal' : 'text-illegal'}`}
+      title={`was #${prev.rank} in ${usage.prevMonth}`}
+    >
+      {delta > 0 ? `▲${delta}` : `▼${-delta}`}
+    </span>
   );
 }
 
@@ -132,7 +158,14 @@ function MonUsageDetail({
             <span className="stat-num text-xs text-gold-300">
               #{mon.rank} · {pct(mon.usage)}
             </span>
+            <TrendChip mon={mon} usage={usage} />
           </div>
+          {usage.prevOf(mon.name) && (
+            <p className="mt-0.5 text-xs text-ink-500">
+              was #{usage.prevOf(mon.name)!.rank} · {pct(usage.prevOf(mon.name)!.usage)} in{' '}
+              {usage.prevMonth}
+            </p>
+          )}
         </div>
         <button onClick={() => jumpToCalc(mon.name)} className="label-caps text-gold-400">
           Calc vs ›

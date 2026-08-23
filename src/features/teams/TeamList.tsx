@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useSettings } from '../../app/settings';
 import { useUI } from '../../app/store';
 import { Button } from '../../app/ui/Button';
 import { EmptyState } from '../../app/ui/EmptyState';
@@ -16,7 +17,10 @@ export function TeamList({ lookup }: { lookup: DexLookup }) {
   if (!teams) return null;
 
   const newTeam = async () => {
-    const team = await createTeam(lookup.regulation.id);
+    const team = await createTeam(
+      lookup.regulation.id,
+      useSettings.getState().gameMode === 'Singles' ? 'singles' : 'doubles',
+    );
     openTeam(team.id);
   };
 

@@ -9,12 +9,15 @@ export const emptySet = (species: string): ChampionsSet => ({
   moves: [],
 });
 
-export async function createTeam(regulation: string): Promise<Team> {
+export async function createTeam(
+  regulation: string,
+  format: Team['format'] = 'doubles',
+): Promise<Team> {
   const team: Team = {
     id: crypto.randomUUID(),
     name: 'New team',
     regulation,
-    format: 'doubles',
+    format,
     sets: [],
   };
   await db.teams.add(team);

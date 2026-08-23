@@ -5,6 +5,7 @@
  * responsive; every row jumps into the Calc for verification.
  */
 import { useEffect, useRef, useState } from 'react';
+import { useSettings } from '../../app/settings';
 import { useUI } from '../../app/store';
 import { Button } from '../../app/ui/Button';
 import { Panel } from '../../app/ui/Panel';
@@ -35,6 +36,7 @@ export function OhkoSweepPanel({
   const usage = useUsage();
   const calc = useCalc();
   const { setTab } = useUI();
+  const { gameMode } = useSettings();
 
   const species = lookup.getSpecies(defenderName);
   const mon = usage?.get(defenderName);
@@ -53,7 +55,7 @@ export function OhkoSweepPanel({
     setProgress(0);
     setSpreadIdx(0);
     setShowAll(false);
-  }, [defenderName]);
+  }, [defenderName, gameMode]);
 
   if (!species) return null;
 
@@ -92,7 +94,14 @@ export function OhkoSweepPanel({
         // heuristic can't hide what it actually clicks (e.g. Earth Power).
         const ladderMoves =
           usage?.get(attacker.name)?.moves.slice(0, 10).map(([name]) => name) ?? [];
-        const entry = sweepOne(attacker, defender, [...species.types], lookup, {}, ladderMoves);
+        const entry = sweepOne(
+          attacker,
+          defender,
+          [...species.types],
+          lookup,
+          { gameType: gameMode },
+          ladderMoves,
+        );
         // Keep practical threats ≥85%, plus mons whose ONLY OHKO is a drawback move.
         if (entry && (entry.maxPercent >= 85 || entry.alternatives[0].maxPercent >= 100)) {
           found.push(entry);
@@ -222,7 +231,7 @@ export function OhkoSweepPanel({
               </button>
             )}
           <p className="mt-2 text-xs text-ink-500">
-            Max rolls, attacker at 32 SP +nature, no item, best learnset move, doubles.
+            Max rolls, attacker at 32 SP +nature, no item, best learnset move.
             Items (Life Orb, Choice) hit harder — verify lines in Calc.
           </p>
         </div>

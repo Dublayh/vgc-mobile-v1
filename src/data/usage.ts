@@ -26,15 +26,35 @@ export interface UsageData {
   synthetic?: boolean;
   generatedAt: string;
   mons: UsageMon[];
+  /** slim prior-month snapshot for trends: [name, usage, rank] */
+  previous?: { month: string; mons: [string, number, number][] };
+}
+
+export interface PrevStats {
+  usage: number;
+  rank: number;
 }
 
 export class UsageLookup {
   readonly data: UsageData;
   private byName = new Map<string, UsageMon>();
+  private prevByName = new Map<string, PrevStats>();
 
   constructor(data: UsageData) {
     this.data = data;
     for (const m of data.mons) this.byName.set(m.name.toLowerCase(), m);
+    for (const [name, usage, rank] of data.previous?.mons ?? []) {
+      this.prevByName.set(name.toLowerCase(), { usage, rank });
+    }
+  }
+
+  /** Prior-month stats for a mon, if trend data exists. */
+  prevOf(name: string): PrevStats | undefined {
+    return this.prevByName.get(name.toLowerCase());
+  }
+
+  get prevMonth(): string | undefined {
+    return this.data.previous?.month;
   }
 
   get mons(): UsageMon[] {

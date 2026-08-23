@@ -20,6 +20,7 @@ import { db } from '../../storage/db';
 import { SPAllocator } from '../teams/SPAllocator';
 import { usageMonToSet } from '../meta/threatSet';
 import { useCalc, type BoostState, type CalcSelection } from './calcStore';
+import { ComboPanel } from './ComboPanel';
 import { speciesToSet } from './jumpToCalc';
 import { OptimizerPanel } from './OptimizerPanel';
 
@@ -34,6 +35,7 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);
   const calc = useCalc();
   const usage = useUsage();
+  const [showPartner, setShowPartner] = useState(calc.attacker2 !== null);
 
   const slotOptions: SlotOption[] = useMemo(
     () =>
@@ -62,14 +64,15 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
     return { set, sourceLabel: mon ? 'meta set' : 'no usage data', fromTeam: false };
   };
 
-  const updateSet = (role: 'attacker' | 'defender') => (patch: Partial<ChampionsSet>) => {
-    const sel = calc[role];
-    if (!sel) return;
-    calc.patch({
-      [role]: { ...sel, set: { ...sel.set, ...patch }, edited: true },
-      expandedMove: null,
-    });
-  };
+  const updateSet =
+    (role: 'attacker' | 'defender' | 'attacker2') => (patch: Partial<ChampionsSet>) => {
+      const sel = calc[role];
+      if (!sel) return;
+      calc.patch({
+        [role]: { ...sel, set: { ...sel.set, ...patch }, edited: true },
+        expandedMove: null,
+      });
+    };
 
   return (
     <div className="flex flex-col gap-3">
@@ -92,6 +95,45 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
           onChange: (attackerBurned) => calc.patch({ attackerBurned }),
         }}
       />
+
+      {/* Partner/combined damage is a doubles concept. */}
+      {calc.gameType === 'Doubles' && showPartner ? (
+        <>
+          <PokemonPanel
+            role="Partner attacker"
+            selected={calc.attacker2}
+            slotOptions={slotOptions}
+            dexOptions={dexOptions}
+            lookup={lookup}
+            onPick={(attacker2) => calc.patch({ attacker2 })}
+            pickSlot={pickSlot}
+            pickSpecies={pickSpecies}
+            onUpdateSet={updateSet('attacker2')}
+            boosts={calc.attacker2Boosts}
+            onBoosts={(attacker2Boosts) => calc.patch({ attacker2Boosts })}
+            boostStats={['atk', 'spa']}
+          />
+          <button
+            onClick={() => {
+              calc.patch({ attacker2: null });
+              setShowPartner(false);
+            }}
+            className="label-caps self-start text-illegal"
+          >
+            ✕ Remove partner
+          </button>
+        </>
+      ) : (
+        calc.gameType === 'Doubles' &&
+        calc.attacker && (
+          <button
+            onClick={() => setShowPartner(true)}
+            className="label-caps self-start text-gold-400"
+          >
+            + Partner attacker (combined damage)
+          </button>
+        )
+      )}
 
       <div className="flex justify-center">
         <button
@@ -122,6 +164,14 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
       {calc.attacker && calc.defender && (
         <>
           <Results attacker={calc.attacker} defender={calc.defender} lookup={lookup} />
+          {calc.gameType === 'Doubles' && calc.attacker2 && (
+            <ComboPanel
+              attacker={calc.attacker}
+              partner={calc.attacker2}
+              defender={calc.defender}
+              lookup={lookup}
+            />
+          )}
           <OptimizerPanel
             attacker={calc.attacker}
             defender={calc.defender}

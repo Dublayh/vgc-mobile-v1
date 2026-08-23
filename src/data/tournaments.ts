@@ -5,6 +5,8 @@ export interface TournamentMon {
   item?: string;
   ability?: string;
   moves?: string[];
+  /** Champions alignment (nature) when the source publishes it */
+  alignment?: string;
 }
 
 export interface TournamentTeam {

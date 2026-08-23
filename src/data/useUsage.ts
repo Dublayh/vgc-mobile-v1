@@ -1,39 +1,64 @@
 import { useEffect, useState } from 'react';
+import { useSettings, type GameMode } from '../app/settings';
 import { UsageLookup, type UsageData } from './usage';
 
-let cached: UsageLookup | null | undefined; // undefined = not fetched, null = missing
-let pending: Promise<UsageLookup | null> | null = null;
+// Per-mode caches: undefined = not fetched, null = missing entirely.
+const caches: Record<GameMode, UsageLookup | null | undefined> = {
+  Doubles: undefined,
+  Singles: undefined,
+};
+const pending: Partial<Record<GameMode, Promise<UsageLookup | null>>> = {};
 
-async function load(): Promise<UsageLookup | null> {
+async function fetchBundle(file: string): Promise<UsageLookup | null> {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}data/usage/${file}`);
+    if (!res.ok) return null;
+    return new UsageLookup((await res.json()) as UsageData);
+  } catch {
+    return null;
+  }
+}
+
+async function load(mode: GameMode): Promise<UsageLookup | null> {
   try {
     const meta = await (
       await fetch(`${import.meta.env.BASE_URL}data/meta.json`)
     ).json();
-    const res = await fetch(
-      `${import.meta.env.BASE_URL}data/usage/${meta.currentRegulation}.json`,
-    );
-    if (!res.ok) return (cached = null);
-    const data = (await res.json()) as UsageData;
-    return (cached = new UsageLookup(data));
+    const reg = meta.currentRegulation as string;
+    let lookup = await fetchBundle(`${reg}${mode === 'Singles' ? '-singles' : ''}.json`);
+    // No singles bundle for this regulation → fall back to the doubles ladder
+    // (consumers can tell from lookup.data.format; the Meta tab labels it).
+    if (!lookup && mode === 'Singles') {
+      lookup = (caches.Doubles ??= await fetchBundle(`${reg}.json`)) ?? null;
+    }
+    return (caches[mode] = lookup);
   } catch {
-    return (cached = null);
+    return (caches[mode] = null);
   }
 }
 
 /**
- * Usage stats for the current regulation, or null when unavailable —
- * usage-powered features must degrade gracefully (hide, don't crash).
+ * Ladder usage stats for the current regulation AND game mode, or null when
+ * unavailable — usage-powered features must degrade gracefully. In Singles
+ * mode this serves the singles ladder bundle (doubles as fallback; check
+ * `lookup.data.format` for "bss" to know which you got).
  */
 export function useUsage(): UsageLookup | null | undefined {
-  const [usage, setUsage] = useState<UsageLookup | null | undefined>(cached);
+  const mode = useSettings((s) => s.gameMode);
+  const [, setTick] = useState(0);
   useEffect(() => {
-    if (cached !== undefined) return;
-    pending ??= load();
+    if (caches[mode] !== undefined) return;
+    pending[mode] ??= load(mode);
     let live = true;
-    pending.then((u) => live && setUsage(u));
+    void pending[mode]!.then(() => live && setTick((t) => t + 1));
     return () => {
       live = false;
     };
-  }, []);
-  return usage;
+  }, [mode]);
+  return caches[mode];
+}
+
+/** True when the given lookup is actual singles-ladder data. */
+export function isSinglesData(lookup: UsageLookup | null | undefined): boolean {
+  return !!lookup?.data.format.includes('bss');
 }

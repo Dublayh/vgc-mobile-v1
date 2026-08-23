@@ -72,9 +72,23 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   (megas inferred from held stones; SP spreads aren't published, so fill those
   in the editor).
 
+- ✅ **Post-plan additions**: Type coverage matrix on the TeamEditor ("Coverage"
+  toggle — per-type best offensive multiplier + weak/resist blocks, stacked
+  weaknesses tinted); app-wide **2v2/1v1 mode** (header chip, persisted) driving
+  every calc/audit/sweep gameType — AND the usage source: Singles mode serves
+  the real singles ranked ladder (`gen9championsbssreg<x>`, own trends; doubles
+  fallback with a label when a regulation lacks it; tournament teams remain
+  doubles events); SP formula CONFIRMED IN-GAME (Adamant 32-SP
+  Garchomp = 200 Atk, matching Showdown parity); tournament imports carry
+  published alignments; usage browser shows month-over-month trends (▲▼ rank
+  movement, "new" entrants, prior-month line in detail — snapshot embedded by
+  the usage pipeline); calc "Combo" panel: add a partner attacker and get exact
+  combined-damage KO odds over all 16×16 roll pairs.
+
 Monthly data refresh (manual until CI exists): `npm run data:usage` (env
-`MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published) and
-`npm run data:tournaments` for fresh tournament results.
+`MONTH=YYYY-MM` to pin a month; fails loudly if Smogon hasn't published; keeps
+the replaced month embedded for trends) and `npm run data:tournaments` for
+fresh tournament results.
 
 ### Dev utilities
 

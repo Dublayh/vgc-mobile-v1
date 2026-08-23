@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { getStoredGameMode } from '../../app/settings';
 import type { FieldOptions } from '../../engine/calc';
 import type { ChampionsSet } from '../../engine/types';
 
@@ -33,6 +34,9 @@ const NO_BOOSTS: BoostState = { atk: 0, spa: 0, def: 0, spd: 0 };
 interface CalcState {
   attacker: CalcSelection | null;
   defender: CalcSelection | null;
+  /** optional second attacker for combined-damage reads (doubles) */
+  attacker2: CalcSelection | null;
+  attacker2Boosts: BoostState;
   /** move used when the attacker is dex-sourced (saved sets bring their own) */
   customMove: string | null;
   gameType: 'Doubles' | 'Singles';
@@ -55,8 +59,10 @@ interface CalcState {
 const initial = {
   attacker: null as CalcSelection | null,
   defender: null as CalcSelection | null,
+  attacker2: null as CalcSelection | null,
+  attacker2Boosts: { ...NO_BOOSTS },
   customMove: null,
-  gameType: 'Doubles' as const,
+  gameType: getStoredGameMode(),
   weather: undefined,
   terrain: undefined,
   helpingHand: false,

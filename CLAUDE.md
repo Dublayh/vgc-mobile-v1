@@ -71,6 +71,13 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   SP-scaled). Consumers use `useUsage()` and MUST degrade gracefully when it
   returns null. Threat auditing: `src/engine/threat.ts` (pure, tested) +
   `usageMonToSet` in `src/features/meta/threatSet.ts`.
+- App-wide game mode: `src/app/settings.ts` (`useSettings().gameMode`,
+  persisted). ANY new damage-calc consumer must pass it as `gameType`
+  (spread penalties differ); combined-damage/partner UI is doubles-only.
+  `useUsage()` is mode-aware: Singles serves `usage/<reg>-singles.json`
+  (format `gen9championsbssreg<x>`; built best-effort by data:usage), falling
+  back to doubles — check `isSinglesData(lookup)`. Tournament data is
+  doubles-only.
 - Navigation is hash-based via the zustand store in `src/app/store.ts`
   (`#teams/<id>/<slot>`, `#dex/<speciesId>`) — no router library; extend the
   store, don't add one.
