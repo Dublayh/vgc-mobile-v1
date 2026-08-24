@@ -37,7 +37,7 @@ interface WorstRow {
 export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);
   const [teamId, setTeamId] = useState<string | null>(null);
-  const [threatName, setThreatName] = useState<string | null>(null);
+  const { threatName, openThreat } = useUI();
   const [query, setQuery] = useState('');
   const [view, setView] = useState<'worst' | 'browse'>('worst');
   const [worst, setWorst] = useState<WorstRow[] | null>(null);
@@ -208,7 +208,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
                     return (
                       <li key={r.name}>
                         <button
-                          onClick={() => setThreatName(r.name)}
+                          onClick={() => openThreat(r.name)}
                           className="flex w-full items-center gap-2.5 border-b border-ink-800/60 px-3 py-1.5 text-left hover:bg-ink-850"
                         >
                           <span className="stat-num w-5 text-right text-xs text-ink-500">
@@ -275,7 +275,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
                 return (
                   <li key={m.name}>
                     <button
-                      onClick={() => setThreatName(m.name)}
+                      onClick={() => openThreat(m.name)}
                       className="flex w-full items-center gap-2.5 border-b border-ink-800/60 px-3 py-1.5 text-left hover:bg-ink-850"
                     >
                       <span className="stat-num w-6 text-right text-xs text-ink-500">
@@ -312,7 +312,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
               </p>
             </div>
             <div className="flex flex-col items-end gap-1">
-              <button onClick={() => setThreatName(null)} className="label-caps text-gold-400">
+              <button onClick={() => openThreat(null)} className="label-caps text-gold-400">
                 Change
               </button>
               <button onClick={() => jumpToCalc(threat.name)} className="label-caps text-gold-400">

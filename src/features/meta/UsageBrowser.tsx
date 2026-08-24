@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
+import { useUI } from '../../app/store';
 import { Panel } from '../../app/ui/Panel';
 import { Sprite } from '../../app/ui/Sprite';
 import { TypeBadge } from '../../app/ui/TypeBadge';
@@ -14,17 +15,18 @@ const OhkoSweepPanel = lazy(() =>
 const pct = (v: number, digits = 1) => `${(v * 100).toFixed(digits)}%`;
 
 export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
-  const [selected, setSelected] = useState<UsageMon | null>(null);
+  const { metaMon, openMetaMon } = useUI();
   const [query, setQuery] = useState('');
 
+  const selected = metaMon ? (usage.get(metaMon) ?? null) : null;
   if (selected) {
     return (
       <MonUsageDetail
         mon={selected}
         usage={usage}
         lookup={lookup}
-        onBack={() => setSelected(null)}
-        onJump={(m) => setSelected(m)}
+        onBack={() => openMetaMon(null)}
+        onJump={(m) => openMetaMon(m.name)}
       />
     );
   }
@@ -48,7 +50,7 @@ export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: De
         return (
           <li key={m.name}>
             <button
-              onClick={() => setSelected(m)}
+              onClick={() => openMetaMon(m.name)}
               className="flex w-full items-center gap-2.5 border-b border-ink-800/60 px-3 py-1.5 text-left hover:bg-ink-850"
             >
               <span className="stat-num w-6 text-right text-xs text-ink-500">{m.rank}</span>

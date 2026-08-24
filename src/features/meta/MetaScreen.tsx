@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useSettings } from '../../app/settings';
+import { useUI, type MetaSegment } from '../../app/store';
 import { EmptyState } from '../../app/ui/EmptyState';
 import { Icon } from '../../app/ui/Icon';
 import type { DexLookup } from '../../data/dex';
@@ -9,11 +9,9 @@ import { ThreatAudit } from './ThreatAudit';
 import { TournamentTeams } from './TournamentTeams';
 import { UsageBrowser } from './UsageBrowser';
 
-type Segment = 'usage' | 'speed' | 'threats' | 'tourney';
-
 export function MetaScreen({ lookup }: { lookup: DexLookup }) {
   const usage = useUsage();
-  const [segment, setSegment] = useState<Segment>('usage');
+  const { metaSegment: segment, setMetaSegment } = useUI();
   const { gameMode } = useSettings();
 
   if (usage === undefined) {
@@ -54,11 +52,11 @@ export function MetaScreen({ lookup }: { lookup: DexLookup }) {
             ['speed', 'Speed'],
             ['threats', 'Threats'],
             ['tourney', 'Tourney'],
-          ] as [Segment, string][]
+          ] as [MetaSegment, string][]
         ).map(([id, label]) => (
           <button
             key={id}
-            onClick={() => setSegment(id)}
+            onClick={() => setMetaSegment(id)}
             className={`chamfer-sm px-3 py-1 font-display text-sm font-semibold tracking-[0.1em] uppercase ${
               segment === id ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
             }`}

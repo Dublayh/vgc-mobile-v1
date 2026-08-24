@@ -79,8 +79,11 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   back to doubles — check `isSinglesData(lookup)`. Tournament data is
   doubles-only.
 - Navigation is hash-based via the zustand store in `src/app/store.ts`
-  (`#teams/<id>/<slot>`, `#dex/<speciesId>`) — no router library; extend the
-  store, don't add one.
+  (`#teams/<id>/<slot>`, `#dex/<speciesId>`, `#meta/<segment>/<mon>`) — no
+  router library; extend the store, don't add one. Forward navigation PUSHES
+  history (browser/phone back pops one nested level; popstate re-parses) —
+  any NEW nested screen must live in this store, not component-local state,
+  or the back button won't see it.
 - Legality: build the context once via `lookup.legalityContext()` and call
   `setViolations`/`teamViolations` (`src/engine/legality.ts`); render results as
   ambient red badges, never modals.
