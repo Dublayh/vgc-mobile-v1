@@ -72,7 +72,11 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   (megas inferred from held stones; SP spreads aren't published, so fill those
   in the editor).
 
-- ✅ **Post-plan additions**: Type coverage matrix on the TeamEditor ("Coverage"
+- ✅ **Post-plan additions**: Calc › **OHKO sweep** screen — pick up to 4 targets
+  (usage-seeded meta spreads) and sweep the regulation for attackers that OHKO
+  ALL of them (or ANY, toggleable), ranked by weakest/best matchup, with
+  attacker filters (type combo + ability) applied pre-sweep for instant filtered
+  runs, per-target move cells verifiable in the Matchup calc; type coverage matrix on the TeamEditor ("Coverage"
   toggle — per-type best offensive multiplier + weak/resist blocks, stacked
   weaknesses tinted); app-wide **2v2/1v1 mode** (header chip, persisted) driving
   every calc/audit/sweep gameType — AND the usage source: Singles mode serves
@@ -99,7 +103,8 @@ fresh tournament results.
   sourcing + scratch edits), `smoke-meta.mjs` (usage/speed/threats),
   `smoke-advisor.mjs` (counters, deep link, completer loop),
   `smoke-share.mjs` (share URL round trip), `smoke-tourney.mjs` (tournament
-  list → import → editor, mega-from-stone inference).
+  list → import → editor, mega-from-stone inference), `smoke-multisweep.mjs`
+  (Calc › OHKO sweep: multi-target intersection + cell verify).
 - Append `?seed` to any dev URL to (re)create the demo team, then deep-link:
   `/?seed#teams/demo-team` (team editor) · `/?seed#teams/demo-team/0` (set editor) ·
   `#dex/garchomp` (dex detail).

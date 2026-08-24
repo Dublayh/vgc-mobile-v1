@@ -22,6 +22,7 @@ import { usageMonToSet } from '../meta/threatSet';
 import { useCalc, type BoostState, type CalcSelection } from './calcStore';
 import { ComboPanel } from './ComboPanel';
 import { speciesToSet } from './jumpToCalc';
+import { MultiSweep } from './MultiSweep';
 import { OptimizerPanel } from './OptimizerPanel';
 
 interface SlotOption {
@@ -36,6 +37,7 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
   const calc = useCalc();
   const usage = useUsage();
   const [showPartner, setShowPartner] = useState(calc.attacker2 !== null);
+  const [screen, setScreen] = useState<'matchup' | 'sweep'>('matchup');
 
   const slotOptions: SlotOption[] = useMemo(
     () =>
@@ -76,6 +78,31 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex gap-1.5">
+        {(
+          [
+            ['matchup', 'Matchup'],
+            ['sweep', 'OHKO sweep'],
+          ] as ['matchup' | 'sweep', string][]
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setScreen(id)}
+            className={`chamfer-sm px-3 py-1 font-display text-sm font-semibold tracking-[0.1em] uppercase ${
+              screen === id ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {screen === 'sweep' && (
+        <MultiSweep lookup={lookup} onVerified={() => setScreen('matchup')} />
+      )}
+
+      {screen === 'matchup' && (
+        <>
       <PokemonPanel
         role="Attacker"
         selected={calc.attacker}
@@ -179,6 +206,8 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
             onUpdateAttacker={updateSet('attacker')}
             onUpdateDefender={updateSet('defender')}
           />
+        </>
+      )}
         </>
       )}
     </div>
