@@ -20,6 +20,7 @@ import {
   prepareDefender,
   sweepOne,
   type OhkoEntry,
+  type OhkoMoveOption,
 } from '../analysis/ohkoSweep';
 import { usageMonToSet } from '../meta/threatSet';
 import { useCalc } from './calcStore';
@@ -130,14 +131,19 @@ export function MultiSweep({
   };
 
   /** Load one cell's exact matchup into the Matchup screen for verification. */
-  const verify = (row: SweepRowData, targetIdx: number) => {
+  const verify = (row: SweepRowData, targetIdx: number, option?: OhkoMoveOption) => {
     const cell = row.cells[targetIdx];
     const attackerSpecies = lookup.getSpecies(row.name);
     if (!cell || !attackerSpecies) return;
-    const set = maxAttackerSet(attackerSpecies, cell.category);
-    set.moves = [cell.move];
+    const pick = option ?? cell;
+    const set = maxAttackerSet(attackerSpecies, pick.category);
+    set.moves = [pick.move];
     calc.patch({
-      attacker: { set, sourceLabel: `max offense (${cell.spreadLabel})`, fromTeam: false },
+      attacker: {
+        set,
+        sourceLabel: `max offense (${pick.category === 'Physical' ? 'Adamant 32 Atk' : 'Modest 32 SpA'})`,
+        fromTeam: false,
+      },
       defender: {
         set: structuredClone(targetSet(targets[targetIdx])),
         sourceLabel: 'meta set',
@@ -376,7 +382,7 @@ function MultiRow({
 }: {
   row: SweepRowData;
   targets: DexSpecies[];
-  onVerify: (row: SweepRowData, targetIdx: number) => void;
+  onVerify: (row: SweepRowData, targetIdx: number, option?: OhkoMoveOption) => void;
   danger?: boolean;
 }) {
   return (
@@ -392,35 +398,99 @@ function MultiRow({
       </div>
       <div className="mt-1 ml-9 flex flex-col gap-0.5">
         {row.cells.map((cell, i) => (
-          <button
+          <TargetCell
             key={targets[i].id}
-            onClick={() => onVerify(row, i)}
-            disabled={!cell}
-            className="flex w-full items-center gap-1.5 py-0.5 text-left text-xs text-ink-300 hover:bg-ink-850 disabled:opacity-50"
-            title="Verify in matchup calc"
+            target={targets[i]}
+            cell={cell}
+            onVerify={(option) => onVerify(row, i, option)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * One target's line: the strongest PRACTICAL move headlines (same rule as the
+ * dex OHKO sweep) with a +N expander listing every other qualifying move.
+ */
+function TargetCell({
+  target,
+  cell,
+  onVerify,
+}: {
+  target: DexSpecies;
+  cell: OhkoEntry | null;
+  onVerify: (option?: OhkoMoveOption) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const extra = cell ? cell.alternatives.filter((o) => o.move !== cell.move) : [];
+
+  return (
+    <div>
+      <div className="flex w-full items-center gap-1.5">
+        <button
+          onClick={() => onVerify()}
+          disabled={!cell}
+          className="flex flex-1 items-center gap-1.5 py-0.5 text-left text-xs text-ink-300 hover:bg-ink-850 disabled:opacity-50"
+          title="Verify in matchup calc"
+        >
+          <span className="label-caps w-24 truncate">{target.name}</span>
+          {cell ? (
+            <>
+              <TypeBadge type={cell.moveType} size="sm" />
+              <span className="flex-1">{cell.move}</span>
+              {cell.drawback && (
+                <span className="chamfer-sm bg-warn/15 px-1 text-[0.65rem] text-warn">
+                  {cell.drawback}
+                </span>
+              )}
+              <span
+                className={`stat-num ${cell.maxPercent >= 100 ? 'text-illegal' : 'text-warn'}`}
+              >
+                {cell.maxPercent}%
+              </span>
+            </>
+          ) : (
+            <span className="text-ink-500">no damaging answer</span>
+          )}
+        </button>
+        {extra.length > 0 && (
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="label-caps shrink-0 px-1 text-ink-500 hover:text-gold-400"
+            aria-label={`${extra.length} more moves vs ${target.name}`}
           >
-            <span className="label-caps w-24 truncate">{targets[i].name}</span>
-            {cell ? (
-              <>
-                <TypeBadge type={cell.moveType} size="sm" />
-                <span className="flex-1">{cell.move}</span>
-                {cell.drawback && (
+            {open ? '▾' : `+${extra.length}`}
+          </button>
+        )}
+      </div>
+      {open && (
+        <ul className="mb-1 ml-[6.75rem] flex flex-col gap-0.5">
+          {extra.map((o) => (
+            <li key={o.move}>
+              <button
+                onClick={() => onVerify(o)}
+                className="flex w-full items-center gap-1.5 py-0.5 text-left text-[0.7rem] text-ink-400 hover:bg-ink-850"
+                title="Verify in matchup calc"
+              >
+                <TypeBadge type={o.moveType} size="sm" />
+                <span className="flex-1">{o.move}</span>
+                {o.drawback && (
                   <span className="chamfer-sm bg-warn/15 px-1 text-[0.65rem] text-warn">
-                    {cell.drawback}
+                    {o.drawback}
                   </span>
                 )}
                 <span
-                  className={`stat-num ${cell.maxPercent >= 100 ? 'text-illegal' : 'text-warn'}`}
+                  className={`stat-num ${o.maxPercent >= 100 ? 'text-illegal' : 'text-ink-500'}`}
                 >
-                  {cell.maxPercent}%
+                  {o.maxPercent}%
                 </span>
-              </>
-            ) : (
-              <span className="text-ink-500">no damaging answer</span>
-            )}
-          </button>
-        ))}
-      </div>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
