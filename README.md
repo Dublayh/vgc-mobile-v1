@@ -34,8 +34,12 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
 - ✅ **M4a — Meta intelligence (foundation)**: Smogon usage pipeline
   (`npm run data:usage` — real Champions Reg M-B ladder stats, ~1.76M battles,
   natively SP-scaled spreads), Meta tab with usage browser (moves/items/abilities/
-  spreads/teammates per mon), L50 speed-tier ladder (team vs meta common+max
-  speeds, Tailwind modes), threat audit (meta mon's most common set vs. every
+  spreads/teammates per mon), L50 speed-tier ladder covering the WHOLE
+  regulation (every forme's max — or min, for Trick Room — plus common ladder
+  spreads; All/Meta scope, name filter, Tailwind modes, team highlighted;
+  plus a two-mon Compare panel: min/common/max side by side with exact
+  "N SP +Spe / M SP neutral to outspeed" crossover numbers),
+  threat audit (meta mon's most common set vs. every
   team slot: damage both ways, speed order, safe/shaky/loses verdicts), and
   one-tap "meta spreads" suggestions in the SetEditor.
 - ✅ **M4b — Threat Advisor + Team Completer**: CounterFinder (top-80 meta sets
