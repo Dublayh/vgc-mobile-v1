@@ -16,6 +16,9 @@ and milestones. `README.md` tracks current status and open TODOs.
 - Alignments = natures (same ±10%, modeled as `AlignmentName` in `src/engine/types.ts`).
 - Mega Evolution is core; `@pkmn/dex` 0.10.x already contains Champions megas
   (Staraptor-Mega, Raichu-Mega-X/Y, Sceptile-Mega, ...) — verified, no override layer needed.
+  Reg M-C added **-Mega-Z formes** (Absol/Garchomp/Lucario-Mega-Z, own stones like
+  "Garchompite Z"): any mega-forme regex must accept `(-[XYZ])?`, and
+  build-regulation resolves the `-Mega-Z` suffix.
 - $0 runtime: static hosting only, no backend, no runtime AI/API calls ever.
 
 ## Design system — read `docs/design-system.md` before writing any UI
@@ -49,8 +52,15 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   ladder-observed usage move against the learnsets and fails if any is missing —
   that failure means the vendored file is stale or a forme's learnset source is
   wrong (megas resolve to base species; Floette-Mega → Floette-Eternal).
-- The roster in `scripts/regulation-source/m-b.ts` is a STARTER list, not the real
-  Reg M-B roster (see README TODOs).
+- Rosters in `scripts/regulation-source/` are REAL (m-b and m-c both extracted from
+  Showdown's champions mod formats-data and cross-checked against Serebii; the
+  `champions` mod always IS the current regulation — old regs get frozen into
+  suffixed mods like `championsregmb`). Current reg = m-c
+  (`DEFAULT_REGULATION` in regulation-source/index.ts). A brand-new regulation
+  has no ladder stats until Smogon publishes its first month: meta.json carries
+  `previousRegulation`, `useUsage()` falls back to that reg's bundle and sets
+  `lookup.staleRegulation` (the Meta tab banners it), and build-dex cross-checks
+  against the fallback bundle.
 - TypeScript 7 (native): no `baseUrl` in tsconfig; use relative `paths`.
 - Tests: `npm test` (Vitest, node env). The golden calc suite in
   `src/engine/calc.test.ts` is the engine acceptance gate — extend it with any
@@ -62,9 +72,12 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   never an API call (plan §5).
 - Tournament teams: schema in `src/data/tournaments.ts`; produced by
   `scripts/build-tournaments.ts` from the Limitless public API (documented,
-  keyless — never scrape HTML sources; a name-alias map at the top of the
-  script handles Limitless↔dex naming quirks). Megas arrive as base species +
-  stone item; the importer infers the forme from the stone.
+  keyless — never scrape HTML sources; name-alias maps at the top of the
+  script handle Limitless↔dex naming quirks and organizer typos). Megas arrive
+  as base species + stone item; the importer infers the forme from the stone.
+  Rollover fallback: when Limitless lacks the new reg's format id (organizers
+  tag events with the old id or CUSTOM), the script falls back to matching
+  event names + dates against the regulation start — same JSON API.
 - Usage stats: schema pinned in `src/data/usage.ts`; produced by
   `scripts/build-usage.ts` from Smogon chaos JSON (format
   `gen9championsvgc2026regmb-<rating>`; Champions spreads are natively

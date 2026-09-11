@@ -16,7 +16,7 @@ const OUT_DIR = join(import.meta.dirname, '..', 'public', 'data');
 
 function resolveMegaFormes(species: string): string[] {
   const formes: string[] = [];
-  for (const suffix of ['-Mega', '-Mega-X', '-Mega-Y']) {
+  for (const suffix of ['-Mega', '-Mega-X', '-Mega-Y', '-Mega-Z']) {
     const forme = Dex.species.get(species + suffix);
     if (forme.exists) formes.push(forme.name);
   }
@@ -91,11 +91,20 @@ for (const source of REGULATIONS) {
   );
 }
 
+// The most recent regulation that ended before the current one started — the
+// app serves its usage bundle (labeled) until Smogon publishes the new reg's
+// first month of ladder stats.
+const currentSource = REGULATIONS.find((r) => r.id === current)!;
+const previous = REGULATIONS.filter(
+  (r) => r.id !== current && r.dateRange[0] < currentSource.dateRange[0],
+).sort((a, b) => (a.dateRange[0] < b.dateRange[0] ? 1 : -1))[0];
+
 writeFileSync(
   join(OUT_DIR, 'meta.json'),
   JSON.stringify(
     {
       currentRegulation: current,
+      ...(previous ? { previousRegulation: previous.id } : {}),
       dataVersion: 1,
       generatedAt: new Date().toISOString(),
     },

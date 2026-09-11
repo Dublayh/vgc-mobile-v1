@@ -1,7 +1,7 @@
 {
   "name": "vgc-mobile-v1",
   "version": "0.1.0",
-  "description": "Pokémon Champions team builder & damage calculator PWA (Reg M-B)",
+  "description": "Pokémon Champions team builder & damage calculator PWA (Reg M-C)",
   "private": true,
   "type": "module",
   "scripts": {

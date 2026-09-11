@@ -54,7 +54,7 @@ function parseHeader(line: string): { species: string; item?: string } {
 
 /** Mega formes come in as their own species name ("Garchomp-Mega"). */
 function splitMegaForme(species: string): { species: string; megaStone?: string } {
-  const m = species.match(/^(.*)-Mega(-[XY])?$/);
+  const m = species.match(/^(.*)-Mega(-[XYZ])?$/);
   return m ? { species: m[1], megaStone: species } : { species };
 }
 

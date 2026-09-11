@@ -37,6 +37,14 @@ export function MetaScreen({ lookup }: { lookup: DexLookup }) {
             : 'Singles mode: no singles ladder bundle for this regulation — showing doubles usage.'}
         </p>
       )}
+      {usage.staleRegulation && (
+        <p className="flex items-center gap-2 border border-warn/40 bg-warn/10 px-2.5 py-1.5 text-xs text-warn">
+          <Icon name="alert" size={14} className="shrink-0" />
+          New regulation — no ladder stats published for it yet. Showing Reg{' '}
+          {usage.staleRegulation.toUpperCase()} usage ({usage.data.month}) until Smogon posts the
+          first month.
+        </p>
+      )}
       {usage.data.synthetic && (
         <p className="flex items-center gap-2 border border-warn/40 bg-warn/10 px-2.5 py-1.5 text-xs text-warn">
           <Icon name="alert" size={14} className="shrink-0" />

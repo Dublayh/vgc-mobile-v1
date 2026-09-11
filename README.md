@@ -1,7 +1,7 @@
 # Champions Team Builder
 
 A free, installable PWA for building and analyzing teams for Pokémon Champions ranked
-(currently Reg M-B), with accurate damage calcs using the Champions Stat Point (SP) system.
+(currently Reg M-C), with accurate damage calcs using the Champions Stat Point (SP) system.
 No backend, no runtime AI — everything runs client-side against static data bundles.
 
 Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline, milestones).
@@ -62,12 +62,18 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   one-tap apply), install prompt, configurable base path, GitHub Actions
   workflows (deploy on push + monthly Smogon data cron — activate by pushing
   this repo to GitHub and enabling Pages).
-- ✅ **M6 — Regulation swap proven**: multi-regulation pipeline
-  (`CURRENT_REG=m-c npm run data:regulation && npm run data:dex` swaps the whole
-  app — header, dex roster, legality, meta degradation — with zero code changes;
-  fake M-C fixture in `scripts/regulation-source/m-c.ts`). When the real M-C
-  lands: replace that file's roster, run `npm run data:all` with CURRENT_REG=m-c,
-  and add usage once Smogon publishes the new ladder format.
+- ✅ **M6 — Regulation swap proven, then done for real**: multi-regulation
+  pipeline swaps the whole app (header, dex roster, legality, meta) with zero
+  code changes. **Reg M-C is live and current** (2026-09-09 →, Season M-6):
+  real roster in `scripts/regulation-source/m-c.ts` extracted from Showdown's
+  champions mod + cross-checked on Serebii — a strict superset of M-B: +25
+  species (Salamence, Rillaboom, Cinderace, Inteleon, Baxcalibur, Golisopod,
+  Toxtricity, ...), +3 mega lines (Salamence/Golisopod/Baxcalibur), and the new
+  **Mega-Z formes** (Absol-/Garchomp-/Lucario-Mega-Z with their own Z stones).
+  Until Smogon publishes M-C's first ladder month (~Oct 5), `useUsage()` serves
+  the final M-B month (2026-08, doubles + singles) flagged via
+  `staleRegulation` and bannered in the Meta tab; the monthly data cron picks
+  up real M-C stats automatically once they exist.
 
 - ✅ **Tournament teams (ProvenTeams)**: Meta → Tourney lists recent high-placing
   Champions tournament teams from the Limitless public API (documented, keyless —
@@ -126,8 +132,7 @@ npm run data:all     # regenerate public/data/*.json from scripts/regulation-sou
 
 ```
 scripts/
-  regulation-source/m-b.ts   editable roster source (⚠ starter list — sync from
-                             Showdown's Champions format defs before real use)
+  regulation-source/m-b.ts   real Reg M-B roster (frozen); m-c.ts is current
   build-regulation.ts        → public/data/regulations/m-b.json + meta.json
   build-dex.ts               → public/data/dex.json (trimmed to reg roster)
 src/engine/
@@ -156,8 +161,8 @@ src/storage/    Dexie (IndexedDB) schema for saved teams
 
 ## Open TODOs before M1 sign-off
 
-1. Replace the starter roster in `scripts/regulation-source/m-b.ts` with the real
-   Reg M-B list (208 species + ~76 megas) from Showdown's `config/formats.ts`.
+1. ~~Replace the starter roster~~ — RESOLVED: real rosters for M-B and M-C are in
+   `scripts/regulation-source/`, extracted from Showdown's champions mod.
 2. ~~Verify the SP rounding mode~~ — RESOLVED: engine matches Showdown's champions
    mod formula exactly (SP added before the alignment multiplier; differential
    test = 0 mismatches). Note: "Export for calc sites" still loses 1 point on

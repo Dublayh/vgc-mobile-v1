@@ -9,6 +9,13 @@
  *
  * - Regulation comes from public/data/meta.json → currentRegulation ("m-b" →
  *   Limitless format id "M-B"), so the format filter IS the regulation window.
+ * - Rollover fallback: right after a regulation change Limitless may not have
+ *   the new format id yet — organizers run events under the old id or CUSTOM
+ *   with the reg only in the event NAME. If the format query finds nothing,
+ *   we scan recent events (same JSON API, no format filter) and keep ones
+ *   dated on/after the regulation start whose name mentions the reg
+ *   (e.g. "Reg M-C", "REG MC"). The format-id path wins again automatically
+ *   once Limitless adds the id.
  * - Keeps the most recent MAX_EVENTS completed events that published open
  *   teamlists, top TOP_CUT placings each (fewer if the event has fewer).
  * - Species/items/abilities/moves are normalized through @pkmn/dex. Teams with
@@ -35,6 +42,10 @@ const ITEM_ALIASES: Record<string, string> = {
 };
 const SPECIES_ALIASES: Record<string, string> = {
   eternalflowerfloette: 'Floette-Eternal',
+};
+// Decklists are sometimes hand-entered by organizers — catch common typos.
+const MOVE_ALIASES: Record<string, string> = {
+  mysticfire: 'Mystical Fire',
 };
 
 interface TournamentData {
@@ -127,7 +138,7 @@ function normAbility(raw: string): string {
 }
 
 function normMove(raw: string): string {
-  const move = Dex.moves.get(raw);
+  const move = Dex.moves.get(MOVE_ALIASES[toID(raw)] ?? raw);
   if (move.exists) return move.name;
   warnOnce(`Unknown move "${raw}" — keeping source spelling`);
   return raw;
@@ -169,10 +180,65 @@ async function main(): Promise<void> {
   const meta = JSON.parse(readFileSync(join(DATA_DIR, 'meta.json'), 'utf8'));
   const regulation: string = meta.currentRegulation; // e.g. "m-b"
   const formatId = regulation.toUpperCase(); // Limitless format id, e.g. "M-B"
+  // Regulation start date gates the name-matched rollover fallback below.
+  const regStart: string = JSON.parse(
+    readFileSync(join(DATA_DIR, 'regulations', `${regulation}.json`), 'utf8'),
+  ).dateRange[0];
 
   const events: TournamentEvent[] = [];
   let teamsDropped = 0;
 
+  // Fetch one event's standings and push it if it's finished with published
+  // teamlists. formatLabel overrides the API's format tag for name-matched
+  // fallback events (tagged with the OLD reg id or CUSTOM on Limitless).
+  const processEvent = async (t: ApiTournament, formatLabel?: string): Promise<void> => {
+    await sleep(FETCH_DELAY_MS);
+
+    let standings: ApiStanding[];
+    try {
+      standings = await fetchJson<ApiStanding[]>(`${API_BASE}/tournaments/${t.id}/standings`);
+    } catch (err) {
+      console.warn(`  Skipping "${t.name}": ${(err as Error).message}`);
+      return;
+    }
+
+    // Completed events have numeric final placings; in-progress ones are null.
+    const finished = standings.filter((s) => typeof s.placing === 'number');
+    if (finished.length === 0) {
+      console.log(`  Skipping "${t.name}" (${t.date}): not finished yet`);
+      return;
+    }
+
+    const topCut = finished
+      .sort((a, b) => (a.placing as number) - (b.placing as number))
+      .filter((s) => (s.placing as number) <= TOP_CUT);
+
+    const placements: TournamentTeam[] = [];
+    for (const row of topCut) {
+      const team = toTeam(row, t.name);
+      if (team) placements.push(team);
+      else if (typeof row.placing === 'number' && Array.isArray(row.decklist)) teamsDropped++;
+    }
+    if (placements.length === 0) {
+      console.log(`  Skipping "${t.name}" (${t.date}): no published teamlists in the top ${TOP_CUT}`);
+      return;
+    }
+
+    events.push({
+      id: t.id,
+      name: t.name,
+      date: t.date,
+      format: formatLabel ?? `Reg ${t.format}`,
+      playerCount: t.players,
+      url: `https://play.limitlesstcg.com/tournament/${t.id}`,
+      placements,
+    });
+    console.log(
+      `Kept "${t.name}" (${t.date.slice(0, 10)}, ${t.players} players, ${placements.length} teams)`,
+    );
+  };
+
+  // Primary pass: trust the Limitless format tag.
   for (let page = 1; page <= MAX_PAGES && events.length < MAX_EVENTS; page++) {
     const listUrl = `${API_BASE}/tournaments?game=VGC&format=${encodeURIComponent(formatId)}&limit=50&page=${page}`;
     const list = await fetchJson<ApiTournament[]>(listUrl);
@@ -183,50 +249,36 @@ async function main(): Promise<void> {
 
     for (const t of list) {
       if (events.length >= MAX_EVENTS) break;
-      await sleep(FETCH_DELAY_MS);
+      await processEvent(t);
+    }
+  }
 
-      let standings: ApiStanding[];
-      try {
-        standings = await fetchJson<ApiStanding[]>(`${API_BASE}/tournaments/${t.id}/standings`);
-      } catch (err) {
-        console.warn(`  Skipping "${t.name}": ${(err as Error).message}`);
-        continue;
-      }
-
-      // Completed events have numeric final placings; in-progress ones are null.
-      const finished = standings.filter((s) => typeof s.placing === 'number');
-      if (finished.length === 0) {
-        console.log(`  Skipping "${t.name}" (${t.date}): not finished yet`);
-        continue;
-      }
-
-      const topCut = finished
-        .sort((a, b) => (a.placing as number) - (b.placing as number))
-        .filter((s) => (s.placing as number) <= TOP_CUT);
-
-      const placements: TournamentTeam[] = [];
-      for (const row of topCut) {
-        const team = toTeam(row, t.name);
-        if (team) placements.push(team);
-        else if (typeof row.placing === 'number' && Array.isArray(row.decklist)) teamsDropped++;
-      }
-      if (placements.length === 0) {
-        console.log(`  Skipping "${t.name}" (${t.date}): no published teamlists in the top ${TOP_CUT}`);
-        continue;
-      }
-
-      events.push({
-        id: t.id,
-        name: t.name,
-        date: t.date,
-        format: `Reg ${t.format}`,
-        playerCount: t.players,
-        url: `https://play.limitlesstcg.com/tournament/${t.id}`,
-        placements,
-      });
-      console.log(
-        `Kept "${t.name}" (${t.date.slice(0, 10)}, ${t.players} players, ${placements.length} teams)`,
+  // Rollover fallback: no events carry the new format id yet — match recent
+  // events by date + name instead (see header comment).
+  if (events.length === 0) {
+    // "m-c" → /(^|[^a-z0-9])m[\s.-]?c([^a-z0-9]|$)/i — hits "Reg M-C", "REG MC",
+    // "(M-C)"; the boundaries keep letter runs like "McDonald" out.
+    const nameRe = new RegExp(
+      `(^|[^a-z0-9])${regulation.split('-').join('[\\s.-]?')}([^a-z0-9]|$)`,
+      'i',
+    );
+    console.log(
+      `No ${formatId}-tagged events on Limitless yet — scanning recent events for ` +
+        `"${formatId}" in the name, dated on/after ${regStart}.`,
+    );
+    for (let page = 1; page <= MAX_PAGES && events.length < MAX_EVENTS; page++) {
+      const list = await fetchJson<ApiTournament[]>(
+        `${API_BASE}/tournaments?game=VGC&limit=50&page=${page}`,
       );
+      if (list.length === 0) break;
+      list.sort((a, b) => b.date.localeCompare(a.date));
+      for (const t of list) {
+        if (events.length >= MAX_EVENTS) break;
+        if (t.date.slice(0, 10) < regStart || !nameRe.test(t.name)) continue;
+        await processEvent(t, `Reg ${formatId}`);
+      }
+      // Newest-first pages: once a whole page predates the reg, stop paging.
+      if (list[list.length - 1].date.slice(0, 10) < regStart) break;
     }
   }
 

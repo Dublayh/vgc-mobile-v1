@@ -37,6 +37,12 @@ export interface PrevStats {
 
 export class UsageLookup {
   readonly data: UsageData;
+  /**
+   * Set (to the older regulation's id) when this bundle belongs to a PREVIOUS
+   * regulation, served as a fallback because Smogon hasn't published the
+   * current regulation's first ladder month yet. Consumers should label it.
+   */
+  staleRegulation?: string;
   private byName = new Map<string, UsageMon>();
   private prevByName = new Map<string, PrevStats>();
 

@@ -126,7 +126,7 @@ async function buildSpecies(name: string): Promise<DexSpecies> {
 
   // Some Champions megas (Meowstic-M-Mega/-F-Mega) lack the isMega flag but
   // carry "Mega" in their forme name — treat those as megas too.
-  const isMega = !!s.isMega || /(^|-)Mega(-[XY])?$/.test(s.forme ?? '');
+  const isMega = !!s.isMega || /(^|-)Mega(-[XYZ])?$/.test(s.forme ?? '');
 
   // Megas learn what their base forme learns — using the roster-legal forme
   // of that base only when the base itself is illegal (Floette-Eternal case).
@@ -246,9 +246,20 @@ console.log(
 // A miss means the vendored champions mod file is stale (REFRESH_MODS=1) or a
 // forme resolves its learnset against the wrong source.
 try {
-  const usage = JSON.parse(
-    readFileSync(join(DATA_DIR, 'usage', `${meta.currentRegulation}.json`), 'utf8'),
-  );
+  // Prefer the current regulation's bundle; a fresh regulation has none until
+  // Smogon publishes, so fall back to the previous reg's (the app serves that
+  // same bundle meanwhile, and its moves/items must still all resolve).
+  let usage: { mons?: { name: string; moves: [string, number][]; items: [string, number][] }[] };
+  try {
+    usage = JSON.parse(
+      readFileSync(join(DATA_DIR, 'usage', `${meta.currentRegulation}.json`), 'utf8'),
+    );
+  } catch {
+    usage = JSON.parse(
+      readFileSync(join(DATA_DIR, 'usage', `${meta.previousRegulation}.json`), 'utf8'),
+    );
+    console.log(`  (cross-checking against previous reg "${meta.previousRegulation}" usage)`);
+  }
   const byId = new Map(species.map((s) => [toId(s.name), s]));
   let misses = 0;
   for (const mon of usage.mons ?? []) {
