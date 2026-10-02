@@ -70,13 +70,32 @@ interface ChaosFile {
 
 const round4 = (n: number): number => Math.round(n * 1e4) / 1e4;
 
+const sumOf = (map: Record<string, number>): number =>
+  Object.values(map).reduce((sum, w) => sum + w, 0);
+
 /** Normalize a weighted-count map to shares of its own sum (0..1). */
 function toShares(map: Record<string, number>): [string, number][] {
-  const entries = Object.entries(map);
-  const total = entries.reduce((sum, [, w]) => sum + w, 0);
+  const total = sumOf(map);
   if (total <= 0) return [];
-  return entries
+  return Object.entries(map)
     .map(([k, w]): [string, number] => [k, w / total])
+    .sort((a, b) => b[1] - a[1]);
+}
+
+/**
+ * Normalize a weighted-count map to "fraction of this mon's sets" (0..1).
+ * Chaos Moves/Teammates are raw weighted counts, NOT shares: a mon's Moves
+ * sum to 4× its weighted set count (four slots) and its Teammates to ~5×
+ * (five partners), so dividing by their own sum would report a move on
+ * every set as 25% and a partner on 40% of teams as ~8%. The mon's weighted
+ * set count is the sum of its Items (== Abilities) map — verified equal for
+ * every species in the 2026-09 Champions files.
+ */
+function toRates(map: Record<string, number>, setCount: number): [string, number][] {
+  if (setCount <= 0) return [];
+  return Object.entries(map)
+    .filter(([, w]) => w > 0)
+    .map(([k, w]): [string, number] => [k, Math.min(1, w / setCount)])
     .sort((a, b) => b[1] - a[1]);
 }
 
@@ -176,6 +195,9 @@ function transformMon(speciesName: string, mon: ChaosMon, rank: number): UsageMo
   const species = Dex.species.get(speciesName);
   if (!species.exists) return null;
 
+  // Weighted number of sets for this mon (see toRates).
+  const setCount = sumOf(mon.Items) || sumOf(mon.Abilities);
+
   const abilities = displayNames(
     toShares(mon.Abilities),
     (id) => {
@@ -195,8 +217,9 @@ function transformMon(speciesName: string, mon: ChaosMon, rank: number): UsageMo
     8,
   );
 
+  // Fraction of sets carrying the move (a 4-move staple ≈ 1.0).
   const moves = displayNames(
-    toShares(mon.Moves),
+    toRates(mon.Moves, setCount),
     (id) => {
       if (id === '' || id === 'nothing') return null; // empty moveslot
       const move = Dex.moves.get(id);
@@ -205,12 +228,11 @@ function transformMon(speciesName: string, mon: ChaosMon, rank: number): UsageMo
     10,
   );
 
-  // Teammate weights can be negative (deviation-adjusted); keep positive only.
-  const positiveTeammates = Object.fromEntries(
-    Object.entries(mon.Teammates).filter(([, w]) => w > 0),
-  );
+  // Fraction of this mon's teams that also carry the partner. Older chaos
+  // files carried deviation-adjusted (possibly negative) weights; toRates
+  // drops non-positive entries either way.
   const teammates = displayNames(
-    toShares(positiveTeammates),
+    toRates(mon.Teammates, setCount),
     (name) => {
       const s = Dex.species.get(name);
       return s.exists ? s.name : null;

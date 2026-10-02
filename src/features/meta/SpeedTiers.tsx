@@ -1,5 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
+import { useUI } from '../../app/store';
+import { Chip, Segmented } from '../../app/ui/Chip';
 import { SearchSelect } from '../../app/ui/SearchSelect';
 import { Sprite } from '../../app/ui/Sprite';
 import type { DexLookup, DexSpecies } from '../../data/dex';
@@ -188,7 +190,7 @@ function SpeedCompare({ lookup, usage }: { lookup: DexLookup; usage: UsageLookup
  */
 export function SpeedTiers({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);
-  const [teamId, setTeamId] = useState<string | null>(null);
+  const { metaTeamId: teamId, setMetaTeamId: setTeamId } = useUI();
   const [tailwind, setTailwind] = useState<TailwindMode>('none');
   const [scope, setScope] = useState<Scope>('all');
   const [variant, setVariant] = useState<Variant>('max');
@@ -275,11 +277,6 @@ export function SpeedTiers({ usage, lookup }: { usage: UsageLookup; lookup: DexL
   const shown = q ? tiers.filter((t) => t.mine || t.label.toLowerCase().includes(q)) : tiers;
   const maxSpeed = shown[0]?.speed ?? 1;
 
-  const chip = (active: boolean) =>
-    `chamfer-sm px-2 py-0.5 font-display text-xs font-semibold tracking-[0.1em] uppercase ${
-      active ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
-    }`;
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-1.5">
@@ -296,24 +293,26 @@ export function SpeedTiers({ usage, lookup }: { usage: UsageLookup; lookup: DexL
             ))}
           </select>
         )}
-        <button onClick={() => setScope('all')} className={chip(scope === 'all')}>
+        <Chip active={scope === 'all'} onClick={() => setScope('all')}>
           All {lookup.species.length}
-        </button>
-        <button onClick={() => setScope('meta')} className={chip(scope === 'meta')}>
+        </Chip>
+        <Chip active={scope === 'meta'} onClick={() => setScope('meta')}>
           Meta 25
-        </button>
-        <button onClick={() => setVariant('max')} className={chip(variant === 'max')}>
-          Max
-        </button>
-        <button onClick={() => setVariant('min')} className={chip(variant === 'min')}>
-          Min
-        </button>
+        </Chip>
+        <Segmented<Variant>
+          value={variant}
+          options={[
+            { value: 'max', label: 'Max' },
+            { value: 'min', label: 'Min' },
+          ]}
+          onChange={setVariant}
+        />
         <span className="label-caps ml-auto">TW:</span>
-        {(['none', 'mine', 'theirs'] as TailwindMode[]).map((m) => (
-          <button key={m} onClick={() => setTailwind(m)} className={chip(tailwind === m)}>
-            {m}
-          </button>
-        ))}
+        <Segmented<TailwindMode>
+          value={tailwind}
+          options={(['none', 'mine', 'theirs'] as TailwindMode[]).map((m) => ({ value: m, label: m }))}
+          onChange={setTailwind}
+        />
       </div>
 
       <p className="text-xs text-ink-500">

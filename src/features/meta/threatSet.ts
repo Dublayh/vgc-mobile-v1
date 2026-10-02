@@ -1,4 +1,5 @@
 import type { DexLookup } from '../../data/dex';
+import { formeSet } from '../../data/formes';
 import type { UsageMon } from '../../data/usage';
 import { EMPTY_SP, type AlignmentName, type ChampionsSet } from '../../engine/types';
 
@@ -11,20 +12,11 @@ export function usageMonToSet(mon: UsageMon, lookup: DexLookup): ChampionsSet | 
   const topItem = mon.items[0]?.[0];
   const moves = mon.moves.slice(0, 4).map(([name]) => name) as ChampionsSet['moves'];
 
-  // Megas resolve to their ROSTER-LEGAL base via the regulation's mega map —
-  // species.baseSpecies alone is wrong when only a forme is legal
-  // (Floette-Mega's base is Floette-Eternal, not plain Floette).
-  const base = species.baseSpecies
-    ? (lookup.megaBaseOf(species.name) ?? species.baseSpecies)
-    : species.name;
-
-  return {
-    species: base,
-    ...(species.baseSpecies ? { megaStone: species.name } : {}),
+  return formeSet(species, lookup, {
     ability: mon.abilities[0]?.[0] ?? species.abilities[0] ?? '',
     ...(topItem && topItem !== 'Nothing' ? { item: topItem } : {}),
     alignment: (spread?.alignment ?? 'Serious') as AlignmentName,
     sp: spread ? { ...spread.sp } : { ...EMPTY_SP },
     moves,
-  };
+  });
 }

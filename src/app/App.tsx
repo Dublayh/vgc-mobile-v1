@@ -12,7 +12,10 @@ const CalcView = lazy(() =>
 const MetaScreen = lazy(() =>
   import('../features/meta/MetaScreen').then((m) => ({ default: m.MetaScreen })),
 );
-import { DesignGallery } from './DesignGallery';
+// Dev-only living design gallery — never part of the production bundle path.
+const DesignGallery = lazy(() =>
+  import('./DesignGallery').then((m) => ({ default: m.DesignGallery })),
+);
 import { useUI, type Tab } from './store';
 import { Icon, type IconName } from './ui/Icon';
 
@@ -84,20 +87,24 @@ export function App() {
                 {lookup.regulation.label.replace('Regulation', 'Reg')}
               </span>
             )}
-            <button
-              onClick={() => setShowGallery((v) => !v)}
-              className={`label-caps ${showGallery ? 'text-gold-400' : ''}`}
-              title="Toggle design gallery (dev)"
-            >
-              UI
-            </button>
+            {import.meta.env.DEV && (
+              <button
+                onClick={() => setShowGallery((v) => !v)}
+                className={`label-caps ${showGallery ? 'text-gold-400' : ''}`}
+                title="Toggle design gallery (dev)"
+              >
+                UI
+              </button>
+            )}
           </div>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-xl flex-1 px-4 py-4">
         {showGallery ? (
-          <DesignGallery />
+          <Suspense fallback={null}>
+            <DesignGallery />
+          </Suspense>
         ) : !lookup ? (
           <p className="mt-16 text-center text-sm text-ink-500">Loading data…</p>
         ) : tab === 'teams' ? (

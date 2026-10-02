@@ -56,6 +56,27 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   co-occurrence, coverage-gap patching, clause-friction flags, iterative
   add-and-re-rank), 18×18 type chart in the engine, and "Ask Claude" AdviceExport
   (clipboard prompts for threat matchups and team completion — never an API call).
+  **Completer v2**: usage pipeline now stores TRUE move frequency and teammate
+  co-occurrence (chaos counts ÷ weighted set count — the old share-of-sum
+  numbers were 4–5× too small); suggestions are scored by fit (co-occurrence
+  from either mon's list, meta-weighted coverage, role gaps — Fake Out /
+  speed control / redirection / Intimidate — weather/terrain setter conflicts,
+  archetype, clause frictions) × a usage prior that is flat above 8%, one row
+  per species, then calc-audited against the team's 10 worst matchups
+  ("beats X, Y · loses to Z", chunked with a progress bar) and backed by a
+  "Proven with this core" panel listing tournament top cuts that contain every
+  locked slot (tap a partner to add its published set). `completer.test.ts`
+  pins the ranking rules.
+  **Condensing pass**: one sweep engine + result list behind both OHKO sweeps
+  (`useOhkoSweep`/`SweepResults` — the dex sweep now uses the same usage-seeded
+  defender, item included, as Calc › Sweep), shared set-editing fields between
+  the SetEditor and the calc scratch editor (`teams/fields.tsx`), one
+  usage-ranked `SpeciesSearch`, `Chip`/`Segmented` primitives replacing eleven
+  hand-rolled toggle styles, `data/formes.ts` as the single forme → base
+  resolver, calc field/combatant setup in one place, and the nested calc
+  (`#calc/sweep`), threat-browse and dex-forme screens moved into the nav store
+  so the back button sees them. The alignment picker now follows external
+  spread changes (meta spread chips, imports).
 - ✅ **M5 — PWA polish**: URL team sharing (team → deflate → base64url fragment,
   `#share/<blob>` preview + save flow, no server), Optimizer panel in Calc
   ("min SP to survive their best move" / "min Spe SP to outspeed", exact search,

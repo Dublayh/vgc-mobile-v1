@@ -1,27 +1,34 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
+import { useUI, type CalcScreen } from '../../app/store';
 import { AlignmentPicker } from '../../app/ui/AlignmentPicker';
+import { Chip, Segmented } from '../../app/ui/Chip';
+import { spreadLabel } from '../../app/ui/format';
 import { Panel } from '../../app/ui/Panel';
 import { SearchSelect } from '../../app/ui/SearchSelect';
 import { Sprite } from '../../app/ui/Sprite';
 import { TypeBadge } from '../../app/ui/TypeBadge';
-import type { DexItem, DexLookup, DexMove, DexSpecies } from '../../data/dex';
+import { useCopy } from '../../app/ui/useCopy';
+import type { DexLookup, DexMove, DexSpecies } from '../../data/dex';
 import { useUsage } from '../../data/useUsage';
-import { buildField, runCalc, toCalcPokemon, type DamageResult } from '../../engine/calc';
+import { runCalc, type DamageResult } from '../../engine/calc';
 import { computeStats } from '../../engine/stats';
-import {
-  type AlignmentName,
-  type ChampionsSet,
-  SP_POOL,
-  STAT_IDS,
-  type Team,
-} from '../../engine/types';
+import { type ChampionsSet, SP_POOL, STAT_IDS, type Team } from '../../engine/types';
 import { db } from '../../storage/db';
+import { SpeciesSearch } from '../dex/SpeciesSearch';
+import {
+  AbilityField,
+  Field,
+  ItemField,
+  MoveRow,
+  SpreadChips,
+  useSetUsage,
+} from '../teams/fields';
 import { SPAllocator } from '../teams/SPAllocator';
-import { usageMonToSet } from '../meta/threatSet';
-import { useCalc, type BoostState, type CalcSelection } from './calcStore';
+import { useCalc, type BoostState, type CalcSelection, type CalcState } from './calcStore';
+import { combatantsFromState } from './combatants';
 import { ComboPanel } from './ComboPanel';
-import { speciesToSet } from './jumpToCalc';
+import { seedSelection } from './jumpToCalc';
 import { MultiSweep } from './MultiSweep';
 import { OptimizerPanel } from './OptimizerPanel';
 
@@ -36,8 +43,8 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);
   const calc = useCalc();
   const usage = useUsage();
+  const { calcScreen, openCalc } = useUI();
   const [showPartner, setShowPartner] = useState(calc.attacker2 !== null);
-  const [screen, setScreen] = useState<'matchup' | 'sweep'>('matchup');
 
   const slotOptions: SlotOption[] = useMemo(
     () =>
@@ -47,11 +54,6 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
     [teams],
   );
 
-  const dexOptions = useMemo(
-    () => [...lookup.species].sort((a, b) => a.name.localeCompare(b.name)),
-    [lookup],
-  );
-
   if (!teams) return null;
 
   const pickSlot = (o: SlotOption): CalcSelection => ({
@@ -59,12 +61,7 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
     sourceLabel: o.team.name,
     fromTeam: true,
   });
-
-  const pickSpecies = (sp: DexSpecies): CalcSelection => {
-    const mon = usage?.get(sp.name);
-    const set = (mon && usageMonToSet(mon, lookup)) || speciesToSet(sp, lookup);
-    return { set, sourceLabel: mon ? 'meta set' : 'no usage data', fromTeam: false };
-  };
+  const pickSpecies = (sp: DexSpecies) => seedSelection(sp, usage, lookup);
 
   const updateSet =
     (role: 'attacker' | 'defender' | 'attacker2') => (patch: Partial<ChampionsSet>) => {
@@ -78,136 +75,116 @@ export function CalcView({ lookup }: { lookup: DexLookup }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-1.5">
-        {(
-          [
-            ['matchup', 'Matchup'],
-            ['sweep', 'OHKO sweep'],
-          ] as ['matchup' | 'sweep', string][]
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setScreen(id)}
-            className={`chamfer-sm px-3 py-1 font-display text-sm font-semibold tracking-[0.1em] uppercase ${
-              screen === id ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {screen === 'sweep' && (
-        <MultiSweep lookup={lookup} onVerified={() => setScreen('matchup')} />
-      )}
-
-      {screen === 'matchup' && (
-        <>
-      <PokemonPanel
-        role="Attacker"
-        selected={calc.attacker}
-        slotOptions={slotOptions}
-        dexOptions={dexOptions}
-        lookup={lookup}
-        onPick={(attacker) => calc.patch({ attacker, customMove: null, expandedMove: null })}
-        pickSlot={pickSlot}
-        pickSpecies={pickSpecies}
-        onUpdateSet={updateSet('attacker')}
-        boosts={calc.attackerBoosts}
-        onBoosts={(attackerBoosts) => calc.patch({ attackerBoosts })}
-        boostStats={['atk', 'spa']}
-        extraToggle={{
-          label: 'Burned',
-          value: calc.attackerBurned,
-          onChange: (attackerBurned) => calc.patch({ attackerBurned }),
-        }}
+      <Segmented<CalcScreen>
+        size="md"
+        value={calcScreen}
+        options={[
+          { value: 'matchup', label: 'Matchup' },
+          { value: 'sweep', label: 'OHKO sweep' },
+        ]}
+        onChange={openCalc}
       />
 
-      {/* Partner/combined damage is a doubles concept. */}
-      {calc.gameType === 'Doubles' && showPartner ? (
+      {calcScreen === 'sweep' && <MultiSweep lookup={lookup} />}
+
+      {calcScreen === 'matchup' && (
         <>
           <PokemonPanel
-            role="Partner attacker"
-            selected={calc.attacker2}
+            role="Attacker"
+            selected={calc.attacker}
             slotOptions={slotOptions}
-            dexOptions={dexOptions}
             lookup={lookup}
-            onPick={(attacker2) => calc.patch({ attacker2 })}
+            onPick={(attacker) => calc.patch({ attacker, customMove: null, expandedMove: null })}
             pickSlot={pickSlot}
             pickSpecies={pickSpecies}
-            onUpdateSet={updateSet('attacker2')}
-            boosts={calc.attacker2Boosts}
-            onBoosts={(attacker2Boosts) => calc.patch({ attacker2Boosts })}
+            onUpdateSet={updateSet('attacker')}
+            boosts={calc.attackerBoosts}
+            onBoosts={(attackerBoosts) => calc.patch({ attackerBoosts })}
             boostStats={['atk', 'spa']}
-          />
-          <button
-            onClick={() => {
-              calc.patch({ attacker2: null });
-              setShowPartner(false);
+            extraToggle={{
+              label: 'Burned',
+              value: calc.attackerBurned,
+              onChange: (attackerBurned) => calc.patch({ attackerBurned }),
             }}
-            className="label-caps self-start text-illegal"
-          >
-            ✕ Remove partner
-          </button>
-        </>
-      ) : (
-        calc.gameType === 'Doubles' &&
-        calc.attacker && (
-          <button
-            onClick={() => setShowPartner(true)}
-            className="label-caps self-start text-gold-400"
-          >
-            + Partner attacker (combined damage)
-          </button>
-        )
-      )}
-
-      <div className="flex justify-center">
-        <button
-          onClick={calc.swap}
-          className="chamfer-sm border border-ink-700 px-3 py-1 font-display text-xs font-semibold tracking-[0.12em] uppercase text-ink-300 hover:border-gold-600 hover:text-gold-300"
-        >
-          ⇅ Swap
-        </button>
-      </div>
-
-      <PokemonPanel
-        role="Defender"
-        selected={calc.defender}
-        slotOptions={slotOptions}
-        dexOptions={dexOptions}
-        lookup={lookup}
-        onPick={(defender) => calc.patch({ defender, expandedMove: null })}
-        pickSlot={pickSlot}
-        pickSpecies={pickSpecies}
-        onUpdateSet={updateSet('defender')}
-        boosts={calc.defenderBoosts}
-        onBoosts={(defenderBoosts) => calc.patch({ defenderBoosts })}
-        boostStats={['def', 'spd']}
-      />
-
-      <FieldControls />
-
-      {calc.attacker && calc.defender && (
-        <>
-          <Results attacker={calc.attacker} defender={calc.defender} lookup={lookup} />
-          {calc.gameType === 'Doubles' && calc.attacker2 && (
-            <ComboPanel
-              attacker={calc.attacker}
-              partner={calc.attacker2}
-              defender={calc.defender}
-              lookup={lookup}
-            />
-          )}
-          <OptimizerPanel
-            attacker={calc.attacker}
-            defender={calc.defender}
-            lookup={lookup}
-            onUpdateAttacker={updateSet('attacker')}
-            onUpdateDefender={updateSet('defender')}
           />
-        </>
-      )}
+
+          {/* Partner/combined damage is a doubles concept. */}
+          {calc.gameType === 'Doubles' && showPartner ? (
+            <>
+              <PokemonPanel
+                role="Partner attacker"
+                selected={calc.attacker2}
+                slotOptions={slotOptions}
+                lookup={lookup}
+                onPick={(attacker2) => calc.patch({ attacker2 })}
+                pickSlot={pickSlot}
+                pickSpecies={pickSpecies}
+                onUpdateSet={updateSet('attacker2')}
+                boosts={calc.attacker2Boosts}
+                onBoosts={(attacker2Boosts) => calc.patch({ attacker2Boosts })}
+                boostStats={['atk', 'spa']}
+              />
+              <button
+                onClick={() => {
+                  calc.patch({ attacker2: null });
+                  setShowPartner(false);
+                }}
+                className="label-caps self-start text-illegal"
+              >
+                ✕ Remove partner
+              </button>
+            </>
+          ) : (
+            calc.gameType === 'Doubles' &&
+            calc.attacker && (
+              <button onClick={() => setShowPartner(true)} className="label-caps self-start text-gold-400">
+                + Partner attacker (combined damage)
+              </button>
+            )
+          )}
+
+          <div className="flex justify-center">
+            <Chip active={false} onClick={calc.swap} className="tracking-[0.12em]">
+              ⇅ Swap
+            </Chip>
+          </div>
+
+          <PokemonPanel
+            role="Defender"
+            selected={calc.defender}
+            slotOptions={slotOptions}
+            lookup={lookup}
+            onPick={(defender) => calc.patch({ defender, expandedMove: null })}
+            pickSlot={pickSlot}
+            pickSpecies={pickSpecies}
+            onUpdateSet={updateSet('defender')}
+            boosts={calc.defenderBoosts}
+            onBoosts={(defenderBoosts) => calc.patch({ defenderBoosts })}
+            boostStats={['def', 'spd']}
+          />
+
+          <FieldControls />
+
+          {calc.attacker && calc.defender && (
+            <>
+              <Results attacker={calc.attacker} defender={calc.defender} lookup={lookup} />
+              {calc.gameType === 'Doubles' && calc.attacker2 && (
+                <ComboPanel
+                  attacker={calc.attacker}
+                  partner={calc.attacker2}
+                  defender={calc.defender}
+                  lookup={lookup}
+                />
+              )}
+              <OptimizerPanel
+                attacker={calc.attacker}
+                defender={calc.defender}
+                lookup={lookup}
+                onUpdateAttacker={updateSet('attacker')}
+                onUpdateDefender={updateSet('defender')}
+              />
+            </>
+          )}
         </>
       )}
     </div>
@@ -220,7 +197,6 @@ function PokemonPanel({
   role,
   selected,
   slotOptions,
-  dexOptions,
   lookup,
   onPick,
   pickSlot,
@@ -234,7 +210,6 @@ function PokemonPanel({
   role: string;
   selected: CalcSelection | null;
   slotOptions: SlotOption[];
-  dexOptions: DexSpecies[];
   lookup: DexLookup;
   onPick: (sel: CalcSelection) => void;
   pickSlot: (o: SlotOption) => CalcSelection;
@@ -245,9 +220,9 @@ function PokemonPanel({
   boostStats: (keyof BoostState)[];
   extraToggle?: { label: string; value: boolean; onChange: (v: boolean) => void };
 }) {
+  const usage = useUsage();
   const [picking, setPicking] = useState(false);
   const [source, setSource] = useState<'teams' | 'dex'>(slotOptions.length ? 'teams' : 'dex');
-  const [query, setQuery] = useState('');
 
   const showPicker = picking || !selected;
 
@@ -262,14 +237,15 @@ function PokemonPanel({
     >
       {showPicker ? (
         <div>
-          <div className="mb-2 flex gap-1.5">
-            <Toggle
-              label={`Teams (${slotOptions.length})`}
-              value={source === 'teams'}
-              onChange={() => setSource('teams')}
-            />
-            <Toggle label="Dex" value={source === 'dex'} onChange={() => setSource('dex')} />
-          </div>
+          <Segmented<'teams' | 'dex'>
+            className="mb-2"
+            value={source}
+            options={[
+              { value: 'teams', label: `Teams (${slotOptions.length})` },
+              { value: 'dex', label: 'Dex' },
+            ]}
+            onChange={setSource}
+          />
 
           {source === 'teams' ? (
             slotOptions.length === 0 ? (
@@ -294,10 +270,7 @@ function PokemonPanel({
                             {sp.name}
                           </span>
                           <span className="block text-xs text-ink-500">
-                            {o.team.name} · {o.set.alignment}{' '}
-                            {STAT_IDS.filter((id) => o.set.sp[id] > 0)
-                              .map((id) => o.set.sp[id])
-                              .join('/')}
+                            {o.team.name} · {o.set.alignment} {spreadLabel(o.set.sp)}
                           </span>
                         </span>
                         {o.set.item && <span className="text-xs text-ink-400">{o.set.item}</span>}
@@ -308,41 +281,16 @@ function PokemonPanel({
               </ul>
             )
           ) : (
-            <div>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search the whole dex…"
-                className="mb-1 min-h-10 w-full border border-ink-700 bg-ink-850 px-2.5 text-sm outline-none placeholder:text-ink-500 focus:border-gold-600"
-              />
-              <ul className="max-h-64 overflow-y-auto">
-                {dexOptions
-                  .filter((s) => !query || s.name.toLowerCase().includes(query.toLowerCase()))
-                  .slice(0, 50)
-                  .map((s) => (
-                    <li key={s.id}>
-                      <button
-                        onClick={() => {
-                          onPick(pickSpecies(s));
-                          setPicking(false);
-                          setQuery('');
-                        }}
-                        className="flex w-full items-center gap-2.5 border-b border-ink-800/60 px-1 py-1.5 text-left hover:bg-ink-850"
-                      >
-                        <Sprite spriteId={s.spriteId} size={32} />
-                        <span className="flex-1 font-display text-sm font-semibold tracking-wide uppercase">
-                          {s.name}
-                        </span>
-                        <span className="flex gap-1">
-                          {s.types.map((t) => (
-                            <TypeBadge key={t} type={t} size="sm" />
-                          ))}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-              </ul>
-            </div>
+            <SpeciesSearch
+              species={lookup.species}
+              lookup={lookup}
+              usage={usage}
+              placeholder="Search the whole dex…"
+              onPick={(s) => {
+                onPick(pickSpecies(s));
+                setPicking(false);
+              }}
+            />
           )}
         </div>
       ) : (
@@ -379,21 +327,21 @@ function SelectedSummary({
 }) {
   const { set } = selected;
   const [editing, setEditing] = useState(false);
-  const species = lookup.getSpecies(set.megaStone ?? set.species);
-  if (!species) return null;
-  const stats = computeStats(species.baseStats, set.sp, set.alignment);
+  const { mon, itemUsage, itemOptions } = useSetUsage(set, lookup);
+  const forme = lookup.getSpecies(set.megaStone ?? set.species);
+  const base = lookup.getSpecies(set.species) ?? forme;
+  if (!forme || !base) return null;
+  const stats = computeStats(forme.baseStats, set.sp, set.alignment);
   const spTotal = STAT_IDS.reduce((sum, s) => sum + set.sp[s], 0);
 
   return (
     <div>
       <div className="flex items-center gap-3">
-        <Sprite spriteId={species.spriteId} size={48} />
+        <Sprite spriteId={forme.spriteId} size={48} />
         <div className="flex-1">
-          <p className="font-display text-lg font-bold tracking-wide uppercase italic">
-            {species.name}
-          </p>
+          <p className="font-display text-lg font-bold tracking-wide uppercase italic">{forme.name}</p>
           <div className="mt-0.5 flex items-center gap-1.5">
-            {species.types.map((t) => (
+            {forme.types.map((t) => (
               <TypeBadge key={t} type={t} size="sm" />
             ))}
             <span className="text-xs text-ink-400">
@@ -419,12 +367,42 @@ function SelectedSummary({
         {stats.spe} Spe
       </p>
 
-      {!selected.fromTeam && (
-        <SpreadChips speciesName={species.name} set={set} onUpdate={onUpdateSet} />
+      {/* One-tap switch between the mon's top ladder spreads (dex-sourced or editing). */}
+      {mon && (!selected.fromTeam || editing) && mon.spreads.length > 0 && (
+        <div className="mt-2">
+          <SpreadChips
+            size="xs"
+            spreads={mon.spreads.slice(0, 5)}
+            current={{ alignment: set.alignment, sp: set.sp }}
+            onPick={(alignment, sp) => onUpdateSet({ alignment, sp })}
+          />
+        </div>
       )}
 
       {editing && (
-        <SetScratchEditor set={set} species={species} lookup={lookup} onUpdate={onUpdateSet} />
+        <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
+          <Field label="Alignment">
+            <AlignmentPicker value={set.alignment} onChange={(alignment) => onUpdateSet({ alignment })} />
+          </Field>
+          <SPAllocator
+            baseStats={forme.baseStats}
+            sp={set.sp}
+            alignment={set.alignment}
+            onChange={(sp) => onUpdateSet({ sp })}
+          />
+          <Field label="Item">
+            <ItemField
+              set={set}
+              lookup={lookup}
+              itemOptions={itemOptions}
+              itemUsage={itemUsage}
+              onChange={(item) => onUpdateSet({ item })}
+            />
+          </Field>
+          <Field label="Ability">
+            <AbilityField set={set} base={base} forme={forme} onChange={(ability) => onUpdateSet({ ability })} />
+          </Field>
+        </div>
       )}
 
       <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -453,182 +431,9 @@ function SelectedSummary({
           </div>
         ))}
         {extraToggle && (
-          <Toggle
-            label={extraToggle.label}
-            value={extraToggle.value}
-            onChange={extraToggle.onChange}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-/** One-tap switch between the mon's top ladder spreads (dex-sourced panels). */
-function SpreadChips({
-  speciesName,
-  set,
-  onUpdate,
-}: {
-  speciesName: string;
-  set: ChampionsSet;
-  onUpdate: (patch: Partial<ChampionsSet>) => void;
-}) {
-  const usage = useUsage();
-  const mon = usage?.get(speciesName) ?? usage?.get(set.species);
-  if (!mon || mon.spreads.length < 2) return null;
-
-  const isCurrent = (s: (typeof mon.spreads)[number]) =>
-    s.alignment === set.alignment && STAT_IDS.every((id) => s.sp[id] === set.sp[id]);
-
-  return (
-    <div className="mt-2 flex flex-wrap gap-1.5">
-      {mon.spreads.slice(0, 5).map((s, i) => (
-        <button
-          key={i}
-          onClick={() => onUpdate({ alignment: s.alignment as AlignmentName, sp: { ...s.sp } })}
-          className={`chamfer-sm px-2 py-0.5 font-display text-[0.7rem] font-semibold tracking-[0.06em] uppercase ${
-            isCurrent(s)
-              ? 'bg-gold-500 text-ink-950'
-              : 'border border-ink-700 text-ink-400 hover:border-gold-600 hover:text-gold-300'
-          }`}
-        >
-          {s.alignment}{' '}
-          <span className="stat-num normal-case">
-            {STAT_IDS.filter((id) => s.sp[id] > 0)
-              .map((id) => s.sp[id])
-              .join('/')}
-          </span>{' '}
-          <span className="opacity-60">{(s.pct * 100).toFixed(0)}%</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/** Inline scratch editing of the working copy (never writes back to teams). */
-function SetScratchEditor({
-  set,
-  species,
-  lookup,
-  onUpdate,
-}: {
-  set: ChampionsSet;
-  species: DexSpecies;
-  lookup: DexLookup;
-  onUpdate: (patch: Partial<ChampionsSet>) => void;
-}) {
-  const usage = useUsage();
-  const mon = usage?.get(species.name) ?? usage?.get(set.species);
-  const baseSpecies = lookup.getSpecies(set.species) ?? species;
-
-  const itemUsage = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const [name, share] of mon?.items ?? []) {
-      const i = lookup.getItem(name);
-      if (i) map.set(i.id, share);
-    }
-    return map;
-  }, [mon, lookup]);
-  const itemOptions = useMemo(
-    () =>
-      [...lookup.items].sort(
-        (a, b) =>
-          (itemUsage.get(b.id) ?? -1) - (itemUsage.get(a.id) ?? -1) ||
-          a.name.localeCompare(b.name),
-      ),
-    [lookup, itemUsage],
-  );
-
-  return (
-    <div className="mt-3 flex flex-col gap-3 border-t border-ink-800 pt-3">
-      {mon && mon.spreads.length > 0 && (
-        <div>
-          <p className="label-caps mb-1.5">Meta spreads</p>
-          <div className="flex flex-wrap gap-1.5">
-            {mon.spreads.slice(0, 5).map((s, i) => (
-              <button
-                key={i}
-                onClick={() =>
-                  onUpdate({ alignment: s.alignment as AlignmentName, sp: { ...s.sp } })
-                }
-                className="chamfer-sm border border-ink-700 px-2 py-1 font-display text-xs font-semibold tracking-[0.06em] uppercase text-ink-300 hover:border-gold-600 hover:text-gold-300"
-              >
-                {s.alignment}{' '}
-                <span className="stat-num normal-case">
-                  {STAT_IDS.filter((id) => s.sp[id] > 0)
-                    .map((id) => s.sp[id])
-                    .join('/')}
-                </span>{' '}
-                <span className="text-ink-500">{(s.pct * 100).toFixed(0)}%</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div>
-        <p className="label-caps mb-1.5">Alignment</p>
-        <AlignmentPicker
-          key={set.alignment}
-          value={set.alignment}
-          onChange={(alignment) => onUpdate({ alignment })}
-        />
-      </div>
-
-      <SPAllocator
-        baseStats={species.baseStats}
-        sp={set.sp}
-        alignment={set.alignment}
-        onChange={(sp) => onUpdate({ sp })}
-      />
-
-      <div>
-        <p className="label-caps mb-1.5">Item</p>
-        {set.megaStone ? (
-          <p className="px-0.5 text-sm text-ink-300">
-            {lookup.stoneFor(set.megaStone)?.name ?? set.item ?? '—'}
-            <span className="ml-2 text-xs text-ink-500">(required to mega evolve)</span>
-          </p>
-        ) : (
-          <SearchSelect<DexItem>
-            value={set.item ? lookup.getItem(set.item) : undefined}
-            placeholder="No item"
-            options={itemOptions}
-            keyOf={(i) => i.id}
-            filter={(i, q) => i.name.toLowerCase().includes(q)}
-            renderValue={(i) => <ItemRow item={i} pct={itemUsage.get(i.id)} />}
-            renderOption={(i) => <ItemRow item={i} pct={itemUsage.get(i.id)} />}
-            onSelect={(i) => onUpdate({ item: i.name })}
-            onClear={() => onUpdate({ item: undefined })}
-          />
-        )}
-      </div>
-
-      <div>
-        <p className="label-caps mb-1.5">Ability</p>
-        {set.megaStone ? (
-          // Mega formes have exactly one ability — offer it, never the base's.
-          <p className="px-0.5 text-sm text-ink-300">
-            {species.abilities[0]}
-            <span className="ml-2 text-xs text-ink-500">(fixed on mega)</span>
-          </p>
-        ) : (
-          <div className="flex flex-wrap gap-1.5">
-            {baseSpecies.abilities.map((ab) => (
-              <button
-                key={ab}
-                onClick={() => onUpdate({ ability: ab })}
-                className={`chamfer-sm px-2.5 py-1 font-display text-xs font-semibold tracking-[0.08em] uppercase ${
-                  set.ability === ab
-                    ? 'bg-gold-500 text-ink-950'
-                    : 'border border-ink-700 text-ink-300'
-                }`}
-              >
-                {ab}
-              </button>
-            ))}
-          </div>
+          <Chip active={extraToggle.value} onClick={() => extraToggle.onChange(!extraToggle.value)}>
+            {extraToggle.label}
+          </Chip>
         )}
       </div>
     </div>
@@ -637,115 +442,67 @@ function SetScratchEditor({
 
 // ---------------------------------------------------------------------------
 
-function Toggle({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      onClick={() => onChange(!value)}
-      className={`chamfer-sm px-2 py-1 font-display text-xs font-semibold tracking-[0.1em] uppercase ${
-        value ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function Segmented<T extends string>({
-  value,
-  options,
-  onChange,
-  none,
-}: {
-  value: T | undefined;
-  options: T[];
-  onChange: (v: T | undefined) => void;
-  none?: string;
-}) {
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {none && (
-        <Toggle label={none} value={value === undefined} onChange={() => onChange(undefined)} />
-      )}
-      {options.map((o) => (
-        <Toggle key={o} label={o} value={value === o} onChange={(on) => onChange(on ? o : undefined)} />
-      ))}
-    </div>
-  );
-}
+type Weather = CalcState['weather'];
+type Terrain = CalcState['terrain'];
 
 function FieldControls() {
   const calc = useCalc();
+  const flag = (label: string, value: boolean, onChange: (v: boolean) => void) => (
+    <Chip active={value} onClick={() => onChange(!value)}>
+      {label}
+    </Chip>
+  );
   return (
     <Panel title="Field">
       <div className="flex flex-col gap-2.5">
         <div className="flex items-center gap-2">
           <span className="label-caps w-14">Mode</span>
-          <Toggle
-            label="Doubles"
-            value={calc.gameType === 'Doubles'}
-            onChange={() => calc.patch({ gameType: 'Doubles' })}
+          <Segmented<'Doubles' | 'Singles'>
+            value={calc.gameType}
+            options={[
+              { value: 'Doubles', label: 'Doubles' },
+              { value: 'Singles', label: 'Singles' },
+            ]}
+            onChange={(gameType) => calc.patch({ gameType })}
           />
-          <Toggle
-            label="Singles"
-            value={calc.gameType === 'Singles'}
-            onChange={() => calc.patch({ gameType: 'Singles' })}
-          />
-          <Toggle label="Crit" value={calc.isCrit} onChange={(isCrit) => calc.patch({ isCrit })} />
+          {flag('Crit', calc.isCrit, (isCrit) => calc.patch({ isCrit }))}
         </div>
         <div className="flex items-start gap-2">
           <span className="label-caps w-14 pt-1.5">Weather</span>
-          <Segmented
+          <Segmented<Weather>
             value={calc.weather}
-            options={['Sun', 'Rain', 'Sand', 'Snow']}
+            options={[undefined, 'Sun', 'Rain', 'Sand', 'Snow'].map((w) => ({
+              value: w as Weather,
+              label: w ?? 'None',
+            }))}
             onChange={(weather) => calc.patch({ weather })}
-            none="None"
           />
         </div>
         <div className="flex items-start gap-2">
           <span className="label-caps w-14 pt-1.5">Terrain</span>
-          <Segmented
+          <Segmented<Terrain>
             value={calc.terrain}
-            options={['Electric', 'Grassy', 'Psychic', 'Misty']}
+            options={[undefined, 'Electric', 'Grassy', 'Psychic', 'Misty'].map((t) => ({
+              value: t as Terrain,
+              label: t ?? 'None',
+            }))}
             onChange={(terrain) => calc.patch({ terrain })}
-            none="None"
           />
         </div>
         <div className="flex items-start gap-2">
           <span className="label-caps w-14 pt-1.5">Sides</span>
           <div className="flex flex-wrap gap-1.5">
-            <Toggle
-              label="Helping Hand"
-              value={calc.helpingHand}
-              onChange={(helpingHand) => calc.patch({ helpingHand })}
-            />
-            <Toggle
-              label="Reflect"
-              value={calc.screens.reflect}
-              onChange={(v) => calc.patch({ screens: { ...calc.screens, reflect: v } })}
-            />
-            <Toggle
-              label="Light Screen"
-              value={calc.screens.lightScreen}
-              onChange={(v) => calc.patch({ screens: { ...calc.screens, lightScreen: v } })}
-            />
-            <Toggle
-              label="Aurora Veil"
-              value={calc.screens.auroraVeil}
-              onChange={(v) => calc.patch({ screens: { ...calc.screens, auroraVeil: v } })}
-            />
-            <Toggle
-              label="Friend Guard"
-              value={calc.friendGuard}
-              onChange={(friendGuard) => calc.patch({ friendGuard })}
-            />
+            {flag('Helping Hand', calc.helpingHand, (helpingHand) => calc.patch({ helpingHand }))}
+            {flag('Reflect', calc.screens.reflect, (v) =>
+              calc.patch({ screens: { ...calc.screens, reflect: v } }),
+            )}
+            {flag('Light Screen', calc.screens.lightScreen, (v) =>
+              calc.patch({ screens: { ...calc.screens, lightScreen: v } }),
+            )}
+            {flag('Aurora Veil', calc.screens.auroraVeil, (v) =>
+              calc.patch({ screens: { ...calc.screens, auroraVeil: v } }),
+            )}
+            {flag('Friend Guard', calc.friendGuard, (friendGuard) => calc.patch({ friendGuard }))}
           </div>
         </div>
       </div>
@@ -765,15 +522,12 @@ function Results({
   lookup: DexLookup;
 }) {
   const calc = useCalc();
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy(1800);
 
   // Any attacker can test an extra learnset move on top of its set's moves.
   const savedMoves = attacker.set.moves.filter((m): m is string => !!m);
   const moveNames = [...savedMoves];
-  if (
-    calc.customMove &&
-    !savedMoves.some((m) => m.toLowerCase() === calc.customMove!.toLowerCase())
-  ) {
+  if (calc.customMove && !savedMoves.some((m) => m.toLowerCase() === calc.customMove!.toLowerCase())) {
     moveNames.push(calc.customMove);
   }
 
@@ -787,39 +541,16 @@ function Results({
 
   const [showSweep, setShowSweep] = useState(false);
 
-  const combatants = useMemo(() => {
-    const field = buildField({
-      gameType: calc.gameType,
-      weather: calc.weather,
-      terrain: calc.terrain,
-      attackerSide: { isHelpingHand: calc.helpingHand },
-      defenderSide: {
-        isReflect: calc.screens.reflect,
-        isLightScreen: calc.screens.lightScreen,
-        isAuroraVeil: calc.screens.auroraVeil,
-        isFriendGuard: calc.friendGuard,
-      },
-    });
-    const atk = toCalcPokemon(attacker.set, {
-      formeName: attacker.set.megaStone,
-      boosts: calc.attackerBoosts,
-      status: calc.attackerBurned ? 'brn' : '',
-    });
-    const def = toCalcPokemon(defender.set, {
-      formeName: defender.set.megaStone,
-      boosts: calc.defenderBoosts,
-    });
-    return { field, atk, def };
-  }, [attacker, defender, calc]);
+  const combatants = useMemo(
+    () => combatantsFromState(calc, attacker, defender),
+    [attacker, defender, calc],
+  );
 
   const rows = useMemo(() => {
     const { field, atk, def } = combatants;
     return moveNames.map((moveName) => {
       try {
-        return {
-          moveName,
-          result: runCalc(atk, def, moveName, field, { isCrit: calc.isCrit }),
-        };
+        return { moveName, result: runCalc(atk, def, moveName, field, { isCrit: calc.isCrit }) };
       } catch {
         return { moveName, result: null };
       }
@@ -848,16 +579,6 @@ function Results({
     (acc, r, i) => (r.result && r.result.maxPercent > (rows[acc]?.result?.maxPercent ?? -1) ? i : acc),
     -1,
   );
-
-  const copy = async (result: DamageResult) => {
-    try {
-      await navigator.clipboard.writeText(result.description);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* clipboard unavailable — the text is visible on screen anyway */
-    }
-  };
 
   return (
     <Panel title="Damage" aside={copied ? <span className="text-xs text-legal">Copied</span> : undefined}>
@@ -897,14 +618,10 @@ function Results({
                   <span className="flex-1 text-sm">{moveName}</span>
                   {result && result.maxPercent > 0 ? (
                     <>
-                      <span
-                        className={`stat-num text-sm ${i === best ? 'text-gold-300' : 'text-ink-200'}`}
-                      >
+                      <span className={`stat-num text-sm ${i === best ? 'text-gold-300' : 'text-ink-200'}`}>
                         {result.percentRange}
                       </span>
-                      <span className="label-caps shrink-0 text-right text-xs">
-                        {shortKO(result.koChance)}
-                      </span>
+                      <span className="label-caps shrink-0 text-right text-xs">{shortKO(result.koChance)}</span>
                     </>
                   ) : (
                     <span className="stat-num text-sm text-ink-500">—</span>
@@ -918,14 +635,9 @@ function Results({
                         style={{ width: `${Math.min(100, result.maxPercent)}%` }}
                       />
                     </div>
-                    <p className="stat-num text-xs break-all text-ink-400">
-                      [{result.rolls.join(', ')}]
-                    </p>
+                    <p className="stat-num text-xs break-all text-ink-400">[{result.rolls.join(', ')}]</p>
                     <p className="mt-1.5 text-xs text-ink-300">{result.description}</p>
-                    <button
-                      onClick={() => copy(result)}
-                      className="label-caps mt-1.5 text-gold-400"
-                    >
+                    <button onClick={() => copy(result.description)} className="label-caps mt-1.5 text-gold-400">
                       Copy calc
                     </button>
                   </div>
@@ -961,39 +673,13 @@ function Results({
                 </li>
               ))}
               {sweep.length === 0 && (
-                <li className="py-1.5 text-xs text-ink-500">
-                  Nothing in the learnset damages this defender.
-                </li>
+                <li className="py-1.5 text-xs text-ink-500">Nothing in the learnset damages this defender.</li>
               )}
             </ul>
           )}
         </div>
       )}
     </Panel>
-  );
-}
-
-function ItemRow({ item, pct }: { item: DexItem; pct?: number }) {
-  return (
-    <span className="flex items-baseline gap-2">
-      <span className="flex-1">{item.name}</span>
-      {pct !== undefined && (
-        <span className="stat-num shrink-0 text-[0.7rem] text-gold-400">
-          {(pct * 100).toFixed(0)}%
-        </span>
-      )}
-    </span>
-  );
-}
-
-function MoveRow({ move }: { move: DexMove }) {
-  return (
-    <span className="flex items-center gap-2">
-      <TypeBadge type={move.type} size="sm" />
-      <span className="flex-1">{move.name}</span>
-      <span className="label-caps">{move.category.slice(0, 4)}</span>
-      <span className="stat-num w-7 text-right text-xs text-ink-300">{move.basePower || '—'}</span>
-    </span>
   );
 }
 

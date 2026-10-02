@@ -4,7 +4,7 @@
  * not heuristics.
  */
 import { Field, type Pokemon } from '@smogon/calc';
-import { buildField, runCalc, toCalcPokemon, type FieldOptions } from './calc';
+import { buildField, runCalc, toCalcPokemon } from './calc';
 import { DEFAULT_SP_MODE, type SPRoundingMode, validateSP } from './stats';
 import { SP_STAT_MAX, type ChampionsSet, type StatID } from './types';
 
@@ -55,29 +55,3 @@ export function minSPToReachSpeed(
   return null;
 }
 
-export interface MaxDamageQuery {
-  attackerSet: ChampionsSet;
-  defenderSet: ChampionsSet;
-  moveName: string;
-  offenseStat: 'atk' | 'spa';
-  fieldOpts?: FieldOptions;
-  spMode?: SPRoundingMode;
-}
-
-/** Max-roll damage % for each SP investment 0–32 in the offense stat (for charting/optimizing). */
-export function damageCurve(q: MaxDamageQuery): { sp: number; maxPercent: number }[] {
-  const field = buildField(q.fieldOpts);
-  const defender = toCalcPokemon(q.defenderSet, { spMode: q.spMode });
-  const out: { sp: number; maxPercent: number }[] = [];
-  for (let sp = 0; sp <= SP_STAT_MAX; sp++) {
-    const candidate: ChampionsSet = {
-      ...q.attackerSet,
-      sp: { ...q.attackerSet.sp, [q.offenseStat]: sp },
-    };
-    if (!validateSP(candidate.sp).valid) break;
-    const attacker = toCalcPokemon(candidate, { spMode: q.spMode });
-    const result = runCalc(attacker, defender, q.moveName, field);
-    out.push({ sp, maxPercent: result.maxPercent });
-  }
-  return out;
-}

@@ -5,43 +5,32 @@
  */
 import { useUI } from '../../app/store';
 import type { DexLookup, DexSpecies } from '../../data/dex';
+import { formeSet } from '../../data/formes';
+import type { UsageLookup } from '../../data/usage';
 import { useUsage } from '../../data/useUsage';
-import { EMPTY_SP, type ChampionsSet } from '../../engine/types';
 import { usageMonToSet } from '../meta/threatSet';
 import { useCalc, type CalcSelection } from './calcStore';
 
-/** Any dex species (or mega forme) as a neutral 0-SP set. */
-export function speciesToSet(sp: DexSpecies, lookup?: DexLookup): ChampionsSet {
-  // Roster-legal base for megas (Floette-Mega → Floette-Eternal).
-  const base = sp.baseSpecies
-    ? (lookup?.megaBaseOf(sp.name) ?? sp.baseSpecies)
-    : sp.name;
-  return {
-    species: base,
-    ...(sp.baseSpecies ? { megaStone: sp.name } : {}),
-    ability: sp.abilities[0] ?? '',
-    alignment: 'Serious',
-    sp: { ...EMPTY_SP },
-    moves: [],
-  };
+/** The ONE way a dex species becomes a calc participant: meta set, else 0-SP. */
+export function seedSelection(
+  sp: DexSpecies,
+  usage: UsageLookup | null | undefined,
+  lookup: DexLookup,
+): CalcSelection {
+  const mon = usage?.get(sp.name);
+  const set = (mon && usageMonToSet(mon, lookup)) || formeSet(sp, lookup);
+  return { set, sourceLabel: mon ? 'meta set' : 'no usage data', fromTeam: false };
 }
 
 export function useJumpToCalc(lookup: DexLookup) {
   const usage = useUsage();
   const calc = useCalc();
-  const { setTab } = useUI();
+  const { openCalc } = useUI();
 
   return (speciesName: string, role: 'attacker' | 'defender' = 'defender') => {
     const sp = lookup.getSpecies(speciesName);
     if (!sp) return;
-    const mon = usage?.get(sp.name);
-    const set = (mon && usageMonToSet(mon, lookup)) || speciesToSet(sp, lookup);
-    const selection: CalcSelection = {
-      set,
-      sourceLabel: mon ? 'meta set' : 'no usage data',
-      fromTeam: false,
-    };
-    calc.patch({ [role]: selection, customMove: null, expandedMove: null });
-    setTab('calc');
+    calc.patch({ [role]: seedSelection(sp, usage, lookup), customMove: null, expandedMove: null });
+    openCalc('matchup');
   };
 }

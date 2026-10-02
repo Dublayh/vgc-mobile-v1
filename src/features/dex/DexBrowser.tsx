@@ -1,5 +1,6 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import { useUI } from '../../app/store';
+import { Chip } from '../../app/ui/Chip';
 import { Panel } from '../../app/ui/Panel';
 import { SearchSelect } from '../../app/ui/SearchSelect';
 import { Sprite } from '../../app/ui/Sprite';
@@ -229,11 +230,13 @@ function SpeciesDetail({
   lookup: DexLookup;
   onBack: () => void;
 }) {
-  const [forme, setForme] = useState<DexSpecies>(species);
+  // The viewed forme lives in the nav store (#dex/<species>/<forme>) so back works.
+  const { dexForme, openDexForme } = useUI();
   const [moveQuery, setMoveQuery] = useState('');
   const jumpToCalc = useJumpToCalc(lookup);
   const megas = lookup.megaFormesOf(species.name);
   const formes = [species, ...megas];
+  const forme = (dexForme && formes.find((f) => f.name === dexForme || f.id === dexForme)) || species;
 
   const learnset = useMemo(
     () =>
@@ -257,17 +260,14 @@ function SpeciesDetail({
           formes.length > 1 && (
             <div className="flex gap-1">
               {formes.map((f) => (
-                <button
+                <Chip
                   key={f.id}
-                  onClick={() => setForme(f)}
-                  className={`chamfer-sm px-1.5 py-0.5 font-display text-[0.7rem] font-semibold tracking-[0.1em] uppercase ${
-                    forme.id === f.id
-                      ? 'bg-gold-500 text-ink-950'
-                      : 'border border-ink-700 text-ink-400'
-                  }`}
+                  size="xs"
+                  active={forme.id === f.id}
+                  onClick={() => openDexForme(f.baseSpecies ? f.name : null)}
                 >
                   {f.baseSpecies ? f.name.replace(`${f.baseSpecies}-`, '') : 'Base'}
-                </button>
+                </Chip>
               ))}
             </div>
           )

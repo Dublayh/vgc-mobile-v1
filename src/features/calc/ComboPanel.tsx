@@ -4,11 +4,13 @@
  * Both attacks are computed under the current field.
  */
 import { useMemo, useState } from 'react';
+import { Chip } from '../../app/ui/Chip';
 import { Panel } from '../../app/ui/Panel';
 import { TypeBadge } from '../../app/ui/TypeBadge';
 import type { DexLookup } from '../../data/dex';
 import { buildField, runCalc, toCalcPokemon, type DamageResult } from '../../engine/calc';
 import { useCalc, type CalcSelection } from './calcStore';
+import { combatantsFromState, partnerPokemon } from './combatants';
 
 interface MoveResult {
   move: string;
@@ -50,37 +52,13 @@ export function ComboPanel({
   const [moveB, setMoveB] = useState<string | null>(null);
 
   const combo = useMemo(() => {
-    const field = buildField({
-      gameType: calc.gameType,
-      weather: calc.weather,
-      terrain: calc.terrain,
-      attackerSide: { isHelpingHand: calc.helpingHand },
-      defenderSide: {
-        isReflect: calc.screens.reflect,
-        isLightScreen: calc.screens.lightScreen,
-        isAuroraVeil: calc.screens.auroraVeil,
-        isFriendGuard: calc.friendGuard,
-      },
-    });
-    const def = toCalcPokemon(defender.set, {
-      formeName: defender.set.megaStone,
-      boosts: calc.defenderBoosts,
-    });
-    const atkA = toCalcPokemon(attacker.set, {
-      formeName: attacker.set.megaStone,
-      boosts: calc.attackerBoosts,
-      status: calc.attackerBurned ? 'brn' : '',
-    });
-    const atkB = toCalcPokemon(partner.set, {
-      formeName: partner.set.megaStone,
-      boosts: calc.attacker2Boosts,
-    });
+    const { field, atk: atkA, def } = combatantsFromState(calc, attacker, defender);
+    const atkB = partnerPokemon(calc, partner);
     return {
       hp: def.maxHP(),
       optionsA: damaging(attacker, atkA, def, field),
       optionsB: damaging(partner, atkB, def, field),
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attacker, partner, defender, calc]);
 
   const pickA = combo.optionsA.find((o) => o.move === moveA) ?? combo.optionsA[0];
@@ -119,24 +97,21 @@ export function ComboPanel({
     onPick: (m: string) => void,
   ) => (
     <div className="flex flex-wrap gap-1.5">
-      {options.map((o) => (
-        <button
-          key={o.move}
-          onClick={() => onPick(o.move)}
-          className={`chamfer-sm flex items-center gap-1.5 px-2 py-1 font-display text-xs font-semibold tracking-[0.06em] uppercase ${
-            pick?.move === o.move
-              ? 'bg-gold-500 text-ink-950'
-              : 'border border-ink-700 text-ink-300'
-          }`}
-        >
-          {(() => {
-            const m = lookup.getMove(o.move);
-            return m ? <TypeBadge type={m.type} size="sm" /> : null;
-          })()}
-          {o.move}
-          <span className="stat-num normal-case opacity-75">{o.result.maxPercent}%</span>
-        </button>
-      ))}
+      {options.map((o) => {
+        const m = lookup.getMove(o.move);
+        return (
+          <Chip
+            key={o.move}
+            active={pick?.move === o.move}
+            onClick={() => onPick(o.move)}
+            className="flex items-center gap-1.5 tracking-[0.06em]"
+          >
+            {m && <TypeBadge type={m.type} size="sm" />}
+            {o.move}
+            <span className="stat-num normal-case opacity-75">{o.result.maxPercent}%</span>
+          </Chip>
+        );
+      })}
       {options.length === 0 && (
         <span className="text-xs text-ink-500">no damaging move vs. this defender</span>
       )}

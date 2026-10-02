@@ -2,7 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSettings } from '../../app/settings';
 import { useUI } from '../../app/store';
-import { Button } from '../../app/ui/Button';
+import { Chip, Segmented } from '../../app/ui/Chip';
+import { pct } from '../../app/ui/format';
 import { Icon } from '../../app/ui/Icon';
 import { Panel } from '../../app/ui/Panel';
 import { Sprite } from '../../app/ui/Sprite';
@@ -12,10 +13,13 @@ import { findCounters, type CounterCandidate } from '../../engine/counters';
 import { auditMatchup, type AuditContext, type MatchupAudit } from '../../engine/threat';
 import type { ChampionsSet } from '../../engine/types';
 import { db } from '../../storage/db';
-import { copyToClipboard, threatAdvicePrompt } from '../analysis/adviceExport';
+import { AdviceButton } from '../analysis/AdviceButton';
+import { threatAdvicePrompt } from '../analysis/adviceExport';
 import { detectArchetypes } from '../analysis/completer';
+import { rankWorstThreats, type WorstRow } from '../analysis/worstThreats';
 import { useCalc } from '../calc/calcStore';
 import { useJumpToCalc } from '../calc/jumpToCalc';
+import { SpeciesSearch } from '../dex/SpeciesSearch';
 import { usageMonToSet } from './threatSet';
 
 const VERDICT_STYLE: Record<MatchupAudit['verdict'], string> = {
@@ -24,22 +28,18 @@ const VERDICT_STYLE: Record<MatchupAudit['verdict'], string> = {
   loses: 'bg-illegal/15 text-illegal',
 };
 
-/** "How does my team handle X?" — X's most common set vs. every slot. */
-interface WorstRow {
-  name: string;
-  usage: number;
-  loses: number;
-  shaky: number;
-  safe: number;
-  score: number;
-}
-
 export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);
-  const [teamId, setTeamId] = useState<string | null>(null);
-  const { threatName, openThreat } = useUI();
-  const [query, setQuery] = useState('');
-  const [view, setView] = useState<'worst' | 'browse'>('worst');
+  // Team selection, sub-view and the chosen threat all live in the nav store
+  // (shared with Speed; back button pops browse → worst).
+  const {
+    threatName,
+    openThreat,
+    threatView: view,
+    setThreatView: setView,
+    metaTeamId: teamId,
+    setMetaTeamId: setTeamId,
+  } = useUI();
   const [worst, setWorst] = useState<WorstRow[] | null>(null);
   const [worstProgress, setWorstProgress] = useState(0);
   const worstToken = useRef(0);
@@ -85,46 +85,10 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
     const token = ++worstToken.current;
     setWorst(null);
     setWorstProgress(0);
-    (async () => {
-      const threats = usage.top(100);
-      const rows: WorstRow[] = [];
-      const CHUNK = 5;
-      for (let i = 0; i < threats.length; i += CHUNK) {
-        if (worstToken.current !== token) return;
-        for (const t of threats.slice(i, i + CHUNK)) {
-          const tSet = usageMonToSet(t, lookup);
-          if (!tSet) continue;
-          let loses = 0;
-          let shaky = 0;
-          let safe = 0;
-          for (const mine of team.sets) {
-            try {
-              const a = auditMatchup(mine, tSet, ctx);
-              if (a.verdict === 'loses') loses++;
-              else if (a.verdict === 'shaky') shaky++;
-              else safe++;
-            } catch {
-              /* skip uncalcable slots */
-            }
-          }
-          // Badness first, prevalence as a multiplier — a 2% mon that 4-0s you
-          // matters less than Kingambit doing it.
-          rows.push({
-            name: t.name,
-            usage: t.usage,
-            loses,
-            shaky,
-            safe,
-            score: (loses * 3 + shaky) * (0.3 + t.usage),
-          });
-        }
-        setWorstProgress(Math.min(100, Math.round(((i + CHUNK) / threats.length) * 100)));
-        await new Promise((r) => setTimeout(r, 0));
-      }
-      if (worstToken.current !== token) return;
-      rows.sort((a, b) => b.score - a.score);
-      setWorst(rows);
-    })();
+    void rankWorstThreats(team.sets, usage, lookup, ctx, {
+      onProgress: setWorstProgress,
+      cancelled: () => worstToken.current !== token,
+    }).then((rows) => rows && setWorst(rows));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, teamKey, trickRoom, myTailwind, theirTailwind, gameMode, usage, lookup]);
 
@@ -148,6 +112,22 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
     );
   }
 
+  const fieldToggles = (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="label-caps">Field:</span>
+      <Chip active={trickRoom} onClick={() => setTrickRoom((v) => !v)}>
+        Trick Room
+      </Chip>
+      <Chip active={myTailwind} onClick={() => setMyTailwind((v) => !v)}>
+        My Tailwind
+      </Chip>
+      <Chip active={theirTailwind} onClick={() => setTheirTailwind((v) => !v)}>
+        Their Tailwind
+      </Chip>
+      {autoNote && <span className="text-xs text-ink-500">auto from team plan</span>}
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-3">
       {teams && teams.length > 1 && (
@@ -166,25 +146,15 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
 
       {!threat && (
         <>
-          <div className="flex gap-1.5">
-            <FieldToggle
-              label="Worst matchups"
-              value={view === 'worst'}
-              onChange={() => setView('worst')}
-            />
-            <FieldToggle
-              label="Browse by usage"
-              value={view === 'browse'}
-              onChange={() => setView('browse')}
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="label-caps">Field:</span>
-            <FieldToggle label="Trick Room" value={trickRoom} onChange={setTrickRoom} />
-            <FieldToggle label="My Tailwind" value={myTailwind} onChange={setMyTailwind} />
-            <FieldToggle label="Their Tailwind" value={theirTailwind} onChange={setTheirTailwind} />
-            {autoNote && <span className="text-xs text-ink-500">auto from team plan</span>}
-          </div>
+          <Segmented
+            value={view}
+            options={[
+              { value: 'worst', label: 'Worst matchups' },
+              { value: 'browse', label: 'Browse by usage' },
+            ]}
+            onChange={setView}
+          />
+          {fieldToggles}
         </>
       )}
 
@@ -219,9 +189,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
                             <span className="font-display text-sm font-semibold tracking-wide uppercase">
                               {r.name}
                             </span>
-                            <span className="stat-num ml-2 text-xs text-ink-500">
-                              {(r.usage * 100).toFixed(1)}%
-                            </span>
+                            <span className="stat-num ml-2 text-xs text-ink-500">{pct(r.usage)}</span>
                           </span>
                           {r.loses > 0 && (
                             <span className="chamfer-sm bg-illegal/15 px-1.5 py-0.5 font-display text-xs font-semibold text-illegal">
@@ -259,41 +227,19 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
       )}
 
       {!threat && view === 'browse' && (
-        <div>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Pick a threat (usage-ranked)…"
-            className="mb-1 min-h-11 w-full border border-ink-700 bg-ink-850 px-3 text-sm outline-none placeholder:text-ink-500 focus:border-gold-600"
-          />
-          <ul className="chamfer max-h-96 overflow-y-auto border border-ink-800 bg-ink-900">
-            {usage.mons
-              .filter((m) => !query || m.name.toLowerCase().includes(query.toLowerCase()))
-              .slice(0, 30)
-              .map((m) => {
-                const sp = lookup.getSpecies(m.name);
-                return (
-                  <li key={m.name}>
-                    <button
-                      onClick={() => openThreat(m.name)}
-                      className="flex w-full items-center gap-2.5 border-b border-ink-800/60 px-3 py-1.5 text-left hover:bg-ink-850"
-                    >
-                      <span className="stat-num w-6 text-right text-xs text-ink-500">
-                        {m.rank}
-                      </span>
-                      {sp && <Sprite spriteId={sp.spriteId} size={32} />}
-                      <span className="flex-1 font-display text-sm font-semibold tracking-wide uppercase">
-                        {m.name}
-                      </span>
-                      <span className="stat-num text-xs text-ink-400">
-                        {(m.usage * 100).toFixed(1)}%
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-          </ul>
-        </div>
+        <SpeciesSearch
+          species={usage.mons
+            .map((m) => lookup.getSpecies(m.name))
+            .filter((s): s is NonNullable<typeof s> => !!s)}
+          lookup={lookup}
+          usage={usage}
+          placeholder="Pick a threat (usage-ranked)…"
+          limit={30}
+          showRank
+          showTypes={false}
+          listClass="chamfer max-h-96 overflow-y-auto border border-ink-800 bg-ink-900"
+          onPick={(s) => openThreat(s.name)}
+        />
       )}
 
       {threat && (
@@ -321,13 +267,7 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="label-caps">Field:</span>
-            <FieldToggle label="Trick Room" value={trickRoom} onChange={setTrickRoom} />
-            <FieldToggle label="My Tailwind" value={myTailwind} onChange={setMyTailwind} />
-            <FieldToggle label="Their Tailwind" value={theirTailwind} onChange={setTheirTailwind} />
-            {autoNote && <span className="text-xs text-ink-500">auto from team plan</span>}
-          </div>
+          {fieldToggles}
 
           <Panel title={`Your team vs. ${threat.name}`}>
             <ul className="flex flex-col gap-2.5">
@@ -401,56 +341,15 @@ export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: Dex
           {threatSet && (
             <AdviceButton
               onCopy={() =>
-                threatAdvicePrompt(
-                  team,
-                  threat.name,
-                  threatSet,
-                  audits,
-                  usage,
-                )
+                threatAdvicePrompt(team, threat.name, threatSet, audits, usage, {
+                  regulationLabel: lookup.regulation.label,
+                  gameMode,
+                })
               }
             />
           )}
         </>
       )}
-    </div>
-  );
-}
-
-function FieldToggle({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      onClick={() => onChange(!value)}
-      className={`chamfer-sm px-2 py-1 font-display text-xs font-semibold tracking-[0.1em] uppercase ${
-        value ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function AdviceButton({ onCopy }: { onCopy: () => string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <div className="flex items-center gap-2">
-      <Button
-        onClick={async () => {
-          setCopied(await copyToClipboard(onCopy()));
-          setTimeout(() => setCopied(false), 2200);
-        }}
-      >
-        Ask Claude — copy prompt
-      </Button>
-      {copied && <span className="text-xs text-legal">Copied — paste into claude.ai</span>}
     </div>
   );
 }
@@ -469,7 +368,7 @@ function CounterFinder({
   lookup: DexLookup;
   ctx: AuditContext;
 }) {
-  const { setTab } = useUI();
+  const { openCalc } = useUI();
   const calc = useCalc();
 
   const counters = useMemo(() => {
@@ -491,7 +390,7 @@ function CounterFinder({
       customMove: null,
       expandedMove: null,
     });
-    setTab('calc');
+    openCalc('matchup');
   };
 
   return (
@@ -515,9 +414,7 @@ function CounterFinder({
                   >
                     {c.audit.verdict}
                   </span>
-                  <span className="stat-num ml-auto text-ink-500">
-                    {(c.usage * 100).toFixed(1)}%
-                  </span>
+                  <span className="stat-num ml-auto text-ink-500">{pct(c.usage)}</span>
                 </div>
                 <p className="mt-0.5 text-[0.7rem] text-ink-500">
                   {c.set.item ? `${c.set.item} · ` : ''}

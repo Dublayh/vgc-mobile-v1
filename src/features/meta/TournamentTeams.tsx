@@ -12,58 +12,9 @@ import { Sprite } from '../../app/ui/Sprite';
 import type { DexLookup } from '../../data/dex';
 import type { TournamentEvent, TournamentTeam } from '../../data/tournaments';
 import { useTournaments } from '../../data/useTournaments';
-import {
-  ALIGNMENTS,
-  type AlignmentName,
-  EMPTY_SP,
-  type ChampionsSet,
-  type Team,
-} from '../../engine/types';
+import type { Team } from '../../engine/types';
 import { db } from '../../storage/db';
-import { parsePaste } from '../import-export/showdown';
-
-function placementToSets(t: TournamentTeam, lookup: DexLookup): ChampionsSet[] {
-  if (t.paste) {
-    try {
-      return parsePaste(t.paste).slice(0, 6);
-    } catch {
-      /* fall through to structured mons */
-    }
-  }
-  return t.mons.slice(0, 6).flatMap((m): ChampionsSet[] => {
-    const sp = lookup.getSpecies(m.species);
-    if (!sp) return [];
-    const base = sp.baseSpecies ? (lookup.megaBaseOf(sp.name) ?? sp.baseSpecies) : sp.name;
-
-    // Sources (Limitless) list megas as base species holding the stone —
-    // the stone pins the exact forme, so mark the set as that mega.
-    let megaForme = sp.baseSpecies ? sp.name : undefined;
-    if (!megaForme && m.item) {
-      const stone = lookup.getItem(m.item);
-      if (
-        stone?.megaForme &&
-        (lookup.megaBaseOf(stone.megaForme) ?? stone.megaEvolves) === base
-      ) {
-        megaForme = lookup.getSpecies(stone.megaForme)?.name;
-      }
-    }
-
-    return [
-      {
-        species: base,
-        ...(megaForme ? { megaStone: megaForme } : {}),
-        ability: m.ability ?? sp.abilities[0] ?? '',
-        item: megaForme ? (lookup.stoneFor(megaForme)?.name ?? m.item) : m.item,
-        alignment:
-          m.alignment && m.alignment in ALIGNMENTS
-            ? (m.alignment as AlignmentName)
-            : 'Serious',
-        sp: { ...EMPTY_SP },
-        moves: (m.moves ?? []).slice(0, 4) as ChampionsSet['moves'],
-      },
-    ];
-  });
-}
+import { placementToSets } from './tournamentSets';
 
 export function TournamentTeams({ lookup }: { lookup: DexLookup }) {
   const data = useTournaments();

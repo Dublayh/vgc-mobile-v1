@@ -45,12 +45,3 @@ export function speedStat(
 ): number {
   return computeStat(baseSpe, sp, alignment, 'spe', mode);
 }
-
-/** Common benchmark speeds for a species: min (0 SP, −alignment) → max (32 SP, +alignment). */
-export function speedRange(baseSpe: number, mode: SPRoundingMode = DEFAULT_SP_MODE) {
-  return {
-    min: speedStat(baseSpe, 0, 'Brave', mode),      // −Spe alignment, 0 SP
-    neutral: speedStat(baseSpe, 0, 'Serious', mode),
-    max: speedStat(baseSpe, 32, 'Timid', mode),     // +Spe alignment, 32 SP
-  };
-}

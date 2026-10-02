@@ -7,6 +7,7 @@
  * gameType is Doubles.
  */
 import type { DexLookup, DexMove, DexSpecies } from '../../data/dex';
+import { formeSet } from '../../data/formes';
 import { buildField, runCalc, toCalcPokemon } from '../../engine/calc';
 import { effectiveness } from '../../engine/typechart';
 import { EMPTY_SP, type ChampionsSet } from '../../engine/types';
@@ -36,18 +37,19 @@ export interface OhkoOptions {
   keepThreshold?: number;
 }
 
+/** "Adamant 32 Atk" / "Modest 32 SpA" — the sweep's max-offense spread label. */
+export const maxSpreadLabel = (category: 'Physical' | 'Special'): string =>
+  category === 'Physical' ? 'Adamant 32 Atk' : 'Modest 32 SpA';
+
 export function maxAttackerSet(
   species: DexSpecies,
   category: 'Physical' | 'Special',
+  lookup: DexLookup,
 ): ChampionsSet {
-  return {
-    species: species.baseSpecies ?? species.name,
-    ...(species.baseSpecies ? { megaStone: species.name } : {}),
-    ability: species.abilities[0] ?? '',
+  return formeSet(species, lookup, {
     alignment: category === 'Physical' ? 'Adamant' : 'Modest',
     sp: { ...EMPTY_SP, [category === 'Physical' ? 'atk' : 'spa']: 32 },
-    moves: [],
-  };
+  });
 }
 
 /**
@@ -97,7 +99,7 @@ export function sweepOne(
   for (const { move } of candidates) {
     const category = move.category as 'Physical' | 'Special';
     try {
-      pokemonByCategory[category] ??= toCalcPokemon(maxAttackerSet(attacker, category), {
+      pokemonByCategory[category] ??= toCalcPokemon(maxAttackerSet(attacker, category, lookup), {
         formeName: attacker.baseSpecies ? attacker.name : undefined,
       });
       const result = runCalc(pokemonByCategory[category]!, defender, move.name, field);
@@ -131,7 +133,7 @@ export function sweepOne(
     name: attacker.name,
     spriteId: attacker.spriteId,
     ...headline,
-    spreadLabel: headline.category === 'Physical' ? 'Adamant 32 Atk' : 'Modest 32 SpA',
+    spreadLabel: maxSpreadLabel(headline.category),
     alternatives,
   };
 }

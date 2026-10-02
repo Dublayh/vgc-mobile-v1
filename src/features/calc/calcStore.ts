@@ -17,11 +17,6 @@ export interface CalcSelection {
   edited?: boolean;
 }
 
-export interface SlotRef {
-  teamId: string;
-  slot: number;
-}
-
 export interface BoostState {
   atk: number;
   spa: number;
@@ -31,7 +26,7 @@ export interface BoostState {
 
 const NO_BOOSTS: BoostState = { atk: 0, spa: 0, def: 0, spd: 0 };
 
-interface CalcState {
+export interface CalcState {
   attacker: CalcSelection | null;
   defender: CalcSelection | null;
   /** optional second attacker for combined-damage reads (doubles) */
@@ -53,7 +48,6 @@ interface CalcState {
 
   patch: (p: Partial<CalcState>) => void;
   swap: () => void;
-  reset: () => void;
 }
 
 const initial = {
@@ -88,5 +82,4 @@ export const useCalc = create<CalcState>((set) => ({
       attackerBurned: false,
       expandedMove: null,
     })),
-  reset: () => set(initial),
 }));

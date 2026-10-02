@@ -3,9 +3,11 @@
  * design system can be reviewed on-device. The set card below is rendered
  * from REAL engine output (computeStats), not mock numbers.
  */
+import { useState } from 'react';
 import { computeStats } from '../engine/stats';
 import { ALIGNMENTS, STAT_IDS, STAT_LABELS } from '../engine/types';
 import { Button } from './ui/Button';
+import { Chip, Segmented } from './ui/Chip';
 import { Icon } from './ui/Icon';
 import { Panel } from './ui/Panel';
 import { POKEMON_TYPES, TypeBadge } from './ui/TypeBadge';
@@ -19,8 +21,36 @@ const spSpent = Object.values(DEMO_SP).reduce((a, b) => a + b, 0);
 
 export function DesignGallery() {
   const a = ALIGNMENTS[DEMO_ALIGNMENT];
+  const [segment, setSegment] = useState<'matchup' | 'sweep'>('matchup');
+  const [flag, setFlag] = useState(true);
   return (
     <div className="flex flex-col gap-4">
+      <Panel title="Chips & segments" aside={<span className="label-caps">Chip · Segmented</span>}>
+        <div className="flex flex-col gap-2.5">
+          <Segmented
+            size="md"
+            value={segment}
+            options={[
+              { value: 'matchup', label: 'Matchup' },
+              { value: 'sweep', label: 'OHKO sweep' },
+            ]}
+            onChange={setSegment}
+          />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="label-caps">Field:</span>
+            <Chip active={flag} onClick={() => setFlag((v) => !v)}>
+              Trick Room
+            </Chip>
+            <Chip active={!flag} onClick={() => setFlag((v) => !v)}>
+              Tailwind
+            </Chip>
+            <Chip size="xs" active={false}>
+              Adamant <span className="stat-num normal-case">32/32/2</span>
+            </Chip>
+          </div>
+        </div>
+      </Panel>
+
       {/* Set card — the M2 SetEditor's read view, previewed here */}
       <Panel
         title="Set card / live engine"

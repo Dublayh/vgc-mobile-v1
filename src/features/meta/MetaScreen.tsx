@@ -1,5 +1,6 @@
 import { useSettings } from '../../app/settings';
 import { useUI, type MetaSegment } from '../../app/store';
+import { Segmented } from '../../app/ui/Chip';
 import { EmptyState } from '../../app/ui/EmptyState';
 import { Icon } from '../../app/ui/Icon';
 import type { DexLookup } from '../../data/dex';
@@ -53,25 +54,18 @@ export function MetaScreen({ lookup }: { lookup: DexLookup }) {
         </p>
       )}
 
-      <div className="flex gap-1.5">
-        {(
-          [
-            ['usage', 'Usage'],
-            ['speed', 'Speed'],
-            ['threats', 'Threats'],
-            ['tourney', 'Tourney'],
-          ] as [MetaSegment, string][]
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setMetaSegment(id)}
-            className={`chamfer-sm px-3 py-1 font-display text-sm font-semibold tracking-[0.1em] uppercase ${
-              segment === id ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="flex items-center gap-1.5">
+        <Segmented<MetaSegment>
+          size="md"
+          value={segment}
+          options={[
+            { value: 'usage', label: 'Usage' },
+            { value: 'speed', label: 'Speed' },
+            { value: 'threats', label: 'Threats' },
+            { value: 'tourney', label: 'Tourney' },
+          ]}
+          onChange={setMetaSegment}
+        />
         <span className="label-caps ml-auto self-center">
           {usage.data.month}
           {usage.data.totalBattles > 0 && ` · ${usage.data.totalBattles.toLocaleString()} battles`}

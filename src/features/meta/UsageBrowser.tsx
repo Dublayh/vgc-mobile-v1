@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import { useUI } from '../../app/store';
+import { pct } from '../../app/ui/format';
 import { Panel } from '../../app/ui/Panel';
 import { Sprite } from '../../app/ui/Sprite';
 import { TypeBadge } from '../../app/ui/TypeBadge';
@@ -11,8 +12,6 @@ import { useJumpToCalc } from '../calc/jumpToCalc';
 const OhkoSweepPanel = lazy(() =>
   import('../analysis/OhkoSweepPanel').then((m) => ({ default: m.OhkoSweepPanel })),
 );
-
-const pct = (v: number, digits = 1) => `${(v * 100).toFixed(digits)}%`;
 
 export function UsageBrowser({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const { metaMon, openMetaMon } = useUI();

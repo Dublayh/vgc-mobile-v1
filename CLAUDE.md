@@ -27,8 +27,15 @@ and milestones. `README.md` tracks current status and open TODOs.
 is disabled), single `gold-*` accent, Barlow/Barlow Condensed + JetBrains Mono
 (`stat-num` for all dynamic numbers), chamfered corners (`chamfer`/`chamfer-sm`),
 type colors via `TypeBadge`. Build screens from the primitives in `src/app/ui/`
-and keep the `DesignGallery` in sync when adding primitives. Never reintroduce
-the generic look (slate + blue accent + rounded-2xl + emoji icons).
+(`Chip`/`Segmented` for every toggle, sub-tab and enum field; `useCopy` for
+clipboard + "copied" feedback; `pct`/`spreadLabel` in `format.ts`) and keep
+the `DesignGallery` in sync when adding primitives. Never reintroduce the
+generic look (slate + blue accent + rounded-2xl + emoji icons). Shared
+feature-level pieces: set-editing fields in `src/features/teams/fields.tsx`
+(used by SetEditor AND the calc scratch editor), `SpeciesSearch` for any
+usage-ranked species list, `seedSelection` (calc/jumpToCalc.ts) as the one
+way a dex species becomes a calc participant, `data/formes.ts` for forme →
+base resolution, and `useOhkoSweep` + `SweepResults` behind both OHKO sweeps.
 
 ## Conventions
 
@@ -81,9 +88,24 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
 - Usage stats: schema pinned in `src/data/usage.ts`; produced by
   `scripts/build-usage.ts` from Smogon chaos JSON (format
   `gen9championsvgc2026regmb-<rating>`; Champions spreads are natively
-  SP-scaled). Consumers use `useUsage()` and MUST degrade gracefully when it
+  SP-scaled). Chaos `Moves`/`Teammates` are RAW weighted counts, not shares:
+  the pipeline divides them by the mon's weighted set count (= sum of its
+  Items map), so `moves[i][1]` = fraction of sets carrying the move and
+  `teammates[i][1]` = fraction of that mon's teams carrying the partner —
+  never renormalize them to their own sum (that shrank them 4–5×).
+  Consumers use `useUsage()` and MUST degrade gracefully when it
   returns null. Threat auditing: `src/engine/threat.ts` (pure, tested) +
-  `usageMonToSet` in `src/features/meta/threatSet.ts`.
+  `usageMonToSet` in `src/features/meta/threatSet.ts`; team-wide "worst
+  matchups" ranking is `src/features/analysis/worstThreats.ts` (shared by
+  the Threats tab and the Team Completer).
+- Team Completer (`src/features/analysis/completer.ts`, tested): fit score
+  (co-occurrence from either mon's teammate list, meta-weighted coverage,
+  role gaps, archetype, clause frictions) × a usage prior that is FLAT at
+  ≥8% usage — its only job is to keep fringe picks out, synergy decides
+  among proven ones. `auditSuggestion` then re-scores the shortlist with
+  real `auditMatchup` calcs vs. the team's worst threats. Keep both pure;
+  the UI chunks them. `provenTeams.ts` matches tournament placements that
+  contain the locked core.
 - App-wide game mode: `src/app/settings.ts` (`useSettings().gameMode`,
   persisted). ANY new damage-calc consumer must pass it as `gameType`
   (spread penalties differ); combined-damage/partner UI is doubles-only.
@@ -92,8 +114,10 @@ the generic look (slate + blue accent + rounded-2xl + emoji icons).
   back to doubles — check `isSinglesData(lookup)`. Tournament data is
   doubles-only.
 - Navigation is hash-based via the zustand store in `src/app/store.ts`
-  (`#teams/<id>/<slot>`, `#dex/<speciesId>`, `#meta/<segment>/<mon>`) — no
-  router library; extend the store, don't add one. Forward navigation PUSHES
+  (`#teams/<id>/<slot>`, `#calc[/sweep]`, `#dex/<speciesId>[/<forme>]`,
+  `#meta/<segment>/<mon>`, `#meta/threats/browse`) — no router library;
+  extend the store, don't add one. The Meta tab's team selection
+  (`metaTeamId`) also lives there so Speed and Threats agree. Forward navigation PUSHES
   history (browser/phone back pops one nested level; popstate re-parses) —
   any NEW nested screen must live in this store, not component-local state,
   or the back button won't see it.

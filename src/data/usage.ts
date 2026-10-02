@@ -11,10 +11,14 @@ export interface UsageMon {
   name: string; // Showdown display name (may be a mega forme)
   rank: number;
   usage: number; // 0..1
+  /** share of sets, sums to ~1 */
   abilities: [string, number][];
+  /** share of sets, sums to ~1 */
   items: [string, number][];
+  /** FRACTION OF SETS carrying the move (0..1 each; a staple ≈ 1.0) */
   moves: [string, number][];
   spreads: UsageSpread[];
+  /** FRACTION OF THIS MON'S TEAMS that also carry the partner (0..1 each) */
   teammates: [string, number][];
 }
 

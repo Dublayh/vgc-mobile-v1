@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useUI } from '../../app/store';
 import { Button } from '../../app/ui/Button';
 import { Icon } from '../../app/ui/Icon';
@@ -11,7 +11,12 @@ import { putTeam, renameTeam } from '../../storage/teams';
 import { parsePaste, serializeTeam } from '../import-export/showdown';
 import { encodeTeamShare, shareUrl } from '../import-export/shareCodec';
 import { CoverageMatrix } from './CoverageMatrix';
-import { TeamCompleter } from './TeamCompleter';
+
+// The completer calc-audits suggestions, which pulls in @smogon/calc — keep
+// that out of the main chunk (same treatment as CalcView / MetaScreen).
+const TeamCompleter = lazy(() =>
+  import('./TeamCompleter').then((m) => ({ default: m.TeamCompleter })),
+);
 
 export function TeamEditor({ team, lookup }: { team: Team; lookup: DexLookup }) {
   const { openTeam, openSlot } = useUI();
@@ -135,7 +140,11 @@ export function TeamEditor({ team, lookup }: { team: Team; lookup: DexLookup }) 
         </div>
       )}
       {showCoverage && team.sets.length > 0 && <CoverageMatrix team={team} lookup={lookup} />}
-      {showCompleter && <TeamCompleter team={team} lookup={lookup} />}
+      {showCompleter && (
+        <Suspense fallback={<p className="text-sm text-ink-500">Loading suggestions…</p>}>
+          <TeamCompleter team={team} lookup={lookup} />
+        </Suspense>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         <Button onClick={() => setShowImport((v) => !v)}>Import</Button>

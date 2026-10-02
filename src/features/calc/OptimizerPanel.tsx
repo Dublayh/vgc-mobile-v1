@@ -6,13 +6,15 @@
  */
 import { useMemo, useState } from 'react';
 import { Button } from '../../app/ui/Button';
+import { Segmented } from '../../app/ui/Chip';
 import { Panel } from '../../app/ui/Panel';
 import type { DexLookup } from '../../data/dex';
-import { buildField, runCalc, toCalcPokemon } from '../../engine/calc';
+import { runCalc } from '../../engine/calc';
 import { minSPToReachSpeed, minSPToSurvive } from '../../engine/optimizer';
 import { computeStat } from '../../engine/stats';
 import type { ChampionsSet, StatID } from '../../engine/types';
 import { useCalc, type CalcSelection } from './calcStore';
+import { combatantsFromState } from './combatants';
 
 const SURVIVE_STATS: StatID[] = ['hp', 'def', 'spd'];
 
@@ -32,62 +34,30 @@ export function OptimizerPanel({
   const calc = useCalc();
   const [surviveStat, setSurviveStat] = useState<StatID>('hp');
 
-  const field = useMemo(
-    () =>
-      buildField({
-        gameType: calc.gameType,
-        weather: calc.weather,
-        terrain: calc.terrain,
-        attackerSide: { isHelpingHand: calc.helpingHand },
-        defenderSide: {
-          isReflect: calc.screens.reflect,
-          isLightScreen: calc.screens.lightScreen,
-          isAuroraVeil: calc.screens.auroraVeil,
-          isFriendGuard: calc.friendGuard,
-        },
-      }),
-    [calc],
-  );
-
-  const atkPokemon = useMemo(
-    () =>
-      toCalcPokemon(attacker.set, {
-        formeName: attacker.set.megaStone,
-        boosts: calc.attackerBoosts,
-        status: calc.attackerBurned ? 'brn' : '',
-      }),
-    [attacker.set, calc.attackerBoosts, calc.attackerBurned],
+  const { field, atk: atkPokemon, def } = useMemo(
+    () => combatantsFromState(calc, attacker, defender),
+    [calc, attacker, defender],
   );
 
   /** Attacker's strongest move vs. the CURRENT defender spread. */
   const bestMove = useMemo(() => {
-    const def = toCalcPokemon(defender.set, {
-      formeName: defender.set.megaStone,
-      boosts: calc.defenderBoosts,
-    });
     let best: { move: string; pct: number } | null = null;
     for (const move of attacker.set.moves) {
       if (!move) continue;
       try {
         const r = runCalc(atkPokemon, def, move, field);
-        if (r.maxPercent > 0 && (!best || r.maxPercent > best.pct)) {
-          best = { move, pct: r.maxPercent };
-        }
+        if (r.maxPercent > 0 && (!best || r.maxPercent > best.pct)) best = { move, pct: r.maxPercent };
       } catch {
         /* skip */
       }
     }
     return best;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [atkPokemon, defender.set, calc.defenderBoosts, field, attacker.set.moves.join('|')]);
+  }, [atkPokemon, def, field, attacker.set.moves.join('|')]);
 
   const survive = useMemo(() => {
     if (!bestMove) return null;
-    return minSPToSurvive(defender.set, surviveStat, {
-      attacker: atkPokemon,
-      moveName: bestMove.move,
-      field,
-    });
+    return minSPToSurvive(defender.set, surviveStat, { attacker: atkPokemon, moveName: bestMove.move, field });
   }, [bestMove, defender.set, surviveStat, atkPokemon, field]);
 
   const outspeed = useMemo(() => {
@@ -113,17 +83,11 @@ export function OptimizerPanel({
             Min SP for {defName} to survive {bestMove ? bestMove.move : '—'}
           </p>
           <div className="flex flex-wrap items-center gap-1.5">
-            {SURVIVE_STATS.map((s) => (
-              <button
-                key={s}
-                onClick={() => setSurviveStat(s)}
-                className={`chamfer-sm px-2 py-1 font-display text-xs font-semibold tracking-[0.1em] uppercase ${
-                  surviveStat === s ? 'bg-gold-500 text-ink-950' : 'border border-ink-700 text-ink-400'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
+            <Segmented<StatID>
+              value={surviveStat}
+              options={SURVIVE_STATS.map((s) => ({ value: s, label: s }))}
+              onChange={setSurviveStat}
+            />
             <span className="stat-num ml-1 text-ink-200">
               {!bestMove
                 ? 'no damaging move'
@@ -137,9 +101,7 @@ export function OptimizerPanel({
               <Button
                 variant="secondary"
                 className="!px-2 !py-0.5"
-                onClick={() =>
-                  onUpdateDefender({ sp: { ...defender.set.sp, [surviveStat]: survive } })
-                }
+                onClick={() => onUpdateDefender({ sp: { ...defender.set.sp, [surviveStat]: survive } })}
               >
                 Apply
               </Button>
