@@ -2,10 +2,12 @@
  * Team Completer (plan §4): builds around a locked core. Suggestions re-rank
  * automatically after each added slot because the team is a live query.
  * Two passes: the statistical shortlist paints immediately, then a chunked
- * calc audit vs. the team's worst meta matchups re-orders it with evidence.
+ * calc audit re-orders it with evidence — against the team's worst meta
+ * matchups by default, or against the mons the user asked to cover.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSettings } from '../../app/settings';
+import { useUI } from '../../app/store';
 import { Button } from '../../app/ui/Button';
 import { pct } from '../../app/ui/format';
 import { Panel } from '../../app/ui/Panel';
@@ -18,19 +20,32 @@ import type { AuditContext } from '../../engine/threat';
 import type { ChampionsSet, Team } from '../../engine/types';
 import { AdviceButton } from '../analysis/AdviceButton';
 import { completeTeamPrompt } from '../analysis/adviceExport';
-import { auditSuggestion, suggestPartners, type Suggestion } from '../analysis/completer';
+import {
+  auditSuggestion,
+  suggestPartners,
+  TARGET_AUDIT,
+  WORST_AUDIT,
+  type Suggestion,
+  type ThreatRef,
+} from '../analysis/completer';
 import { provenTeams } from '../analysis/provenTeams';
+import { VERDICT_STYLE } from '../analysis/verdictStyle';
 import { rankWorstThreats, type WorstRow } from '../analysis/worstThreats';
+import { SpeciesSearch } from '../dex/SpeciesSearch';
+import { usageMonToSet } from '../meta/threatSet';
 import { tournamentMonToSet } from '../meta/tournamentSets';
 import { updateSet } from '../../storage/teams';
 
 const SHORTLIST = 24; // statistical candidates that get calc-audited
+const SHORTLIST_TARGETED = 60; // wider net when the user names what to cover
 const SHOWN = 8;
 const WORST_THREATS = 10;
+const MAX_TARGETS = 6;
 
 interface Audited {
   key: string;
   suggestions: Suggestion[];
+  /** the auto worst-matchup list (empty when auditing user targets) */
   threats: WorstRow[];
 }
 
@@ -38,15 +53,22 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
   const usage = useUsage();
   const tournaments = useTournaments();
   const { gameMode } = useSettings();
+  const { completerTargets: targets, setCompleterTargets: setTargets } = useUI();
   const full = team.sets.length >= 6;
+  const targeted = targets.length > 0;
 
   // Fingerprint the sets, not the Team object: live queries hand out fresh
   // objects on every DB write (even a rename) and the audit is expensive.
-  const teamKey = useMemo(() => `${gameMode}|${JSON.stringify(team.sets)}`, [team.sets, gameMode]);
+  const teamKey = useMemo(
+    () => `${gameMode}|${targets.join(',')}|${JSON.stringify(team.sets)}`,
+    [team.sets, gameMode, targets],
+  );
   const analysis = useMemo(
     () =>
       usage && team.sets.length > 0
-        ? suggestPartners(team.sets, usage, lookup, { limit: SHORTLIST })
+        ? suggestPartners(team.sets, usage, lookup, {
+            limit: targeted ? SHORTLIST_TARGETED : SHORTLIST,
+          })
         : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [teamKey, usage, lookup],
@@ -66,25 +88,46 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
       myTailwind: analysis.archetypes.includes('Tailwind'),
     };
     (async () => {
-      const rows = await rankWorstThreats(team.sets, usage, lookup, ctx, {
-        top: 80,
-        onProgress: (p) => setProgress(p / 2),
-        cancelled,
-      });
-      if (!rows) return;
-      const threats = rows.filter((r) => r.loses + r.shaky > 0).slice(0, WORST_THREATS);
+      let refs: ThreatRef[];
+      let worst: WorstRow[] = [];
+      if (targeted) {
+        // The user's picks, at their most common set, all weighted equally.
+        refs = targets.flatMap((name) => {
+          const mon = usage.get(name);
+          const set = mon && usageMonToSet(mon, lookup);
+          return mon && set ? [{ name: mon.name, set, usage: mon.usage, weight: 1.5 }] : [];
+        });
+      } else {
+        const rows = await rankWorstThreats(team.sets, usage, lookup, ctx, {
+          top: 80,
+          onProgress: (p) => setProgress(p / 2),
+          cancelled,
+        });
+        if (!rows) return;
+        worst = rows.filter((r) => r.loses + r.shaky > 0).slice(0, WORST_THREATS);
+        refs = worst;
+      }
+      const weights = targeted ? TARGET_AUDIT : WORST_AUDIT;
+      const base = targeted ? 0 : 50;
       const out: Suggestion[] = [];
       const CHUNK = 4;
       const list = analysis.suggestions;
       for (let i = 0; i < list.length; i += CHUNK) {
         if (cancelled()) return;
-        for (const s of list.slice(i, i + CHUNK)) out.push(auditSuggestion(s, threats, ctx));
-        setProgress(50 + Math.round(((i + CHUNK) / list.length) * 50));
+        for (const s of list.slice(i, i + CHUNK)) out.push(auditSuggestion(s, refs, ctx, weights));
+        setProgress(base + Math.round(((i + CHUNK) / list.length) * (100 - base)));
         await new Promise((r) => setTimeout(r, 0));
       }
       if (cancelled()) return;
-      out.sort((a, b) => b.score - a.score);
-      setAudited({ key: teamKey, suggestions: out, threats });
+      // With named targets, covering them outranks everything else.
+      out.sort((a, b) =>
+        targeted
+          ? (b.audit?.beats.length ?? 0) - (a.audit?.beats.length ?? 0) ||
+            (a.audit?.losesTo.length ?? 0) - (b.audit?.losesTo.length ?? 0) ||
+            b.score - a.score
+          : b.score - a.score,
+      );
+      setAudited({ key: teamKey, suggestions: out, threats: worst });
     })();
     return () => {
       run.current++;
@@ -95,7 +138,7 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
   const proven = useMemo(
     () => (tournaments ? provenTeams(team.sets, tournaments, lookup) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [teamKey, tournaments, lookup],
+    [team.sets.length, teamKey, tournaments, lookup],
   );
 
   if (!usage || !analysis) {
@@ -112,6 +155,10 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
   const isAudited = audited?.key === teamKey;
   const shown = (isAudited ? audited.suggestions : analysis.suggestions).slice(0, SHOWN);
   const addSet = (set: ChampionsSet) => updateSet(team.id, team.sets.length, set);
+  const metaSpecies = usage.mons
+    .filter((m) => !targets.includes(m.name))
+    .map((m) => lookup.getSpecies(m.name))
+    .filter((s): s is NonNullable<typeof s> => !!s);
 
   return (
     <div className="flex flex-col gap-3">
@@ -157,6 +204,60 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
         </div>
       </Panel>
 
+      {!full && (
+        <Panel
+          title="Cover these"
+          aside={
+            <span className="label-caps">
+              {targeted ? `${targets.length}/${MAX_TARGETS}` : 'optional'}
+            </span>
+          }
+        >
+          {targeted && (
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {targets.map((name) => {
+                const sp = lookup.getSpecies(name);
+                return (
+                  <button
+                    key={name}
+                    onClick={() => setTargets(targets.filter((t) => t !== name))}
+                    className="chamfer-sm flex items-center gap-1.5 border border-gold-600/50 bg-gold-950 px-2 py-1 font-display text-xs font-semibold tracking-wide uppercase text-gold-300"
+                    title="Remove"
+                  >
+                    {sp && <Sprite spriteId={sp.spriteId} size={22} />}
+                    {name} ✕
+                  </button>
+                );
+              })}
+              <button onClick={() => setTargets([])} className="label-caps self-center text-ink-500">
+                clear
+              </button>
+            </div>
+          )}
+          {targets.length < MAX_TARGETS && (
+            <SpeciesSearch
+              species={metaSpecies}
+              lookup={lookup}
+              usage={usage}
+              placeholder="Add a Pokémon your remaining slots must handle…"
+              limit={20}
+              showTypes={false}
+              spriteSize={28}
+              listClass="max-h-40 overflow-y-auto"
+              onPick={(s) => {
+                const mon = usage.get(s.name);
+                if (mon) setTargets([...targets, mon.name]);
+              }}
+            />
+          )}
+          <p className="mt-2 text-xs text-ink-500">
+            {targeted
+              ? 'Suggestions are re-ranked by how many of these each candidate beats (calc vs. its most common set), then by fit.'
+              : 'Pick one or more meta mons to cover; otherwise suggestions are audited against your worst matchups.'}
+          </p>
+        </Panel>
+      )}
+
       <Panel
         title={full ? 'Team is full' : `Slot ${team.sets.length + 1} suggestions`}
         aside={
@@ -171,15 +272,17 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
           <>
             {isAudited ? (
               <p className="mb-2 text-xs text-ink-500">
-                Audited vs. your worst matchups:{' '}
-                {audited.threats.length
-                  ? audited.threats.map((t) => t.name).join(', ')
-                  : 'none — nothing in the top 80 beats this core'}
-                .
+                {targeted
+                  ? `Audited vs. your picks: ${targets.join(', ')}.`
+                  : `Audited vs. your worst matchups: ${
+                      audited.threats.length
+                        ? audited.threats.map((t) => t.name).join(', ')
+                        : 'none — nothing in the top 80 beats this core'
+                    }.`}
               </p>
             ) : (
               <div className="mb-2 flex items-center gap-3">
-                <span className="label-caps">Auditing vs. meta…</span>
+                <span className="label-caps">Auditing vs. {targeted ? 'your picks' : 'meta'}…</span>
                 <div className="h-1.5 flex-1 bg-ink-800">
                   <div className="h-full bg-gold-500" style={{ width: `${progress}%` }} />
                 </div>
@@ -204,6 +307,19 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
                         </span>
                         <span className="stat-num ml-auto text-ink-500">{pct(s.usage)}</span>
                       </div>
+                      {targeted && s.audit && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {s.audit.verdicts.map(({ name, verdict }) => (
+                            <span
+                              key={name}
+                              className={`chamfer-sm px-1.5 py-0.5 font-display text-[0.65rem] font-semibold tracking-[0.06em] uppercase ${VERDICT_STYLE[verdict]}`}
+                              title={`${verdict} vs ${name}`}
+                            >
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <p className="mt-0.5 text-ink-400">
                         {s.evidence.length ? s.evidence.join(' · ') : 'high usage'}
                       </p>
@@ -268,7 +384,14 @@ export function TeamCompleter({ team, lookup }: { team: Team; lookup: DexLookup 
         onCopy={() =>
           completeTeamPrompt(
             team,
-            { gaps, archetypes, roles, suggestions: shown, threats: isAudited ? audited.threats : undefined },
+            {
+              gaps,
+              archetypes,
+              roles,
+              suggestions: shown,
+              threats: isAudited ? audited.threats : undefined,
+              targets: targeted ? targets : undefined,
+            },
             usage,
             { regulationLabel: lookup.regulation.label, gameMode },
           )

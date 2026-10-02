@@ -10,6 +10,9 @@ import { setViolations } from '../../engine/legality';
 import type { ChampionsSet, Team } from '../../engine/types';
 import { updateSet } from '../../storage/teams';
 import { SpeciesSearch } from '../dex/SpeciesSearch';
+import { usageMonToSet } from '../meta/threatSet';
+import { Button } from '../../app/ui/Button';
+import { pct } from '../../app/ui/format';
 import {
   AbilityField,
   Field,
@@ -74,6 +77,19 @@ export function SetEditor({
     team.sets.filter((_, i) => i !== slot).flatMap((s) => (s.item ? [s.item] : [])),
   );
 
+  // The ladder's most common set for the ACTIVE forme (megas are tracked
+  // separately), applied in one tap: ability, item, alignment, SP, moves.
+  const common = mon ? usageMonToSet(mon, lookup) : null;
+  const applyCommon = () =>
+    common &&
+    patch({
+      ability: common.ability,
+      item: common.item,
+      alignment: common.alignment,
+      sp: { ...common.sp },
+      moves: [...common.moves] as ChampionsSet['moves'],
+    });
+
   return (
     <div className="flex flex-col gap-4">
       {back}
@@ -110,6 +126,19 @@ export function SetEditor({
               <Icon name="alert" size={14} /> {v.message}
             </p>
           ))}
+        </div>
+      )}
+
+      {common && mon && (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="secondary" className="!px-2.5 !py-1" onClick={applyCommon}>
+            Use most common set
+          </Button>
+          <span className="text-xs text-ink-500">
+            {active.name} on ladder: {common.item ?? 'no item'} · {common.alignment}
+            {mon.spreads[0] ? ` (${pct(mon.spreads[0].pct, 0)} of sets)` : ''} ·{' '}
+            {common.moves.filter(Boolean).join(' / ')}
+          </span>
         </div>
       )}
 

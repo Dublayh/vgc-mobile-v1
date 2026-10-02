@@ -119,7 +119,11 @@ export interface ThreatRef {
   name: string;
   set: ChampionsSet;
   usage: number;
+  /** evidence weight (default 0.5 + usage); user-chosen targets pass a flat 1.5 */
+  weight?: number;
 }
+
+export type Verdict = 'safe' | 'shaky' | 'loses';
 
 export interface Suggestion {
   name: string; // forme display name
@@ -133,7 +137,13 @@ export interface Suggestion {
   score: number;
   evidence: string[];
   /** calc-backed matchup evidence (set by auditSuggestion) */
-  audit?: { beats: string[]; losesTo: string[]; shaky: string[] };
+  audit?: {
+    beats: string[];
+    losesTo: string[];
+    shaky: string[];
+    /** per-threat verdict in the order audited (mirror matchups omitted) */
+    verdicts: { name: string; verdict: Verdict }[];
+  };
 }
 
 export interface CompleterAnalysis {
@@ -346,35 +356,50 @@ export function suggestPartners(
 
 /* ---------------------------------------------------------------- audit */
 
-/** per-threat fit deltas (× 0.5..1.5 by threat usage), total clamped to [-1, +1.5] */
-const AUDIT = { safe: 0.25, loses: -0.15, min: -1, max: 1.5 };
+export interface AuditWeights {
+  /** fit delta per clean win, × threat weight */
+  safe: number;
+  /** fit delta per outright loss, × threat weight */
+  loses: number;
+  /** total delta clamp */
+  min: number;
+  max: number;
+}
+
+/** Default: the team's worst matchups (weighted 0.5..1.5 by usage), clamped to [-1, +1.5]. */
+export const WORST_AUDIT: AuditWeights = { safe: 0.25, loses: -0.15, min: -1, max: 1.5 };
+/** User-chosen "cover these" targets: covering the picks is the whole point. */
+export const TARGET_AUDIT: AuditWeights = { safe: 0.5, loses: -0.3, min: -3, max: 6 };
 
 /**
- * Calc-backed re-score: audit the candidate's set against the team's worst
- * meta matchups. A clean win ("safe") against a common threat is worth more
- * than against a fringe one; losing outright costs. Pure and synchronous —
+ * Calc-backed re-score: audit the candidate's set against a threat list
+ * (the team's worst meta matchups, or the user's chosen targets). A clean
+ * win ("safe") earns fit, losing outright costs it. Pure and synchronous —
  * callers chunk over candidates to keep the UI responsive.
  */
 export function auditSuggestion(
   s: Suggestion,
   threats: ThreatRef[],
   ctx: AuditContext = {},
+  weights: AuditWeights = WORST_AUDIT,
 ): Suggestion {
   const beats: string[] = [];
   const losesTo: string[] = [];
   const shaky: string[] = [];
+  const verdicts: { name: string; verdict: Verdict }[] = [];
   let delta = 0;
   for (const t of threats) {
     if (t.set.species === s.set.species) continue; // mirror — not evidence
     try {
       const a = auditMatchup(s.set, t.set, ctx);
-      const w = 0.5 + t.usage; // 0.5..1.5
+      const w = t.weight ?? 0.5 + t.usage; // 0.5..1.5
+      verdicts.push({ name: t.name, verdict: a.verdict });
       if (a.verdict === 'safe') {
         beats.push(t.name);
-        delta += AUDIT.safe * w;
+        delta += weights.safe * w;
       } else if (a.verdict === 'loses') {
         losesTo.push(t.name);
-        delta += AUDIT.loses * w;
+        delta += weights.loses * w;
       } else {
         shaky.push(t.name);
       }
@@ -387,8 +412,14 @@ export function auditSuggestion(
     names.length > 3 ? `${names.slice(0, 3).join(', ')} +${names.length - 3}` : names.join(', ');
   if (beats.length) evidence.push(`beats ${list(beats)}`);
   if (losesTo.length) evidence.push(`loses to ${list(losesTo)}`);
-  const fit = s.fit + Math.max(AUDIT.min, Math.min(AUDIT.max, delta));
-  return { ...s, fit, score: fit * usagePrior(s.usage), evidence, audit: { beats, losesTo, shaky } };
+  const fit = s.fit + Math.max(weights.min, Math.min(weights.max, delta));
+  return {
+    ...s,
+    fit,
+    score: fit * usagePrior(s.usage),
+    evidence,
+    audit: { beats, losesTo, shaky, verdicts },
+  };
 }
 
 export type { CoverageGaps, TypeName };

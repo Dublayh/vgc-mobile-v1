@@ -9,7 +9,9 @@ import {
   metaWeights,
   rolesOf,
   suggestPartners,
+  TARGET_AUDIT,
   usagePrior,
+  WORST_AUDIT,
 } from './completer';
 // Real generated bundles: the suggestions must resolve against actual roster data.
 import dexJson from '../../../public/data/dex.json';
@@ -233,7 +235,22 @@ describe('auditSuggestion', () => {
 
   test('the mirror matchup is not evidence', () => {
     const out = auditSuggestion(garchomp, [{ name: 'Garchomp', set: setOf('Garchomp'), usage: 0.08 }]);
-    expect(out.audit).toEqual({ beats: [], losesTo: [], shaky: [] });
+    expect(out.audit).toEqual({ beats: [], losesTo: [], shaky: [], verdicts: [] });
     expect(out.score).toBe(garchomp.score);
+  });
+
+  test('user targets: flat weight, stronger deltas, per-target verdicts kept in order', () => {
+    const harmless: ChampionsSet = { ...setOf('Torkoal'), moves: ['Protect', 'Yawn'] };
+    const refs = [
+      { name: 'Torkoal', set: harmless, usage: 0.05, weight: 1.5 },
+      { name: 'Sneasler', set: setOf('Sneasler'), usage: 0.37, weight: 1.5 },
+    ];
+    const unarmed = { ...garchomp, set: { ...garchomp.set, moves: ['Earthquake'] as ChampionsSet['moves'] } };
+    const worst = auditSuggestion(unarmed, refs, {}, WORST_AUDIT);
+    const targeted = auditSuggestion(unarmed, refs, {}, TARGET_AUDIT);
+    expect(targeted.audit?.verdicts.map((v) => v.name)).toEqual(['Torkoal', 'Sneasler']);
+    expect(targeted.audit?.verdicts[0].verdict).toBe('safe');
+    // Same wins, bigger payoff when the user asked for them.
+    expect(targeted.fit - unarmed.fit).toBeGreaterThan(worst.fit - unarmed.fit);
   });
 });

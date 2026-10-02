@@ -73,6 +73,8 @@ export interface CompletionSummary {
   suggestions: Suggestion[];
   /** the team's worst meta matchups, when the calc audit has run */
   threats?: WorstRow[];
+  /** mons the user explicitly wants the remaining slots to cover */
+  targets?: string[];
 }
 
 export function completeTeamPrompt(
@@ -81,12 +83,15 @@ export function completeTeamPrompt(
   usage: UsageLookup,
   ctx: AdviceContext,
 ): string {
-  const { gaps, archetypes, roles, suggestions, threats } = summary;
+  const { gaps, archetypes, roles, suggestions, threats, targets } = summary;
   const threatLines = threats?.length
     ? `\nWorst calc-audited matchups so far (meta set vs. each locked slot): ${threats
         .slice(0, 6)
         .map((t) => `${t.name} (${t.loses} lose / ${t.shaky} shaky / ${t.safe} safe)`)
         .join(', ')}.`
+    : '';
+  const targetLine = targets?.length
+    ? `\nI specifically want the remaining slots to handle: ${targets.join(', ')} (suggestions below were calc-audited against each one's most common set).`
     : '';
   return `${header(usage, ctx)}
 
@@ -95,7 +100,7 @@ ${serializeTeam(team.sets)}
 
 Detected plan: ${archetypes.length ? archetypes.join(' + ') : 'none obvious yet'}.
 Roles covered: ${roles.size ? [...roles].join(', ') : 'none yet'}.
-Coverage gaps: cannot hit ${gaps.uncovered.join(', ') || 'nothing'} super-effectively; stacked weak to ${gaps.weakTo.join(', ') || 'nothing'}.${threatLines}
+Coverage gaps: cannot hit ${gaps.uncovered.join(', ') || 'nothing'} super-effectively; stacked weak to ${gaps.weakTo.join(', ') || 'nothing'}.${threatLines}${targetLine}
 
 Statistical + calc-audited partner suggestions from the ladder (with evidence):
 ${suggestions

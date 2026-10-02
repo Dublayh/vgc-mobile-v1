@@ -10,23 +10,18 @@ import { Sprite } from '../../app/ui/Sprite';
 import type { DexLookup } from '../../data/dex';
 import type { UsageLookup, UsageMon } from '../../data/usage';
 import { findCounters, type CounterCandidate } from '../../engine/counters';
-import { auditMatchup, type AuditContext, type MatchupAudit } from '../../engine/threat';
+import { auditMatchup, type AuditContext } from '../../engine/threat';
 import type { ChampionsSet } from '../../engine/types';
 import { db } from '../../storage/db';
 import { AdviceButton } from '../analysis/AdviceButton';
 import { threatAdvicePrompt } from '../analysis/adviceExport';
 import { detectArchetypes } from '../analysis/completer';
+import { VERDICT_STYLE } from '../analysis/verdictStyle';
 import { rankWorstThreats, type WorstRow } from '../analysis/worstThreats';
 import { useCalc } from '../calc/calcStore';
 import { useJumpToCalc } from '../calc/jumpToCalc';
 import { SpeciesSearch } from '../dex/SpeciesSearch';
 import { usageMonToSet } from './threatSet';
-
-const VERDICT_STYLE: Record<MatchupAudit['verdict'], string> = {
-  safe: 'bg-legal/15 text-legal',
-  shaky: 'bg-warn/15 text-warn',
-  loses: 'bg-illegal/15 text-illegal',
-};
 
 export function ThreatAudit({ usage, lookup }: { usage: UsageLookup; lookup: DexLookup }) {
   const teams = useLiveQuery(() => db.teams.toArray(), []);

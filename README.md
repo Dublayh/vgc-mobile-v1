@@ -65,8 +65,13 @@ Full project plan: `champions-teambuilder-plan.md` (domain model, data pipeline,
   per species, then calc-audited against the team's 10 worst matchups
   ("beats X, Y · loses to Z", chunked with a progress bar) and backed by a
   "Proven with this core" panel listing tournament top cuts that contain every
-  locked slot (tap a partner to add its published set). `completer.test.ts`
-  pins the ranking rules.
+  locked slot (tap a partner to add its published set). **Cover these**: pick
+  up to six meta mons the remaining slots must handle — suggestions are then
+  audited against those picks (wider 60-candidate net), ranked by how many
+  they beat, with a per-pick safe/shaky/loses badge on every row; the picks
+  go into the "Ask Claude" prompt too. `completer.test.ts` pins the ranking
+  rules. SetEditor: **Use most common set** applies the active forme's top
+  ladder ability/item/alignment/SP/moves in one tap.
   **Condensing pass**: one sweep engine + result list behind both OHKO sweeps
   (`useOhkoSweep`/`SweepResults` — the dex sweep now uses the same usage-seeded
   defender, item included, as Calc › Sweep), shared set-editing fields between

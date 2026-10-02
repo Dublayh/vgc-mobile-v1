@@ -36,6 +36,9 @@ interface NavState {
 interface UIState extends NavState {
   /** team the Meta tab's team-aware views (Speed, Threats) are looking at */
   metaTeamId: string | null;
+  /** Team Completer "cover these" picks (usage mon names) — session-scoped */
+  completerTargets: string[];
+  setCompleterTargets: (names: string[]) => void;
   setTab: (tab: Tab) => void;
   openTeam: (id: string | null) => void;
   openSlot: (slot: number | null) => void;
@@ -140,6 +143,8 @@ export const useUI = create<UIState>((set, get) => {
   return {
     ...parseHash(),
     metaTeamId: null,
+    completerTargets: [],
+    setCompleterTargets: (completerTargets) => set({ completerTargets }),
     setTab: (tab) => apply({ tab, shareBlob: null }),
     openTeam: (teamId) => apply({ tab: 'teams', teamId, slot: null, shareBlob: null }),
     openSlot: (slot) => apply({ slot }),
