@@ -47,6 +47,16 @@ base resolution, and `useOhkoSweep` + `SweepResults` behind both OHKO sweeps.
   construct `@smogon/calc` Pokemon with EVs directly.
 - Regulation/dex data is generated, never hand-edited: edit
   `scripts/regulation-source/*.ts`, then `npm run data:all` → `public/data/*.json`.
+- `@pkmn/dex` is a SNAPSHOT that lags Showdown's live data: new formes can
+  ship with placeholder abilities (0.10.11 had Golisopod-Mega = Emergency Exit,
+  the -Mega-Z trio copying their -Mega sibling, Baxcalibur-Mega with two
+  abilities) and brand-new abilities (Aura Guard) missing entirely. build-dex
+  applies `scripts/vendor/ps-pokedex-overrides.json` — a diff of Showdown's
+  `data/pokedex.ts`/`abilities.ts` vs. the package for the roster, regenerated
+  by `REFRESH_MODS=1` — and fails if any ladder-observed ability (≥2%) is
+  missing from a forme. `@smogon/calc`'s forme data lags the same way, so
+  `toCalcPokemon` only "corrects" an ability that is a genuine BASE-forme
+  ability; anything else on the set is trusted (regression-tested).
 - Learnsets = mainline gen-9 learnsets ∪ Champions-specific TM/tutor additions
   from Showdown's champions mod, vendored at `scripts/vendor/champions-learnsets.ts`
   (refresh: `REFRESH_MODS=1 npm run data:dex`). Items likewise: the Champions

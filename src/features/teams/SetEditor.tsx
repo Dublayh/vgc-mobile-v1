@@ -146,7 +146,17 @@ export function SetEditor({
       {megas.length > 0 && (
         <Field label="Forme">
           <div className="flex gap-1.5">
-            <Chip size="md" active={!set.megaStone} onClick={() => patch({ megaStone: undefined })}>
+            <Chip
+              size="md"
+              active={!set.megaStone}
+              // Back to base: drop a mega-only ability for the base's first one.
+              onClick={() =>
+                patch({
+                  megaStone: undefined,
+                  ability: species.abilities.includes(set.ability) ? set.ability : species.abilities[0],
+                })
+              }
+            >
               Base
             </Chip>
             {megas.map((m) => (
@@ -154,8 +164,15 @@ export function SetEditor({
                 key={m.id}
                 size="md"
                 active={set.megaStone === m.name}
-                // Megas must hold their stone (ladder-verified) — set it too.
-                onClick={() => patch({ megaStone: m.name, item: lookup.stoneFor(m.name)?.name ?? set.item })}
+                // Megas must hold their stone (ladder-verified) and have exactly
+                // one ability — set both so the saved set is self-consistent.
+                onClick={() =>
+                  patch({
+                    megaStone: m.name,
+                    item: lookup.stoneFor(m.name)?.name ?? set.item,
+                    ability: m.abilities[0] ?? set.ability,
+                  })
+                }
               >
                 {m.name.replace(`${species.name}-`, '')}
               </Chip>

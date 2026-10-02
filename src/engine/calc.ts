@@ -13,6 +13,7 @@ import {
   type Result,
 } from '@smogon/calc';
 import type { MoveName, NatureName } from '@smogon/calc/dist/data/interface';
+import { knownAbilities } from './abilityRegistry';
 import { computeStats, DEFAULT_SP_MODE, type SPRoundingMode } from './stats';
 import {
   CHAMPIONS_LEVEL,
@@ -72,12 +73,19 @@ export function toCalcPokemon(set: ChampionsSet, opts: CalcPokemonOptions = {}):
   const stats = computeStats(realBase, set.sp, set.alignment, opts.spMode ?? DEFAULT_SP_MODE);
 
   // Forme swaps (megas) fix the ability: a stale base-forme ability on the set
-  // must never leak into the damage math.
-  const formeAbilities = Object.values(probe.species.abilities ?? {}) as string[];
-  const ability =
-    opts.formeName && formeAbilities.length && !formeAbilities.includes(set.ability)
-      ? formeAbilities[0]
-      : set.ability;
+  // (Garchomp's Rough Skin on a Garchomp-Mega) must never leak into the damage
+  // math. The forme's real ability list comes from the dex registry when the
+  // app has loaded one — @smogon/calc's own forme data lags Showdown
+  // (Golisopod-Mega listed with Emergency Exit, not Tough Claws) and would
+  // otherwise "correct" the right ability away.
+  let ability = set.ability;
+  if (opts.formeName && opts.formeName !== set.species) {
+    const formeAbilities =
+      knownAbilities(name) ?? (Object.values(probe.species.abilities ?? {}) as string[]);
+    if (formeAbilities.length && !formeAbilities.includes(set.ability)) {
+      ability = formeAbilities[0];
+    }
+  }
 
   const invertedBase: StatsTable = {
     hp: realBase.hp === 1 ? 1 : stats.hp - 75, // base HP 1 = Shedinja special case

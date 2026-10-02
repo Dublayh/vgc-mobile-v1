@@ -1,0 +1,37 @@
+{
+  "source": "https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts",
+  "generatedAt": "2026-10-02T08:45:34.019Z",
+  "species": {
+    "absolmegaz": {
+      "abilities": [
+        "Sharpness"
+      ]
+    },
+    "garchompmegaz": {
+      "abilities": [
+        "Levitate"
+      ]
+    },
+    "lucariomegaz": {
+      "abilities": [
+        "Aura Guard"
+      ]
+    },
+    "golisopodmega": {
+      "abilities": [
+        "Tough Claws"
+      ]
+    },
+    "baxcaliburmega": {
+      "abilities": [
+        "Thermal Exchange"
+      ]
+    }
+  },
+  "abilities": {
+    "auraguard": {
+      "name": "Aura Guard",
+      "shortDesc": "This Pokemon takes half damage from contact moves."
+    }
+  }
+}

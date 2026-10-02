@@ -81,6 +81,105 @@ async function loadModItems(): Promise<Map<string, string | null>> {
 }
 
 const modItems = await loadModItems();
+
+/**
+ * @pkmn/dex is a periodic snapshot of Showdown's data and lags the live
+ * repo: the Reg M-C formes (Golisopod-Mega, Baxcalibur-Mega, the -Mega-Z
+ * trio) shipped in 0.10.11 with placeholder abilities copied from their base
+ * or -Mega sibling, and Lucario-Mega-Z's "Aura Guard" doesn't exist in the
+ * package at all. Showdown's data/pokedex.ts + data/abilities.ts are the
+ * authority, so REFRESH_MODS=1 diffs them against the package for the
+ * current roster and vendors ONLY the differences (a few hundred bytes),
+ * which every build then applies. The ladder cross-check below catches any
+ * ability the vendored diff still misses.
+ */
+const PS_POKEDEX_URL =
+  'https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts';
+const PS_ABILITIES_URL =
+  'https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/abilities.ts';
+
+/**
+ * Showdown ships brand-new ("Future") abilities with a handler but no text
+ * yet; the description is read off the handler and kept here until upstream
+ * adds one (the refresh prefers upstream's shortDesc when present).
+ */
+const NEW_ABILITY_DESCS: Record<string, string> = {
+  auraguard: 'This Pokemon takes half damage from contact moves.',
+};
+
+interface SpeciesOverride {
+  types?: string[];
+  baseStats?: Record<string, number>;
+  abilities?: string[];
+  weightkg?: number;
+}
+interface SpeciesOverrides {
+  source: string;
+  generatedAt: string;
+  species: Record<string, SpeciesOverride>;
+  /** abilities unknown to @pkmn/dex: id → { name, shortDesc } */
+  abilities: Record<string, { name: string; shortDesc: string }>;
+}
+
+async function loadSpeciesOverrides(rosterNames: string[]): Promise<SpeciesOverrides> {
+  const vendored = join(VENDOR_DIR, 'ps-pokedex-overrides.json');
+  if (process.env.REFRESH_MODS) {
+    const [dexRes, abRes] = await Promise.all([fetch(PS_POKEDEX_URL), fetch(PS_ABILITIES_URL)]);
+    if (!dexRes.ok || !abRes.ok) {
+      console.error(`✗ failed to refresh Showdown pokedex/abilities (${dexRes.status}/${abRes.status})`);
+      process.exit(1);
+    }
+    let src = await dexRes.text();
+    src = src.slice(src.indexOf('= {') + 2);
+    const table = new Function('return ' + src.trim().replace(/;\s*$/, ''))() as Record<
+      string,
+      { types: string[]; baseStats: Record<string, number>; abilities: Record<string, string>; weightkg: number }
+    >;
+    const abilitiesSrc = await abRes.text();
+    const out: SpeciesOverrides = {
+      source: PS_POKEDEX_URL,
+      generatedAt: new Date().toISOString(),
+      species: {},
+      abilities: {},
+    };
+    for (const name of rosterNames) {
+      const s = Dex.species.get(name);
+      const p = table[toId(name)];
+      if (!s.exists || !p) continue;
+      const ov: SpeciesOverride = {};
+      if (JSON.stringify(s.types) !== JSON.stringify(p.types)) ov.types = p.types;
+      if (JSON.stringify(s.baseStats) !== JSON.stringify(p.baseStats)) ov.baseStats = p.baseStats;
+      const mine = Object.values(s.abilities).filter(Boolean);
+      const theirs = Object.values(p.abilities).filter(Boolean);
+      if (JSON.stringify(mine) !== JSON.stringify(theirs)) ov.abilities = theirs;
+      if (s.weightkg !== p.weightkg) ov.weightkg = p.weightkg;
+      if (Object.keys(ov).length) out.species[s.id] = ov;
+      for (const ab of theirs) {
+        if (Dex.abilities.get(ab).exists) continue;
+        const id = toId(ab);
+        const block = abilitiesSrc.slice(abilitiesSrc.indexOf(`\n\t${id}: {`));
+        const shortDesc =
+          block.match(/shortDesc:\s*"([^"]*)"/)?.[1] ??
+          block.match(/\bdesc:\s*"([^"]*)"/)?.[1] ??
+          NEW_ABILITY_DESCS[id] ??
+          '';
+        if (!shortDesc) console.warn(`  ⚠ no description for new ability "${ab}" — add it to NEW_ABILITY_DESCS`);
+        out.abilities[id] = { name: ab, shortDesc };
+      }
+    }
+    writeFileSync(vendored, JSON.stringify(out, null, 2) + '\n');
+    console.log(
+      `↻ refreshed vendor/ps-pokedex-overrides.json (${Object.keys(out.species).length} species, ${Object.keys(out.abilities).length} abilities differ from @pkmn/dex)`,
+    );
+  }
+  try {
+    return JSON.parse(readFileSync(vendored, 'utf8')) as SpeciesOverrides;
+  } catch {
+    console.warn('  ⚠ no vendor/ps-pokedex-overrides.json — run REFRESH_MODS=1 once');
+    return { source: '', generatedAt: '', species: {}, abilities: {} };
+  }
+}
+
 const meta = JSON.parse(readFileSync(join(DATA_DIR, 'meta.json'), 'utf8'));
 const reg = JSON.parse(
   readFileSync(join(DATA_DIR, 'regulations', `${meta.currentRegulation}.json`), 'utf8'),
@@ -103,6 +202,8 @@ for (const name of reg.allowedSpecies as string[]) {
     rosterByBase.set(toId(sp.baseSpecies || sp.name), name);
   }
 }
+
+const overrides = await loadSpeciesOverrides(speciesNames);
 
 const usedMoves = new Set<string>();
 const usedAbilities = new Set<string>();
@@ -150,17 +251,19 @@ async function buildSpecies(name: string): Promise<DexSpecies> {
   const learnset = [...new Set([...mainline, ...additions])];
   for (const m of learnset) usedMoves.add(m);
 
-  const abilities = Object.values(s.abilities).filter(Boolean) as string[];
+  // Showdown-live corrections over the @pkmn/dex snapshot (see loadSpeciesOverrides).
+  const ov = overrides.species[s.id] ?? {};
+  const abilities = ov.abilities ?? (Object.values(s.abilities).filter(Boolean) as string[]);
   for (const a of abilities) usedAbilities.add(a);
 
   return {
     id: s.id,
     name: s.name,
     num: s.num,
-    types: [...s.types],
-    baseStats: { ...s.baseStats },
+    types: [...(ov.types ?? s.types)],
+    baseStats: { ...(ov.baseStats ?? s.baseStats) },
     abilities,
-    weightkg: s.weightkg,
+    weightkg: ov.weightkg ?? s.weightkg,
     ...(isMega ? { baseSpecies: s.baseSpecies } : {}),
     learnset,
     spriteId:
@@ -200,7 +303,10 @@ const moves = [...usedMoves].sort().map((id) => {
 
 const abilities = [...usedAbilities].sort().map((name) => {
   const a = Dex.abilities.get(name);
-  return { id: a.id, name: a.name, shortDesc: a.shortDesc };
+  if (a.exists) return { id: a.id, name: a.name, shortDesc: a.shortDesc };
+  const vendored = overrides.abilities[toId(name)];
+  if (!vendored) throw new Error(`Ability "${name}" unknown to @pkmn/dex and not vendored — REFRESH_MODS=1`);
+  return { id: toId(name), name: vendored.name, shortDesc: vendored.shortDesc };
 });
 
 // The Champions item pool: mod verdict first, gen-9 standard status otherwise.
@@ -285,11 +391,23 @@ try {
     misses++;
     console.error(`  ✗ ladder-observed item missing from pool: ${item}`);
   }
+  // And abilities: a ladder-observed ability (≥2% of sets) our dex doesn't
+  // list for that forme means the @pkmn/dex snapshot is stale for it.
+  for (const mon of usage.mons ?? []) {
+    const sp = byId.get(toId(mon.name));
+    if (!sp) continue;
+    for (const [ability, share] of (mon as { abilities?: [string, number][] }).abilities ?? []) {
+      if (share >= 0.02 && !sp.abilities.includes(ability)) {
+        misses++;
+        console.error(`  ✗ ladder ability not in dex: ${mon.name} → ${ability} (have ${sp.abilities.join('/')})`);
+      }
+    }
+  }
   if (misses > 0) {
     console.error(`✗ ${misses} ladder-observed entries missing — try REFRESH_MODS=1 npm run data:dex`);
     process.exit(1);
   }
-  console.log('✓ all ladder-observed moves + items present');
+  console.log('✓ all ladder-observed moves, items + abilities present');
 } catch {
   console.warn('  ⚠ no usage bundle — skipped learnset cross-check');
 }

@@ -1,4 +1,5 @@
 /** Types + loader for the static /data bundle (dex.json, regulations/*.json). */
+import { registerSpeciesAbilities } from '../engine/abilityRegistry';
 import type { LegalityContext } from '../engine/legality';
 import type { Regulation, StatsTable } from '../engine/types';
 
@@ -81,6 +82,9 @@ export class DexLookup {
       this.bySpecies.set(s.id, s);
       this.bySpecies.set(toId(s.name), s);
     }
+    // The calc engine resolves forme abilities against the dex, not its own
+    // (lagging) library data.
+    registerSpeciesAbilities(dex.species);
     for (const m of dex.moves) this.byMove.set(m.id, m);
     for (const i of dex.items) this.byItem.set(toId(i.name), i);
     for (const [base, formes] of Object.entries(regulation.megaFormes)) {

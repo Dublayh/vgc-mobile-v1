@@ -1,5 +1,6 @@
 import { Pokemon } from '@smogon/calc';
 import { describe, expect, test } from 'vitest';
+import { registerSpeciesAbilities } from './abilityRegistry';
 import { buildField, calcSets, GEN, runCalc, toCalcPokemon } from './calc';
 import { computeStats } from './stats';
 import { EMPTY_SP, type ChampionsSet } from './types';
@@ -149,6 +150,26 @@ describe('golden damage calcs', () => {
       { gameType: 'Singles', attackerSide: { isHelpingHand: true } },
     );
     expect(boosted.maxPercent).toBeGreaterThan(plain.maxPercent * 1.8);
+  });
+
+  test('REGRESSION: forme abilities come from the dex registry, not the lagging calc library', () => {
+    // @smogon/calc 0.11 still lists Golisopod-Mega with Emergency Exit; the
+    // real (Showdown/ladder) ability is Tough Claws and must reach the math.
+    // The app registers dex.json's abilities on load; mirror that here.
+    registerSpeciesAbilities([
+      { name: 'Golisopod-Mega', abilities: ['Tough Claws'] },
+      { name: 'Lucario-Mega-Z', abilities: ['Aura Guard'] },
+    ]);
+    const golisopod = set({ species: 'Golisopod', megaStone: 'Golisopod-Mega', ability: 'Tough Claws' });
+    expect(toCalcPokemon(golisopod, { formeName: 'Golisopod-Mega' }).ability).toBe('Tough Claws');
+    // A stale BASE ability on a mega set is corrected to the registered forme ability…
+    const stale = set({ species: 'Golisopod', megaStone: 'Golisopod-Mega', ability: 'Emergency Exit' });
+    expect(toCalcPokemon(stale, { formeName: 'Golisopod-Mega' }).ability).toBe('Tough Claws');
+    // …even when the library has never heard of that ability.
+    const lucario = set({ species: 'Lucario', megaStone: 'Lucario-Mega-Z', ability: 'Adaptability' });
+    expect(toCalcPokemon(lucario, { formeName: 'Lucario-Mega-Z' }).ability).toBe('Aura Guard');
+    // Unregistered formes fall back to library data (pre-existing behavior).
+    expect(toCalcPokemon(GARCHOMP, { formeName: 'Garchomp-Mega' }).ability).toBe('Sand Force');
   });
 
   test('new Champions mega exists in data: Mega Staraptor (Contrary)', () => {
